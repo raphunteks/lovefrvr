@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>LOVEFOREVER — Wedding Invitation</title>
+
+  <meta
+    name="description"
+    content="LOVEFOREVER — Wedding Invitation"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/css/style.css"
+  >
+</head>
+
+<body>
+
+  <header class="site-header">
+
+    <a
+      href="/"
+      class="brand"
+    >
+      LOVEFOREVER
+    </a>
+
+    <a
+      href="/admin/login"
+      class="header-admin-link"
+    >
+      Admin
+    </a>
+
+  </header>
+
+
+  <main>
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <p class="eyebrow">
+          WEDDING INVITATION
+        </p>
+
+        <h1>
+          LOVEFOREVER
+        </h1>
+
+        <p class="hero-description">
+          Sebuah tempat untuk menyimpan
+          cerita cinta, hari bahagia,
+          dan undangan pernikahan.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <section class="invitation-list">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          OUR INVITATIONS
+        </p>
+
+        <h2>
+          Wedding Invitation
+        </h2>
+
+      </div>
+
+
+      <% if (!weddings || weddings.length === 0) { %>
+
+        <div class="empty-state">
+
+          <p>
+            Belum ada wedding invitation
+            yang dipublikasikan.
+          </p>
+
+        </div>
+
+      <% } %>
+
+
+      <div class="wedding-grid">
+
+        <% weddings.forEach(function(wedding) { %>
+
+          <article class="wedding-card">
+
+            <div class="wedding-card-content">
+
+              <p class="card-label">
+                WEDDING INVITATION
+              </p>
+
+              <h3>
+                <%= wedding.groom.name %>
+                &
+                <%= wedding.bride.name %>
+              </h3>
+
+              <% if (wedding.date) { %>
+
+                <p class="card-date">
+                  <%= wedding.date %>
+                </p>
+
+              <% } %>
+
+              <a
+                href="/<%= encodeURIComponent(wedding.slug) %>"
+                class="button"
+              >
+                Buka Undangan
+              </a>
+
+            </div>
+
+          </article>
+
+        <% }); %>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="site-footer">
+
+    <p>
+      © <%= new Date().getFullYear() %>
+      LOVEFOREVER
+    </p>
+
+  </footer>
+
+</body>
+</html>

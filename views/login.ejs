@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Admin Login — LOVEFOREVER
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="/css/style.css"
+  >
+
+</head>
+
+<body class="auth-page">
+
+  <main class="auth-container">
+
+    <section class="auth-card">
+
+      <div class="auth-header">
+
+        <p class="eyebrow">
+          LOVEFOREVER
+        </p>
+
+        <h1>
+          Admin Login
+        </h1>
+
+        <p>
+          Masuk untuk mengelola wedding invitation.
+        </p>
+
+      </div>
+
+
+      <% if (error) { %>
+
+        <div class="alert alert-error">
+          <%= error %>
+        </div>
+
+      <% } %>
+
+
+      <form
+        method="POST"
+        action="/admin/login"
+        class="form"
+      >
+
+        <input
+          type="hidden"
+          name="_csrf"
+          value="<%= csrfToken %>"
+        >
+
+
+        <div class="form-group">
+
+          <label for="username">
+            Username
+          </label>
+
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="button button-full"
+        >
+          Login
+        </button>
+
+      </form>
+
+
+      <a
+        href="/"
+        class="back-link"
+      >
+        ← Kembali ke halaman utama
+      </a>
+
+    </section>
+
+  </main>
+
+</body>
+</html>

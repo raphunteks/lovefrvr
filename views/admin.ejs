@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Admin Dashboard — LOVEFOREVER
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="/css/style.css"
+  >
+
+</head>
+
+
+<body class="admin-page">
+
+
+<header class="admin-header">
+
+  <div>
+
+    <a
+      href="/admin"
+      class="brand"
+    >
+      LOVEFOREVER
+    </a>
+
+  </div>
+
+
+  <div class="admin-header-actions">
+
+    <a
+      href="/"
+      target="_blank"
+      class="button button-small"
+    >
+      Website
+    </a>
+
+
+    <form
+      method="POST"
+      action="/admin/logout"
+    >
+
+      <input
+        type="hidden"
+        name="_csrf"
+        value="<%= csrfToken %>"
+      >
+
+      <button
+        type="submit"
+        class="button button-small button-outline"
+      >
+        Logout
+      </button>
+
+    </form>
+
+  </div>
+
+</header>
+
+
+<main class="admin-container">
+
+
+  <% if (message) { %>
+
+    <div class="alert alert-success">
+      <%= message %>
+    </div>
+
+  <% } %>
+
+
+  <% if (error) { %>
+
+    <div class="alert alert-error">
+      <%= error %>
+    </div>
+
+  <% } %>
+
+
+  <!-- =====================================================
+       CREATE WEDDING
+       ===================================================== -->
+
+  <% if (createMode) { %>
+
+    <section class="admin-section">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          NEW WEDDING
+        </p>
+
+        <h1>
+          Buat Wedding Invitation
+        </h1>
+
+      </div>
+
+
+      <form
+        method="POST"
+        action="/admin/wedding/new"
+        class="form"
+      >
+
+        <input
+          type="hidden"
+          name="_csrf"
+          value="<%= csrfToken %>"
+        >
+
+
+        <div class="form-group">
+
+          <label>
+            Custom Slug
+          </label>
+
+          <input
+            type="text"
+            name="slug"
+            placeholder="contoh: aulia-rizky"
+            pattern="[a-z0-9-]+"
+            required
+          >
+
+          <small>
+            Slug menentukan URL invitation.
+            Contoh:
+            /aulia-rizky
+          </small>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Mempelai Pria
+            </label>
+
+            <input
+              type="text"
+              name="groomName"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Mempelai Wanita
+            </label>
+
+            <input
+              type="text"
+              name="brideName"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Lengkap Pria
+            </label>
+
+            <input
+              type="text"
+              name="groomFullName"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Lengkap Wanita
+            </label>
+
+            <input
+              type="text"
+              name="brideFullName"
+            >
+
+          </div>
+
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Tanggal Wedding
+          </label>
+
+          <input
+            type="date"
+            name="weddingDate"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Quote
+          </label>
+
+          <textarea
+            name="quote"
+            rows="4"
+            placeholder="Quote pernikahan..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="button"
+          >
+            Buat Wedding
+          </button>
+
+
+          <a
+            href="/admin"
+            class="button button-outline"
+          >
+            Batal
+          </a>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+  <% } else if (editWedding) { %>
+
+
+  <!-- =====================================================
+       EDIT WEDDING
+       ===================================================== -->
+
+  <section class="admin-section">
+
+    <div class="section-heading">
+
+      <p class="eyebrow">
+        EDIT WEDDING
+      </p>
+
+      <h1>
+        <%= editWedding.groom.name %>
+        &
+        <%= editWedding.bride.name %>
+      </h1>
+
+    </div>
+
+
+    <form
+      method="POST"
+      action="/admin/wedding/<%= encodeURIComponent(editWedding.slug) %>/edit"
+      class="form"
+    >
+
+      <input
+        type="hidden"
+        name="_csrf"
+        value="<%= csrfToken %>"
+      >
+
+
+      <div class="form-group">
+
+        <label>
+          Custom Slug
+        </label>
+
+        <input
+          type="text"
+          name="slug"
+          value="<%= editWedding.slug %>"
+          pattern="[a-z0-9-]+"
+          required
+        >
+
+        <small>
+          Mengubah slug akan mengubah URL invitation.
+        </small>
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="form-group">
+
+          <label>
+            Nama Mempelai Pria
+          </label>
+
+          <input
+            type="text"
+            name="groomName"
+            value="<%= editWedding.groom.name %>"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Nama Mempelai Wanita
+          </label>
+
+          <input
+            type="text"
+            name="brideName"
+            value="<%= editWedding.bride.name %>"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Nama Lengkap Pria
+          </label>
+
+          <input
+            type="text"
+            name="groomFullName"
+            value="<%= editWedding.groom.fullName || '' %>"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Nama Lengkap Wanita
+          </label>
+
+          <input
+            type="text"
+            name="brideFullName"
+            value="<%= editWedding.bride.fullName || '' %>"
+          >
+
+        </div>
+
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Tanggal Wedding
+        </label>
+
+        <input
+          type="date"
+          name="weddingDate"
+          value="<%= editWedding.date || '' %>"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Quote
+        </label>
+
+        <textarea
+          name="quote"
+          rows="4"
+        ><%= editWedding.quote || '' %></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Deskripsi
+        </label>
+
+        <textarea
+          name="description"
+          rows="6"
+        ><%= editWedding.description || '' %></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Music URL
+        </label>
+
+        <input
+          type="url"
+          name="musicUrl"
+          value="<%= editWedding.music ? editWedding.music.url : '' %>"
+          placeholder="https://..."
+        >
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="submit"
+          class="button"
+        >
+          Simpan Perubahan
+        </button>
+
+
+        <a
+          href="/admin"
+          class="button button-outline"
+        >
+          Batal
+        </a>
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <% } else if (rsvpWedding) { %>
+
+
+  <!-- =====================================================
+       RSVP
+       ===================================================== -->
+
+  <section class="admin-section">
+
+    <div class="section-heading">
+
+      <p class="eyebrow">
+        RSVP
+      </p>
+
+      <h1>
+        RSVP —
+        <%= rsvpWedding.groom.name %>
+        &
+        <%= rsvpWedding.bride.name %>
+      </h1>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table class="data-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Nama
+            </th>
+
+            <th>
+              Kehadiran
+            </th>
+
+            <th>
+              Jumlah Tamu
+            </th>
+
+            <th>
+              Pesan
+            </th>
+
+            <th>
+              Waktu
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <% if (!rsvps || rsvps.length === 0) { %>
+
+            <tr>
+
+              <td
+                colspan="5"
+                class="empty-table"
+              >
+                Belum ada RSVP.
+              </td>
+
+            </tr>
+
+          <% } %>
+
+
+          <% if (rsvps) { %>
+
+            <% rsvps.forEach(function(rsvp) { %>
+
+              <tr>
+
+                <td>
+                  <%= rsvp.name %>
+                </td>
+
+                <td>
+                  <%= rsvp.attendance %>
+                </td>
+
+                <td>
+                  <%= rsvp.guestCount %>
+                </td>
+
+                <td>
+                  <%= rsvp.message || '-' %>
+                </td>
+
+                <td>
+                  <%= rsvp.createdAt %>
+                </td>
+
+              </tr>
+
+            <% }); %>
+
+          <% } %>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <a
+      href="/admin"
+      class="button button-outline"
+    >
+      ← Kembali
+    </a>
+
+  </section>
+
+
+  <% } else { %>
+
+
+  <!-- =====================================================
+       DASHBOARD
+       ===================================================== -->
+
+  <section class="dashboard-heading">
+
+    <div>
+
+      <p class="eyebrow">
+        ADMIN DASHBOARD
+      </p>
+
+      <h1>
+        Wedding Management
+      </h1>
+
+      <p>
+        Kelola semua wedding invitation
+        dari satu dashboard.
+      </p>
+
+    </div>
+
+
+    <a
+      href="/admin/wedding/new"
+      class="button"
+    >
+      + Buat Wedding
+    </a>
+
+  </section>
+
+
+  <section class="stats-grid">
+
+
+    <div class="stat-card">
+
+      <span>
+        Total Wedding
+      </span>
+
+      <strong>
+        <%= stats.total || 0 %>
+      </strong>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <span>
+        Published
+      </span>
+
+      <strong>
+        <%= stats.published || 0 %>
+      </strong>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <span>
+        Draft
+      </span>
+
+      <strong>
+        <%= stats.draft || 0 %>
+      </strong>
+
+    </div>
+
+
+  </section>
+
+
+  <section class="admin-section">
+
+    <div class="section-heading">
+
+      <p class="eyebrow">
+        WEDDINGS
+      </p>
+
+      <h2>
+        Daftar Invitation
+      </h2>
+
+    </div>
+
+
+    <% if (!weddings || weddings.length === 0) { %>
+
+      <div class="empty-state">
+
+        <p>
+          Belum ada wedding.
+        </p>
+
+        <a
+          href="/admin/wedding/new"
+          class="button"
+        >
+          Buat Wedding Pertama
+        </a>
+
+      </div>
+
+    <% } else { %>
+
+
+      <div class="admin-wedding-list">
+
+
+        <% weddings.forEach(function(wedding) { %>
+
+          <article class="admin-wedding-card">
+
+
+            <div class="admin-wedding-info">
+
+              <span class="status-badge
+                <%= wedding.status === 'published'
+                  ? 'status-published'
+                  : 'status-draft'
+                %>"
+              >
+                <%= wedding.status %>
+              </span>
+
+
+              <h3>
+
+                <%= wedding.groom.name %>
+
+                &
+
+                <%= wedding.bride.name %>
+
+              </h3>
+
+
+              <p>
+                /<%= wedding.slug %>
+              </p>
+
+
+              <a
+                href="/<%= encodeURIComponent(wedding.slug) %>"
+                target="_blank"
+                class="public-link"
+              >
+                Buka Invitation →
+              </a>
+
+            </div>
+
+
+            <div class="admin-wedding-actions">
+
+
+              <a
+                href="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/edit"
+                class="button button-small"
+              >
+                Edit
+              </a>
+
+
+              <a
+                href="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/rsvp"
+                class="button button-small button-outline"
+              >
+                RSVP
+              </a>
+
+
+              <% if (wedding.status === "published") { %>
+
+                <form
+                  method="POST"
+                  action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/unpublish"
+                >
+
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    value="<%= csrfToken %>"
+                  >
+
+                  <button
+                    type="submit"
+                    class="button button-small button-outline"
+                  >
+                    Unpublish
+                  </button>
+
+                </form>
+
+              <% } else { %>
+
+                <form
+                  method="POST"
+                  action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/publish"
+                >
+
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    value="<%= csrfToken %>"
+                  >
+
+                  <button
+                    type="submit"
+                    class="button button-small"
+                  >
+                    Publish
+                  </button>
+
+                </form>
+
+              <% } %>
+
+
+              <form
+                method="POST"
+                action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/delete"
+                onsubmit="return confirm('Hapus wedding ini? Data RSVP juga akan dihapus.');"
+              >
+
+                <input
+                  type="hidden"
+                  name="_csrf"
+                  value="<%= csrfToken %>"
+                >
+
+                <button
+                  type="submit"
+                  class="button button-small button-danger"
+                >
+                  Delete
+                </button>
+
+              </form>
+
+
+            </div>
+
+          </article>
+
+        <% }); %>
+
+
+      </div>
+
+
+    <% } %>
+
+
+  </section>
+
+
+  <% } %>
+
+
+</main>
+
+</body>
+</html>
