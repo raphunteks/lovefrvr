@@ -1,306 +1,435 @@
 require("dotenv").config();
 
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const cookieSession = require("cookie-session");
-const rateLimit = require("express-rate-limit");
+const path = require("path");
 const crypto = require("crypto");
 const { Redis } = require("@upstash/redis");
 
 const app = express();
 
+/*
+|--------------------------------------------------------------------------
+| ENVIRONMENT
+|--------------------------------------------------------------------------
+*/
+
 const PORT = process.env.PORT || 3000;
 
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const SESSION_TTL = 60 * 60 * 24; // 24 jam
+
+/*
+|--------------------------------------------------------------------------
+| VALIDATION ENV
+|--------------------------------------------------------------------------
+*/
+
+if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+  console.warn(
+    "WARNING: ADMIN_USERNAME atau ADMIN_PASSWORD belum dikonfigurasi."
+  );
+}
+
+if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
+  console.warn(
+    "WARNING: Upstash Redis environment variables belum dikonfigurasi."
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| UPSTASH REDIS
+|--------------------------------------------------------------------------
+*/
+
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN
+  url: UPSTASH_REDIS_REST_URL,
+  token: UPSTASH_REDIS_REST_TOKEN,
 });
 
 /*
 |--------------------------------------------------------------------------
-| BASIC CONFIGURATION
+| EXPRESS CONFIG
 |--------------------------------------------------------------------------
 */
 
 app.set("view engine", "ejs");
-app.set("views", __dirname + "/views");
+app.set("views", path.join(__dirname, "views"));
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "12mb"
+  express.static(path.join(__dirname, "public"), {
+    maxAge: "7d",
   })
 );
 
-app.use(
-  express.json({
-    limit: "12mb"
-  })
-);
+/*
+|--------------------------------------------------------------------------
+| COOKIE HELPERS
+|--------------------------------------------------------------------------
+*/
+
+function parseCookies(req) {
+  const cookies = {};
+
+  const header = req.headers.cookie;
+
+  if (!header) {
+    return cookies;
+  }
+
+  header.split(";").forEach((cookie) => {
+    const separatorIndex = cookie.indexOf("=");
+
+    if (separatorIndex === -1) {
+      return;
+    }
+
+    const key = cookie.slice(0, separatorIndex).trim();
+    const value = cookie.slice(separatorIndex + 1).trim();
+
+    cookies[key] = decodeURIComponent(value);
+  });
+
+  return cookies;
+}
+
+function setCookie(res, name, value, options = {}) {
+  const parts = [
+    `${name}=${encodeURIComponent(value)}`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Lax",
+  ];
+
+  if (options.maxAge !== undefined) {
+    parts.push(`Max-Age=${options.maxAge}`);
+  }
+
+  if (options.secure) {
+    parts.push("Secure");
+  }
+
+  res.setHeader("Set-Cookie", parts.join("; "));
+}
+
+function clearCookie(res, name) {
+  setCookie(res, name, "", {
+    maxAge: 0,
+    secure: process.env.NODE_ENV === "production",
+  });
+}
 
 /*
 |--------------------------------------------------------------------------
 | SESSION
 |--------------------------------------------------------------------------
 |
-| cookie-session dipakai supaya session tidak membutuhkan database/session
-| store tambahan. Hal ini cocok dengan konsep sederhana dan stateless
-| untuk deployment Vercel.
+| Session tidak disimpan di MemoryStore.
+| Session ID disimpan di cookie.
+| Data session disimpan di Upstash Redis.
 |
 */
 
-app.use(
-  cookieSession({
-    name: "loveforever_session",
-    keys: [
-      process.env.SESSION_SECRET || "CHANGE_THIS_SESSION_SECRET"
-    ],
-    maxAge: 1000 * 60 * 60 * 8,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax"
-  })
-);
+async function createSession() {
+  const sessionId = crypto.randomBytes(32).toString("hex");
+
+  const session = {
+    authenticated: true,
+    username: ADMIN_USERNAME,
+    createdAt: Date.now(),
+  };
+
+  await redis.set(
+    `session:${sessionId}`,
+    JSON.stringify(session),
+    {
+      ex: SESSION_TTL,
+    }
+  );
+
+  return sessionId;
+}
+
+async function getSession(req) {
+  try {
+    const cookies = parseCookies(req);
+
+    const sessionId = cookies.admin_session;
+
+    if (!sessionId) {
+      return null;
+    }
+
+    const session = await redis.get(`session:${sessionId}`);
+
+    if (!session) {
+      return null;
+    }
+
+    if (typeof session === "string") {
+      return JSON.parse(session);
+    }
+
+    return session;
+  } catch (error) {
+    console.error("Session error:", error);
+    return null;
+  }
+}
+
+async function destroySession(req) {
+  try {
+    const cookies = parseCookies(req);
+
+    const sessionId = cookies.admin_session;
+
+    if (sessionId) {
+      await redis.del(`session:${sessionId}`);
+    }
+  } catch (error) {
+    console.error("Destroy session error:", error);
+  }
+}
 
 /*
 |--------------------------------------------------------------------------
-| HELPERS
+| AUTHENTICATION
 |--------------------------------------------------------------------------
 */
 
-function generateId(prefix = "id") {
-  return `${prefix}_${crypto.randomUUID()}`;
-}
+async function requireAdmin(req, res, next) {
+  const session = await getSession(req);
 
-function nowISO() {
-  return new Date().toISOString();
-}
-
-function normalizeSlug(slug) {
-  return String(slug || "")
-    .trim()
-    .toLowerCase();
-}
-
-function isValidSlug(slug) {
-  return /^[a-z0-9](?:[a-z0-9-]{1,98}[a-z0-9])?$/.test(slug);
-}
-
-function sanitizeText(value, maxLength = 500) {
-  return String(value || "")
-    .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, maxLength);
-}
-
-function sanitizeMultiline(value, maxLength = 2000) {
-  return String(value || "")
-    .trim()
-    .slice(0, maxLength);
-}
-
-function getGuestName(req) {
-  return sanitizeText(req.query.to || "", 100);
-}
-
-function isAdmin(req) {
-  return Boolean(req.session && req.session.isAdmin === true);
-}
-
-function requireAdmin(req, res, next) {
-  if (!isAdmin(req)) {
+  if (!session || !session.authenticated) {
     return res.redirect("/admin/login");
   }
 
-  next();
-}
-
-function csrfToken(req) {
-  if (!req.session.csrfToken) {
-    req.session.csrfToken = crypto.randomBytes(32).toString("hex");
-  }
-
-  return req.session.csrfToken;
-}
-
-function validateCsrf(req, res, next) {
-  const token = req.body._csrf;
-
-  if (
-    !token ||
-    !req.session.csrfToken ||
-    token !== req.session.csrfToken
-  ) {
-    return res.status(403).send("CSRF validation failed.");
-  }
+  req.admin = session;
 
   next();
 }
 
-async function getWedding(slug) {
-  return await redis.get(`wedding:${slug}`);
-}
+/*
+|--------------------------------------------------------------------------
+| CSRF
+|--------------------------------------------------------------------------
+|
+| Token dibuat per session dan disimpan di Redis.
+|
+*/
 
-async function getWeddingSlugs() {
-  const weddings = await redis.get("weddings");
+async function getCsrfToken(req) {
+  const cookies = parseCookies(req);
+  const sessionId = cookies.admin_session;
 
-  if (!Array.isArray(weddings)) {
-    return [];
+  if (!sessionId) {
+    return null;
   }
 
-  return weddings;
-}
+  const key = `csrf:${sessionId}`;
 
-async function saveWedding(wedding) {
-  await redis.set(`wedding:${wedding.slug}`, wedding);
+  let token = await redis.get(key);
 
-  let slugs = await getWeddingSlugs();
+  if (!token) {
+    token = crypto.randomBytes(32).toString("hex");
 
-  if (!slugs.includes(wedding.slug)) {
-    slugs.push(wedding.slug);
+    await redis.set(key, token, {
+      ex: SESSION_TTL,
+    });
   }
 
-  await redis.set("weddings", slugs);
+  return token;
 }
 
-async function removeWedding(slug) {
-  await redis.del(`wedding:${slug}`);
+async function verifyCsrf(req) {
+  const cookies = parseCookies(req);
 
-  let slugs = await getWeddingSlugs();
+  const sessionId = cookies.admin_session;
 
-  slugs = slugs.filter((item) => item !== slug);
-
-  await redis.set("weddings", slugs);
-}
-
-async function getAllWeddings() {
-  const slugs = await getWeddingSlugs();
-
-  if (!slugs.length) {
-    return [];
+  if (!sessionId) {
+    return false;
   }
 
-  const weddings = [];
+  const submittedToken = req.body._csrf;
 
-  for (const slug of slugs) {
-    const wedding = await getWedding(slug);
+  if (!submittedToken) {
+    return false;
+  }
 
-    if (wedding) {
-      weddings.push(wedding);
+  const storedToken = await redis.get(`csrf:${sessionId}`);
+
+  if (!storedToken) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    Buffer.from(String(submittedToken)),
+    Buffer.from(String(storedToken))
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| SIMPLE LOGIN RATE LIMIT
+|--------------------------------------------------------------------------
+|
+| Mencegah brute-force sederhana.
+|
+*/
+
+async function loginRateLimit(req, res, next) {
+  try {
+    const ip =
+      req.headers["x-forwarded-for"] ||
+      req.socket.remoteAddress ||
+      "unknown";
+
+    const normalizedIp = String(ip)
+      .split(",")[0]
+      .trim();
+
+    const key = `login-attempt:${normalizedIp}`;
+
+    const attempts = await redis.incr(key);
+
+    if (attempts === 1) {
+      await redis.expire(key, 300);
     }
+
+    if (attempts > 10) {
+      return res.status(429).render("login", {
+        error:
+          "Terlalu banyak percobaan login. Silakan coba lagi beberapa menit kemudian.",
+        csrfToken: null,
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Rate limit error:", error);
+
+    /*
+     * Jika Redis bermasalah, jangan langsung memblokir login.
+     * Request tetap dilanjutkan.
+     */
+    next();
   }
-
-  return weddings;
 }
 
 /*
 |--------------------------------------------------------------------------
-| RATE LIMITING
+| PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 5,
-  standardHeaders: "draft-8",
-  legacyHeaders: false,
-  message: "Terlalu banyak percobaan login. Silakan coba lagi nanti."
-});
-
-const rsvpLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  limit: 10,
-  standardHeaders: "draft-8",
-  legacyHeaders: false,
-  message: "Terlalu banyak pengiriman RSVP. Silakan coba lagi nanti."
-});
-
 /*
 |--------------------------------------------------------------------------
-| DEFAULT WEDDING DATA
-|--------------------------------------------------------------------------
-*/
-
-function createEmptyWedding({
-  slug,
-  groomName,
-  groomFullName,
-  brideName,
-  brideFullName,
-  weddingDate,
-  quote
-}) {
-  return {
-    id: generateId("wedding"),
-
-    slug,
-
-    status: "draft",
-
-    groom: {
-      name: sanitizeText(groomName, 100),
-      fullName: sanitizeText(groomFullName, 150),
-      photo: ""
-    },
-
-    bride: {
-      name: sanitizeText(brideName, 100),
-      fullName: sanitizeText(brideFullName, 150),
-      photo: ""
-    },
-
-    date: weddingDate || "",
-
-    quote: sanitizeMultiline(quote, 1000),
-
-    description: "",
-
-    events: [],
-
-    story: [],
-
-    gallery: [],
-
-    gift: [],
-
-    music: {
-      url: ""
-    },
-
-    theme: {
-      title: "LOVEFOREVER",
-      font: "serif"
-    },
-
-    createdAt: nowISO(),
-
-    updatedAt: nowISO()
-  };
-}
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC LANDING PAGE
+| LANDING PAGE
 |--------------------------------------------------------------------------
 */
 
 app.get("/", async (req, res) => {
   try {
-    const weddings = await getAllWeddings();
+    /*
+     * Data invitation dapat dikembangkan kemudian.
+     * Untuk sementara halaman landing mengambil daftar
+     * invitation yang aktif dari Redis.
+     */
 
-    const published = weddings.filter(
-      (wedding) => wedding.status === "published"
-    );
+    const keys = await redis.keys("invitation:*");
+
+    const invitations = [];
+
+    for (const key of keys) {
+      const invitation = await redis.get(key);
+
+      if (!invitation) {
+        continue;
+      }
+
+      if (typeof invitation === "string") {
+        invitations.push(JSON.parse(invitation));
+      } else {
+        invitations.push(invitation);
+      }
+    }
 
     res.render("index", {
-      weddings: published
+      invitations,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Landing page error:", error);
 
-    res.status(500).send("Terjadi kesalahan pada server.");
+    res.render("index", {
+      invitations: [],
+    });
+  }
+});
+
+/*
+|--------------------------------------------------------------------------
+| WEDDING INVITATION
+|--------------------------------------------------------------------------
+|
+| Contoh:
+|
+| /liza-rahmat
+|
+| dengan query:
+|
+| ?to=drg.%20A.%20Rifka%20Rahmayanti
+|
+*/
+
+app.get("/:slug", async (req, res, next) => {
+  const slug = req.params.slug;
+
+  /*
+   * Jangan menangkap route admin sebagai invitation.
+   */
+  if (slug === "admin") {
+    return next();
+  }
+
+  try {
+    const invitation = await redis.get(`invitation:${slug}`);
+
+    if (!invitation) {
+      return res.status(404).render("404", {
+        message: "Undangan tidak ditemukan.",
+      });
+    }
+
+    const data =
+      typeof invitation === "string"
+        ? JSON.parse(invitation)
+        : invitation;
+
+    const guestName = req.query.to || "";
+
+    /*
+     * Query ?to=...
+     * hanya digunakan untuk menampilkan nama tamu.
+     */
+
+    res.render("invitation", {
+      invitation: data,
+      guestName,
+    });
+  } catch (error) {
+    console.error("Invitation error:", error);
+
+    return res.status(500).render("404", {
+      message: "Terjadi kesalahan pada server.",
+    });
   }
 });
 
@@ -310,79 +439,108 @@ app.get("/", async (req, res) => {
 |--------------------------------------------------------------------------
 */
 
-app.get("/admin/login", (req, res) => {
-  if (isAdmin(req)) {
+app.get("/admin/login", async (req, res) => {
+  const session = await getSession(req);
+
+  if (session && session.authenticated) {
     return res.redirect("/admin");
   }
 
   res.render("login", {
     error: null,
-    csrfToken: csrfToken(req)
+    csrfToken: null,
   });
 });
 
-app.post(
-  "/admin/login",
-  loginLimiter,
-  validateCsrf,
-  async (req, res) => {
-    try {
-      const username = sanitizeText(req.body.username, 100);
-      const password = String(req.body.password || "");
+/*
+|--------------------------------------------------------------------------
+| ADMIN LOGIN POST
+|--------------------------------------------------------------------------
+*/
 
-      const configuredUsername =
-        process.env.ADMIN_USERNAME || "";
+app.post("/admin/login", loginRateLimit, async (req, res) => {
+  try {
+    const username = String(req.body.username || "").trim();
+    const password = String(req.body.password || "");
 
-      const passwordHash =
-        process.env.ADMIN_PASSWORD_HASH || "";
+    /*
+     * Tidak menggunakan hash.
+     * Credential langsung dibandingkan dengan ENV.
+     */
 
-      if (!configuredUsername || !passwordHash) {
-        return res.render("login", {
-          error:
-            "Admin belum dikonfigurasi. Periksa environment variables.",
-          csrfToken: csrfToken(req)
-        });
-      }
+    const usernameValid =
+      username === String(ADMIN_USERNAME || "");
 
-      const usernameCorrect =
-        username === configuredUsername;
+    const passwordValid =
+      password === String(ADMIN_PASSWORD || "");
 
-      const passwordCorrect =
-        usernameCorrect &&
-        await bcrypt.compare(password, passwordHash);
-
-      if (!usernameCorrect || !passwordCorrect) {
-        return res.render("login", {
-          error: "Username atau password salah.",
-          csrfToken: csrfToken(req)
-        });
-      }
-
-      req.session.isAdmin = true;
-      req.session.username = configuredUsername;
-
-      return res.redirect("/admin");
-    } catch (error) {
-      console.error(error);
-
-      res.status(500).render("login", {
-        error: "Terjadi kesalahan saat login.",
-        csrfToken: csrfToken(req)
+    if (!usernameValid || !passwordValid) {
+      return res.status(401).render("login", {
+        error: "Username atau password salah.",
+        csrfToken: null,
       });
     }
-  }
-);
 
-app.post(
-  "/admin/logout",
-  requireAdmin,
-  validateCsrf,
-  (req, res) => {
-    req.session = null;
+    /*
+     * Buat session baru.
+     */
 
-    res.redirect("/admin/login");
+    const sessionId = await createSession();
+
+    /*
+     * Buat CSRF token.
+     */
+
+    const csrfToken = crypto.randomBytes(32).toString("hex");
+
+    await redis.set(
+      `csrf:${sessionId}`,
+      csrfToken,
+      {
+        ex: SESSION_TTL,
+      }
+    );
+
+    /*
+     * Cookie hanya menyimpan session ID.
+     * Credential admin TIDAK pernah masuk cookie.
+     */
+
+    setCookie(res, "admin_session", sessionId, {
+      maxAge: SESSION_TTL,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return res.redirect("/admin");
+  } catch (error) {
+    console.error("Login error:", error);
+
+    return res.status(500).render("login", {
+      error: "Terjadi kesalahan server. Silakan coba lagi.",
+      csrfToken: null,
+    });
   }
-);
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+app.post("/admin/logout", requireAdmin, async (req, res) => {
+  await destroySession(req);
+
+  const cookies = parseCookies(req);
+
+  if (cookies.admin_session) {
+    await redis.del(`csrf:${cookies.admin_session}`);
+  }
+
+  clearCookie(res, "admin_session");
+
+  res.redirect("/admin/login");
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -392,716 +550,185 @@ app.post(
 
 app.get("/admin", requireAdmin, async (req, res) => {
   try {
-    const weddings = await getAllWeddings();
+    const keys = await redis.keys("invitation:*");
 
-    const stats = {
-      total: weddings.length,
-      published: weddings.filter(
-        (wedding) => wedding.status === "published"
-      ).length,
-      draft: weddings.filter(
-        (wedding) => wedding.status !== "published"
-      ).length
-    };
+    const invitations = [];
+
+    for (const key of keys) {
+      const invitation = await redis.get(key);
+
+      if (!invitation) {
+        continue;
+      }
+
+      if (typeof invitation === "string") {
+        invitations.push(JSON.parse(invitation));
+      } else {
+        invitations.push(invitation);
+      }
+    }
+
+    const csrfToken = await getCsrfToken(req);
 
     res.render("admin", {
-      weddings,
-      stats,
-      csrfToken: csrfToken(req),
-      message: req.query.message || "",
-      error: req.query.error || ""
+      admin: req.admin,
+      invitations,
+      csrfToken,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Admin dashboard error:", error);
 
-    res.status(500).send("Gagal memuat dashboard.");
+    res.status(500).send("Terjadi kesalahan server.");
   }
 });
 
 /*
 |--------------------------------------------------------------------------
-| CREATE WEDDING FORM
+| ADD / CREATE INVITATION
 |--------------------------------------------------------------------------
 */
 
-app.get(
-  "/admin/wedding/new",
-  requireAdmin,
-  (req, res) => {
-    res.render("admin", {
-      weddings: [],
-      stats: {
-        total: 0,
-        published: 0,
-        draft: 0
-      },
-      csrfToken: csrfToken(req),
-      message: "",
-      error: "",
-      createMode: true
-    });
-  }
-);
+app.get("/admin/addmin", requireAdmin, async (req, res) => {
+  const csrfToken = await getCsrfToken(req);
+
+  res.render("addmin", {
+    admin: req.admin,
+    csrfToken,
+    error: null,
+  });
+});
 
 /*
 |--------------------------------------------------------------------------
-| CREATE WEDDING
+| CREATE INVITATION
 |--------------------------------------------------------------------------
 */
 
 app.post(
-  "/admin/wedding/new",
+  "/admin/invitation/create",
   requireAdmin,
-  validateCsrf,
   async (req, res) => {
     try {
-      const slug = normalizeSlug(req.body.slug);
+      const validCsrf = await verifyCsrf(req);
 
-      if (!isValidSlug(slug)) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Slug tidak valid. Gunakan huruf kecil, angka, dan tanda -."
-          )
-        );
+      if (!validCsrf) {
+        return res.status(403).send("CSRF token tidak valid.");
       }
 
-      const reservedRoutes = [
-        "admin",
-        "login",
-        "health",
-        "favicon.ico"
-      ];
+      const {
+        slug,
+        groomName,
+        brideName,
+        weddingDate,
+        weddingTime,
+        venue,
+        address,
+      } = req.body;
 
-      if (reservedRoutes.includes(slug)) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Slug tersebut merupakan reserved route."
-          )
-        );
+      const cleanSlug = String(slug || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      if (!cleanSlug) {
+        const csrfToken = await getCsrfToken(req);
+
+        return res.status(400).render("addmin", {
+          admin: req.admin,
+          csrfToken,
+          error: "Slug invitation wajib diisi.",
+        });
       }
 
-      const existing = await getWedding(slug);
+      /*
+       * Cek apakah slug sudah digunakan.
+       */
+
+      const existing = await redis.get(
+        `invitation:${cleanSlug}`
+      );
 
       if (existing) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Slug sudah digunakan."
-          )
-        );
-      }
-
-      const wedding = createEmptyWedding({
-        slug,
-        groomName: req.body.groomName,
-        groomFullName: req.body.groomFullName,
-        brideName: req.body.brideName,
-        brideFullName: req.body.brideFullName,
-        weddingDate: req.body.weddingDate,
-        quote: req.body.quote
-      });
-
-      await saveWedding(wedding);
-
-      res.redirect(
-        "/admin?message=" +
-        encodeURIComponent(
-          "Wedding berhasil dibuat."
-        )
-      );
-    } catch (error) {
-      console.error(error);
-
-      res.redirect(
-        "/admin?error=" +
-        encodeURIComponent(
-          "Gagal membuat wedding."
-        )
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| EDIT WEDDING FORM
-|--------------------------------------------------------------------------
-*/
-
-app.get(
-  "/admin/wedding/:slug/edit",
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding) {
-        return res.status(404).send(
-          "Wedding tidak ditemukan."
-        );
-      }
-
-      const weddings = await getAllWeddings();
-
-      res.render("admin", {
-        weddings,
-        stats: {
-          total: weddings.length,
-          published: weddings.filter(
-            (w) => w.status === "published"
-          ).length,
-          draft: weddings.filter(
-            (w) => w.status !== "published"
-          ).length
-        },
-        editWedding: wedding,
-        csrfToken: csrfToken(req),
-        message: "",
-        error: ""
-      });
-    } catch (error) {
-      console.error(error);
-
-      res.status(500).send(
-        "Gagal membuka wedding."
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| UPDATE WEDDING
-|--------------------------------------------------------------------------
-*/
-
-app.post(
-  "/admin/wedding/:slug/edit",
-  requireAdmin,
-  validateCsrf,
-  async (req, res) => {
-    try {
-      const oldSlug = normalizeSlug(req.params.slug);
-      const newSlug = normalizeSlug(req.body.slug);
-
-      const wedding = await getWedding(oldSlug);
-
-      if (!wedding) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Wedding tidak ditemukan."
-          )
-        );
-      }
-
-      if (!isValidSlug(newSlug)) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Slug tidak valid."
-          )
-        );
-      }
-
-      const reservedRoutes = [
-        "admin",
-        "login",
-        "health",
-        "favicon.ico"
-      ];
-
-      if (reservedRoutes.includes(newSlug)) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Slug tersebut merupakan reserved route."
-          )
-        );
-      }
-
-      if (newSlug !== oldSlug) {
-        const slugExists = await getWedding(newSlug);
-
-        if (slugExists) {
-          return res.redirect(
-            "/admin?error=" +
-            encodeURIComponent(
-              "Slug baru sudah digunakan."
-            )
-          );
-        }
-
-        await redis.del(`wedding:${oldSlug}`);
-
-        let slugs = await getWeddingSlugs();
-
-        slugs = slugs.filter(
-          (item) => item !== oldSlug
-        );
-
-        slugs.push(newSlug);
-
-        await redis.set("weddings", slugs);
-
-        wedding.slug = newSlug;
-      }
-
-      wedding.groom = {
-        name: sanitizeText(
-          req.body.groomName,
-          100
-        ),
-        fullName: sanitizeText(
-          req.body.groomFullName,
-          150
-        ),
-        photo: req.body.groomPhoto || ""
-      };
-
-      wedding.bride = {
-        name: sanitizeText(
-          req.body.brideName,
-          100
-        ),
-        fullName: sanitizeText(
-          req.body.brideFullName,
-          150
-        ),
-        photo: req.body.bridePhoto || ""
-      };
-
-      wedding.date = sanitizeText(
-        req.body.weddingDate,
-        50
-      );
-
-      wedding.quote = sanitizeMultiline(
-        req.body.quote,
-        1000
-      );
-
-      wedding.description =
-        sanitizeMultiline(
-          req.body.description,
-          2000
-        );
-
-      wedding.music = {
-        url: sanitizeText(
-          req.body.musicUrl,
-          1000
-        )
-      };
-
-      wedding.updatedAt = nowISO();
-
-      await saveWedding(wedding);
-
-      res.redirect(
-        "/admin?message=" +
-        encodeURIComponent(
-          "Wedding berhasil diperbarui."
-        )
-      );
-    } catch (error) {
-      console.error(error);
-
-      res.redirect(
-        "/admin?error=" +
-        encodeURIComponent(
-          "Gagal memperbarui wedding."
-        )
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| DELETE WEDDING
-|--------------------------------------------------------------------------
-*/
-
-app.post(
-  "/admin/wedding/:slug/delete",
-  requireAdmin,
-  validateCsrf,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Wedding tidak ditemukan."
-          )
-        );
-      }
-
-      await removeWedding(slug);
-
-      await redis.del(`rsvp:${slug}`);
-
-      res.redirect(
-        "/admin?message=" +
-        encodeURIComponent(
-          "Wedding berhasil dihapus."
-        )
-      );
-    } catch (error) {
-      console.error(error);
-
-      res.redirect(
-        "/admin?error=" +
-        encodeURIComponent(
-          "Gagal menghapus wedding."
-        )
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| PUBLISH
-|--------------------------------------------------------------------------
-*/
-
-app.post(
-  "/admin/wedding/:slug/publish",
-  requireAdmin,
-  validateCsrf,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Wedding tidak ditemukan."
-          )
-        );
-      }
-
-      wedding.status = "published";
-      wedding.updatedAt = nowISO();
-
-      await saveWedding(wedding);
-
-      res.redirect(
-        "/admin?message=" +
-        encodeURIComponent(
-          "Wedding berhasil dipublish."
-        )
-      );
-    } catch (error) {
-      console.error(error);
-
-      res.redirect(
-        "/admin?error=" +
-        encodeURIComponent(
-          "Gagal publish wedding."
-        )
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| UNPUBLISH
-|--------------------------------------------------------------------------
-*/
-
-app.post(
-  "/admin/wedding/:slug/unpublish",
-  requireAdmin,
-  validateCsrf,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding) {
-        return res.redirect(
-          "/admin?error=" +
-          encodeURIComponent(
-            "Wedding tidak ditemukan."
-          )
-        );
-      }
-
-      wedding.status = "draft";
-      wedding.updatedAt = nowISO();
-
-      await saveWedding(wedding);
-
-      res.redirect(
-        "/admin?message=" +
-        encodeURIComponent(
-          "Wedding berhasil di-unpublish."
-        )
-      );
-    } catch (error) {
-      console.error(error);
-
-      res.redirect(
-        "/admin?error=" +
-        encodeURIComponent(
-          "Gagal melakukan unpublish."
-        )
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| RSVP LIST
-|--------------------------------------------------------------------------
-*/
-
-app.get(
-  "/admin/wedding/:slug/rsvp",
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding) {
-        return res.status(404).send(
-          "Wedding tidak ditemukan."
-        );
-      }
-
-      const rsvps =
-        await redis.get(`rsvp:${slug}`) || [];
-
-      res.render("admin", {
-        weddings: await getAllWeddings(),
-        stats: {},
-        rsvpWedding: wedding,
-        rsvps,
-        csrfToken: csrfToken(req),
-        message: "",
-        error: ""
-      });
-    } catch (error) {
-      console.error(error);
-
-      res.status(500).send(
-        "Gagal memuat RSVP."
-      );
-    }
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC RSVP
-|--------------------------------------------------------------------------
-*/
-
-app.post(
-  "/:slug/rsvp",
-  rsvpLimiter,
-  async (req, res) => {
-    try {
-      const slug = normalizeSlug(req.params.slug);
-
-      const wedding = await getWedding(slug);
-
-      if (!wedding || wedding.status !== "published") {
-        return res.status(404).json({
-          success: false,
-          message: "Wedding tidak ditemukan."
+        const csrfToken = await getCsrfToken(req);
+
+        return res.status(409).render("addmin", {
+          admin: req.admin,
+          csrfToken,
+          error: "Slug tersebut sudah digunakan.",
         });
       }
 
-      const name = sanitizeText(
-        req.body.name,
-        100
-      );
+      const invitation = {
+        slug: cleanSlug,
 
-      const attendance =
-        sanitizeText(
-          req.body.attendance,
-          30
-        );
+        groomName: String(groomName || "").trim(),
+        brideName: String(brideName || "").trim(),
 
-      const guestCount =
-        Number.parseInt(
-          req.body.guestCount,
-          10
-        );
+        weddingDate: String(weddingDate || "").trim(),
+        weddingTime: String(weddingTime || "").trim(),
 
-      const message =
-        sanitizeMultiline(
-          req.body.message,
-          500
-        );
+        venue: String(venue || "").trim(),
+        address: String(address || "").trim(),
 
-      const allowedAttendance = [
-        "hadir",
-        "tidak_hadir",
-        "masih_menentukan"
-      ];
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
 
-      if (!name) {
-        return res.status(400).json({
-          success: false,
-          message: "Nama wajib diisi."
-        });
-      }
-
-      if (
-        !allowedAttendance.includes(
-          attendance
-        )
-      ) {
-        return res.status(400).json({
-          success: false,
-          message: "Pilihan kehadiran tidak valid."
-        });
-      }
-
-      if (
-        !Number.isInteger(guestCount) ||
-        guestCount < 1 ||
-        guestCount > 20
-      ) {
-        return res.status(400).json({
-          success: false,
-          message: "Jumlah tamu tidak valid."
-        });
-      }
-
-      let rsvps =
-        await redis.get(`rsvp:${slug}`) || [];
-
-      const rsvp = {
-        id: generateId("rsvp"),
-        name,
-        attendance,
-        guestCount,
-        message,
-        createdAt: nowISO()
+        active: true,
       };
-
-      rsvps.unshift(rsvp);
-
-      if (rsvps.length > 5000) {
-        rsvps = rsvps.slice(0, 5000);
-      }
 
       await redis.set(
-        `rsvp:${slug}`,
-        rsvps
+        `invitation:${cleanSlug}`,
+        JSON.stringify(invitation)
       );
 
-      return res.json({
-        success: true,
-        message:
-          "Terima kasih, RSVP Anda telah diterima."
-      });
+      return res.redirect("/admin");
     } catch (error) {
-      console.error(error);
+      console.error("Create invitation error:", error);
 
-      res.status(500).json({
-        success: false,
-        message:
-          "Terjadi kesalahan saat menyimpan RSVP."
-      });
+      res.status(500).send(
+        "Terjadi kesalahan saat membuat invitation."
+      );
     }
   }
 );
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC WEDDING
+| DELETE INVITATION
 |--------------------------------------------------------------------------
-|
-| HARUS DILETAKKAN SETELAH ROUTE ADMIN.
-|
 */
 
-app.get("/:slug", async (req, res, next) => {
-  try {
-    const slug = normalizeSlug(req.params.slug);
+app.post(
+  "/admin/invitation/delete",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const validCsrf = await verifyCsrf(req);
 
-    const reservedRoutes = [
-      "admin",
-      "login",
-      "health",
-      "favicon.ico"
-    ];
+      if (!validCsrf) {
+        return res.status(403).send("CSRF token tidak valid.");
+      }
 
-    if (reservedRoutes.includes(slug)) {
-      return next();
-    }
+      const slug = String(req.body.slug || "").trim();
 
-    const wedding = await getWedding(slug);
+      if (!slug) {
+        return res.redirect("/admin");
+      }
 
-    if (!wedding || wedding.status !== "published") {
-      return res.status(404).send(
-        "Wedding invitation tidak ditemukan."
+      await redis.del(`invitation:${slug}`);
+
+      return res.redirect("/admin");
+    } catch (error) {
+      console.error("Delete invitation error:", error);
+
+      res.status(500).send(
+        "Terjadi kesalahan saat menghapus invitation."
       );
     }
-
-    const guestName = getGuestName(req);
-
-    res.render("wedding", {
-      wedding,
-      guestName
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).send(
-      "Terjadi kesalahan pada invitation."
-    );
   }
-});
-
-/*
-|--------------------------------------------------------------------------
-| HEALTH CHECK
-|--------------------------------------------------------------------------
-*/
-
-app.get("/health", async (req, res) => {
-  try {
-    await redis.ping();
-
-    res.json({
-      status: "ok",
-      redis: "ok",
-      timestamp: nowISO()
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(503).json({
-      status: "error",
-      redis: "error",
-      timestamp: nowISO()
-    });
-  }
-});
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -1110,9 +737,9 @@ app.get("/health", async (req, res) => {
 */
 
 app.use((req, res) => {
-  res.status(404).send(
-    "Halaman tidak ditemukan."
-  );
+  res.status(404).render("404", {
+    message: "Halaman tidak ditemukan.",
+  });
 });
 
 /*
@@ -1122,27 +749,29 @@ app.use((req, res) => {
 */
 
 app.use((error, req, res, next) => {
-  console.error(error);
+  console.error("Unhandled error:", error);
 
   res.status(500).send(
-    "Terjadi kesalahan pada server."
+    "Terjadi kesalahan internal pada server."
   );
 });
 
 /*
 |--------------------------------------------------------------------------
-| START SERVER
+| LOCAL DEVELOPMENT
 |--------------------------------------------------------------------------
 |
-| Vercel membutuhkan export app.
-| Local development tetap bisa menggunakan node server.js.
+| Vercel akan menggunakan module.exports.
+| Local development tetap bisa menggunakan:
+|
+| npm start
 |
 */
 
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(
-      `LOVEFOREVER running on http://localhost:${PORT}`
+      `LOVEFOREVER berjalan di http://localhost:${PORT}`
     );
   });
 }
