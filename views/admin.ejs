@@ -13,145 +13,336 @@
     Admin Dashboard — LOVEFOREVER
   </title>
 
-  <link
-    rel="stylesheet"
-    href="/css/style.css"
-  >
-
   <style>
 
     * {
       box-sizing: border-box;
     }
 
+    :root {
+      --bg: #f5f3f0;
+      --surface: #ffffff;
+      --surface-soft: #faf8f5;
+      --border: #e3ded8;
+      --text: #292624;
+      --muted: #77716c;
+      --accent: #76685d;
+      --danger: #a94442;
+      --success: #55745d;
+      --radius: 18px;
+      --shadow:
+        0 10px 35px rgba(45, 38, 33, .06);
+    }
+
     body {
       margin: 0;
-      background: #f7f5f2;
-      color: #2b2927;
+      background: var(--bg);
+      color: var(--text);
       font-family:
+        Inter,
         Arial,
-        Helvetica,
         sans-serif;
     }
 
-    .admin-layout {
-      min-height: 100vh;
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
     }
 
-    .admin-header {
+    button {
+      cursor: pointer;
+    }
+
+    .topbar {
       position: sticky;
       top: 0;
       z-index: 100;
-      padding: 15px 20px;
-      background: rgba(255,255,255,.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #e5e0db;
+      height: 76px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
+      padding: 0 32px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
     }
 
-    .admin-brand {
-      font-weight: 700;
-      letter-spacing: 2px;
+    .brand {
+      font-weight: 800;
+      letter-spacing: .16em;
     }
 
-    .admin-main {
-      width: min(1250px, 100%);
-      margin: auto;
-      padding: 30px 18px 80px;
+    .logout {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: #ece7e2;
+      color: var(--text);
     }
 
-    .dashboard-title {
-      margin-bottom: 25px;
+    .container {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 45px 0 100px;
     }
 
-    .dashboard-title h1 {
-      margin-bottom: 8px;
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
     }
 
-    .dashboard-title p {
-      opacity: .65;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(160px, 1fr)
-        );
-      gap: 15px;
+    .hero {
       margin-bottom: 30px;
     }
 
-    .summary-card {
-      background: white;
-      border: 1px solid #e6e1dc;
-      border-radius: 16px;
-      padding: 20px;
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 64px);
+      margin-bottom: 10px;
     }
 
-    .summary-card small {
-      opacity: .6;
+    .hero p {
+      color: var(--muted);
+      font-size: 18px;
     }
 
-    .summary-card strong {
+    .alert {
+      display: none;
+      padding: 15px 18px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      background: #fff2d6;
+      color: #73521b;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat span {
       display: block;
-      font-size: 30px;
-      margin-top: 8px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 38px;
     }
 
     .panel {
-      background: white;
-      border: 1px solid #e6e1dc;
-      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       margin-bottom: 25px;
       overflow: hidden;
     }
 
     .panel-header {
-      padding: 20px;
-      border-bottom: 1px solid #eee8e3;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
+      padding: 25px 28px;
+      border-bottom: 1px solid var(--border);
     }
 
     .panel-body {
-      padding: 20px;
+      padding: 28px;
     }
 
-    .wedding-card {
-      border: 1px solid #e8e3de;
-      border-radius: 15px;
-      padding: 18px;
-      margin-bottom: 15px;
-    }
-
-    .wedding-card:last-child {
-      margin-bottom: 0;
-    }
-
-    .wedding-card-header {
+    .toolbar {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
+      gap: 12px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
-    .wedding-card h3 {
-      margin: 0 0 5px;
+    .toolbar select {
+      min-width: 280px;
     }
 
-    .wedding-meta {
-      opacity: .65;
-      font-size: 14px;
-      line-height: 1.7;
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #d8d2cb;
+      background: #fff;
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 3px rgba(118,104,93,.10);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .section {
+      padding: 25px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+    }
+
+    .section-title h3 {
+      margin-bottom: 5px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+    }
+
+    .button.secondary {
+      background: #ece7e2;
+      color: var(--text);
+    }
+
+    .button.danger {
+      background: var(--danger);
+    }
+
+    .button.success {
+      background: var(--success);
+    }
+
+    .button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .media-card {
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .media-preview {
+      aspect-ratio: 1 / 1;
+      background: #eee9e4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .media-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-info {
+      padding: 12px;
+    }
+
+    .media-info strong {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .media-info small {
+      color: var(--muted);
+    }
+
+    .media-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .media-actions button {
+      flex: 1;
+    }
+
+    .rsvp-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .rsvp-table th,
+    .rsvp-table td {
+      text-align: left;
+      padding: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px;
+      color: var(--muted);
     }
 
     .status {
@@ -159,257 +350,103 @@
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .status-published {
-      background: #e5f5e8;
-      color: #256c35;
+    .status.published {
+      background: #e6f2e8;
+      color: #416548;
     }
 
-    .status-draft {
-      background: #f3eee8;
-      color: #765e49;
+    .status.draft {
+      background: #eeeae6;
+      color: #766e67;
     }
 
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    button,
-    .button-link {
-      border: 0;
-      border-radius: 9px;
-      padding: 10px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    button {
-      background: #292624;
-      color: white;
-    }
-
-    button.secondary,
-    .button-link.secondary {
-      background: #eee9e4;
-      color: #292624;
-    }
-
-    button.danger {
-      background: #b13c3c;
-      color: white;
-    }
-
-    button.success {
-      background: #357345;
-      color: white;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(
-          2,
-          minmax(0, 1fr)
-        );
-      gap: 18px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 7px;
-      font-size: 14px;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      border: 1px solid #d8d1ca;
-      border-radius: 9px;
-      padding: 11px 12px;
-      background: white;
-      color: #222;
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    .image-upload {
-      border: 1px dashed #cfc5bc;
-      border-radius: 12px;
-      padding: 15px;
-      background: #fbfaf8;
-    }
-
-    .image-preview {
-      margin-top: 10px;
-      display: none;
-    }
-
-    .image-preview img {
-      max-width: 180px;
-      max-height: 150px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .repeatable {
-      border: 1px solid #e4ddd7;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 12px;
-      background: #fcfbfa;
-    }
-
-    .repeatable-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(
-          auto-fill,
-          minmax(150px, 1fr)
-        );
-      gap: 12px;
-    }
-
-    .gallery-item {
-      border: 1px solid #e3ddd7;
-      border-radius: 10px;
-      padding: 8px;
-      background: white;
-    }
-
-    .gallery-item img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .notice {
-      padding: 12px 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      background: #f2eee9;
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.6;
-      font-size: 14px;
     }
 
-    .notice.warning {
-      background: #fff2d8;
+    .upload-box {
+      padding: 20px;
+      border: 1px dashed #cfc7bf;
+      border-radius: 15px;
+      background: var(--surface-soft);
     }
 
-    .notice.success {
-      background: #e6f5e9;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 500;
-      display: none;
-      align-items: center;
-      justify-content: center;
+    .sticky-actions {
+      position: sticky;
+      bottom: 15px;
+      z-index: 50;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
       padding: 15px;
-    }
-
-    .modal.open {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--border);
       border-radius: 18px;
-      width: min(1100px, 100%);
-      max-height: 90vh;
-      overflow: auto;
-      padding: 25px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+    @media (max-width: 900px) {
 
-    .rsvp-table-wrapper {
-      overflow-x: auto;
-    }
+      .stats {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
-      vertical-align: top;
-      white-space: nowrap;
-    }
-
-    th {
-      background: #f7f5f2;
-    }
-
-    .muted {
-      opacity: .6;
-    }
-
-    @media (max-width: 700px) {
-
-      .form-grid {
+      .grid,
+      .grid-3 {
         grid-template-columns: 1fr;
       }
 
-      .form-group.full {
-        grid-column: auto;
+      .media-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
 
-      .admin-header {
-        align-items: flex-start;
-        flex-direction: column;
+      .topbar {
+        padding: 0 18px;
       }
 
+    }
+
+    @media (max-width: 600px) {
+
+      .container {
+        width: min(
+          100% - 20px,
+          1500px
+        );
+        padding-top: 25px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-body,
       .panel-header {
-        align-items: flex-start;
+        padding: 20px;
+      }
+
+      .toolbar select {
+        min-width: 100%;
+      }
+
+      .sticky-actions {
         flex-direction: column;
+      }
+
+      .sticky-actions button {
+        width: 100%;
       }
 
     }
@@ -420,191 +457,191 @@
 
 <body>
 
-<div class="admin-layout">
+<header class="topbar">
+
+  <div class="brand">
+    LOVEFOREVER
+  </div>
+
+  <form
+    method="POST"
+    action="/admin/logout"
+  >
+
+    <button
+      class="logout"
+      type="submit"
+    >
+      Logout
+    </button>
+
+  </form>
+
+</header>
 
 
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
+<main class="container">
 
-  <header class="admin-header">
+  <div
+    id="alert"
+    class="alert"
+  ></div>
 
-    <div class="admin-brand">
-      LOVEFOREVER
+
+  <section class="hero">
+
+    <h1>
+      Admin Dashboard
+    </h1>
+
+    <p>
+      Kelola wedding invitation,
+      media, event, gallery,
+      music, RSVP dan konten.
+    </p>
+
+  </section>
+
+
+  <section class="stats">
+
+    <div class="stat">
+      <span>
+        Total Wedding
+      </span>
+
+      <strong id="totalWedding">
+        <%= totalWedding %>
+      </strong>
     </div>
 
-    <form
-      method="POST"
-      action="/admin/logout"
-    >
 
-      <input
-        type="hidden"
-        name="_csrf"
-        value="<%= csrfToken %>"
-      >
+    <div class="stat">
+      <span>
+        Published
+      </span>
 
-      <button
-        type="submit"
-        class="secondary"
-      >
-        Logout
-      </button>
-
-    </form>
-
-  </header>
+      <strong id="publishedWedding">
+        <%= published %>
+      </strong>
+    </div>
 
 
-  <!-- =====================================================
-       MAIN
-  ====================================================== -->
+    <div class="stat">
+      <span>
+        Draft
+      </span>
 
-  <main class="admin-main">
+      <strong id="draftWedding">
+        <%= draft %>
+      </strong>
+    </div>
 
 
-    <div class="dashboard-title">
+    <div class="stat">
+      <span>
+        Total RSVP
+      </span>
 
-      <h1>
-        Admin Dashboard
-      </h1>
+      <strong id="totalRSVP">
+        <%= weddings.reduce(
+          (sum, item) =>
+            sum + (item.rsvpCount || 0),
+          0
+        ) %>
+      </strong>
+    </div>
 
-      <p>
-        Kelola wedding invitation,
-        gallery, event, RSVP dan konten
-        dari satu dashboard.
+  </section>
+
+
+  <section class="panel">
+
+    <div class="panel-header">
+
+      <div class="toolbar">
+
+        <select id="weddingSelector">
+
+          <option value="">
+            + Buat Wedding Baru
+          </option>
+
+          <% weddings.forEach(function(wedding) { %>
+
+            <option
+              value="<%= wedding.slug %>"
+            >
+              <%= wedding.slug %>
+              —
+              <%= wedding.status %>
+            </option>
+
+          <% }) %>
+
+        </select>
+
+
+        <button
+          id="loadWeddingButton"
+          class="button secondary"
+          type="button"
+        >
+          Edit Wedding
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="panel">
+
+    <div class="panel-header">
+
+      <h2>
+        Wedding Editor
+      </h2>
+
+      <p class="hint">
+        Editor ini dapat digunakan untuk
+        wedding yang sudah Published maupun Draft.
       </p>
 
     </div>
 
 
-    <div id="globalMessage"></div>
+    <div class="panel-body">
 
+      <form
+        id="weddingForm"
+      >
 
-    <!-- ===================================================
-         SUMMARY
-    ==================================================== -->
+        <!-- =====================================================
+             GENERAL
+        ====================================================== -->
 
-    <section class="summary-grid">
+        <div class="section">
 
-      <div class="summary-card">
+          <div class="section-title">
 
-        <small>
-          Total Wedding
-        </small>
+            <h3>
+              01. Informasi Dasar
+            </h3>
 
-        <strong>
-          <%= weddings.length %>
-        </strong>
+            <p>
+              Slug adalah URL wedding
+              dan ditentukan manual oleh Admin.
+            </p>
 
-      </div>
-
-
-      <div class="summary-card">
-
-        <small>
-          Published
-        </small>
-
-        <strong>
-
-          <%= weddings.filter(
-            w =>
-              w.status ===
-              "published"
-          ).length %>
-
-        </strong>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <small>
-          Draft
-        </small>
-
-        <strong>
-
-          <%= weddings.filter(
-            w =>
-              w.status !==
-              "published"
-          ).length %>
-
-        </strong>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <small>
-          Total RSVP
-        </small>
-
-        <strong>
-
-          <%= weddings.reduce(
-            (sum, w) =>
-              sum +
-              (w.stats?.total || 0),
-            0
-          ) %>
-
-        </strong>
-
-      </div>
-
-    </section>
-
-
-    <!-- ===================================================
-         CREATE WEDDING
-    ==================================================== -->
-
-    <section class="panel">
-
-      <div class="panel-header">
-
-        <div>
-
-          <strong>
-            Buat Wedding Baru
-          </strong>
-
-          <div class="muted">
-            Slug ditentukan manual oleh Admin.
           </div>
 
-        </div>
 
-      </div>
+          <div class="grid">
 
-
-      <div class="panel-body">
-
-        <form
-          id="createWeddingForm"
-        >
-
-          <input
-            type="hidden"
-            id="csrfToken"
-            value="<%= csrfToken %>"
-          >
-
-
-          <!-- BASIC -->
-
-          <h3>
-            Informasi Dasar
-          </h3>
-
-          <div class="form-grid">
-
-            <div class="form-group">
+            <div class="field">
 
               <label>
                 Slug
@@ -613,26 +650,27 @@
               <input
                 id="slug"
                 name="slug"
-                required
                 placeholder="contoh-aulia-rizky"
-                pattern="[a-zA-Z0-9-]+"
+                required
               >
 
-              <small class="muted">
-                URL:
-                /slug-yang-anda-tentukan
-              </small>
+              <div class="hint">
+                Contoh:
+                /contoh-aulia-rizky
+              </div>
 
             </div>
 
 
-            <div class="form-group">
+            <div class="field">
 
               <label>
                 Status
               </label>
 
-              <select id="status">
+              <select
+                id="status"
+              >
 
                 <option value="draft">
                   Draft
@@ -646,22 +684,40 @@
 
             </div>
 
+          </div>
 
-            <div class="form-group">
+
+          <div class="field">
+
+            <label>
+              Judul
+            </label>
+
+            <input
+              id="title"
+              placeholder="The Wedding Of"
+            >
+
+          </div>
+
+
+          <div class="grid">
+
+            <div class="field">
 
               <label>
                 Tanggal Pernikahan
               </label>
 
               <input
-                type="datetime-local"
                 id="date"
+                type="datetime-local"
               >
 
             </div>
 
 
-            <div class="form-group">
+            <div class="field">
 
               <label>
                 Timezone
@@ -669,12 +725,12 @@
 
               <select id="timezone">
 
-                <option value="Asia/Makassar">
-                  Asia/Makassar — WITA
-                </option>
-
                 <option value="Asia/Jakarta">
                   Asia/Jakarta — WIB
+                </option>
+
+                <option value="Asia/Makassar">
+                  Asia/Makassar — WITA
                 </option>
 
                 <option value="Asia/Jayapura">
@@ -685,1504 +741,2036 @@
 
             </div>
 
+          </div>
 
-            <div class="form-group full">
+        </div>
 
-              <label>
-                Quote
-              </label>
 
-              <textarea
-                id="quote"
-                placeholder="Tuliskan quote pernikahan..."
-              ></textarea>
+        <!-- =====================================================
+             OPENING
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              02. Opening
+            </h3>
+
+            <p>
+              Bagian yang muncul setelah
+              user menekan BUKA UNDANGAN.
+            </p>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Eyebrow
+            </label>
+
+            <input id="openingEyebrow">
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Opening Title
+            </label>
+
+            <input id="openingTitle">
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Opening Text
+            </label>
+
+            <textarea
+              id="openingText"
+            ></textarea>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Button
+            </label>
+
+            <input
+              id="openingButton"
+              value="BUKA UNDANGAN"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             COUPLE
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              03. Mempelai
+            </h3>
+
+            <p>
+              Data mempelai pria dan wanita.
+            </p>
+
+          </div>
+
+
+          <div class="grid">
+
+            <div>
+
+              <h3>
+                Mempelai Pria
+              </h3>
+
+              <div class="field">
+
+                <label>
+                  Nama
+                </label>
+
+                <input id="groomName">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Nama Lengkap
+                </label>
+
+                <input id="groomFullName">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Orang Tua
+                </label>
+
+                <input id="groomParents">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Instagram
+                </label>
+
+                <input id="groomInstagram">
+
+              </div>
 
             </div>
 
 
-            <div class="form-group full">
+            <div>
+
+              <h3>
+                Mempelai Wanita
+              </h3>
+
+              <div class="field">
+
+                <label>
+                  Nama
+                </label>
+
+                <input id="brideName">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Nama Lengkap
+                </label>
+
+                <input id="brideFullName">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Orang Tua
+                </label>
+
+                <input id="brideParents">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Instagram
+                </label>
+
+                <input id="brideInstagram">
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             QUOTE
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              04. Quote
+            </h3>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Quote
+            </label>
+
+            <textarea
+              id="quoteText"
+            ></textarea>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Source
+            </label>
+
+            <input
+              id="quoteSource"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             STORY
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              05. Story / Timeline
+            </h3>
+
+            <p>
+              Gunakan format JSON.
+            </p>
+
+          </div>
+
+
+          <div class="field">
+
+            <textarea
+              id="storyJSON"
+              spellcheck="false"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             EVENTS
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              06. Events
+            </h3>
+
+            <p>
+              Akad, resepsi atau event lainnya.
+            </p>
+
+          </div>
+
+
+          <div class="field">
+
+            <textarea
+              id="eventsJSON"
+              spellcheck="false"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             GIFT
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              07. Wedding Gift
+            </h3>
+
+          </div>
+
+
+          <div class="grid">
+
+            <div class="field">
 
               <label>
-                Deskripsi
+                Bank
               </label>
 
-              <textarea
-                id="description"
-                placeholder="Deskripsi singkat undangan..."
-              ></textarea>
+              <input id="bankName">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Nomor Rekening
+              </label>
+
+              <input id="accountNumber">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Nama Pemilik
+              </label>
+
+              <input id="accountName">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Alamat
+              </label>
+
+              <input id="giftAddress">
 
             </div>
 
           </div>
 
 
-          <!-- COUPLE -->
+          <div class="field">
 
-          <h3>
-            Mempelai Pria
-          </h3>
+            <label>
+              Pesan Gift
+            </label>
 
-          <div class="form-grid">
+            <textarea
+              id="giftText"
+            ></textarea>
 
-            <div class="form-group">
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MEDIA
+        ====================================================== -->
+
+        <div class="section">
+
+          <div class="section-title">
+
+            <h3>
+              08. Media
+            </h3>
+
+            <p>
+              Semua file disimpan sebagai Base64
+              di Upstash Redis.
+            </p>
+
+          </div>
+
+
+          <div class="grid">
+
+            <div class="upload-box">
 
               <label>
-                Nama
+                Cover / Opening Image
               </label>
 
               <input
-                id="groomName"
-                placeholder="Rizky"
+                id="coverUpload"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
               >
+
+              <p class="hint">
+                Maksimal ±1.2 MB.
+              </p>
+
+              <button
+                class="button"
+                type="button"
+                onclick="uploadSingle('coverUpload','cover')"
+              >
+                Upload Cover
+              </button>
 
             </div>
 
 
-            <div class="form-group">
-
-              <label>
-                Nama Lengkap
-              </label>
-
-              <input
-                id="groomFullName"
-                placeholder="Rizky ..."
-              >
-
-            </div>
-
-
-            <div class="form-group full">
+            <div class="upload-box">
 
               <label>
                 Foto Mempelai Pria
               </label>
 
-              <div class="image-upload">
-
-                <input
-                  type="file"
-                  id="groomPhotoFile"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                >
-
-                <div
-                  id="groomPhotoPreview"
-                  class="image-preview"
-                ></div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <h3>
-            Mempelai Wanita
-          </h3>
-
-          <div class="form-grid">
-
-            <div class="form-group">
-
-              <label>
-                Nama
-              </label>
-
               <input
-                id="brideName"
-                placeholder="Aulia"
+                id="groomUpload"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
               >
 
-            </div>
+              <p class="hint">
+                Maksimal ±1.2 MB.
+              </p>
 
-
-            <div class="form-group">
-
-              <label>
-                Nama Lengkap
-              </label>
-
-              <input
-                id="brideFullName"
-                placeholder="Aulia ..."
+              <button
+                class="button"
+                type="button"
+                onclick="uploadSingle('groomUpload','groom')"
               >
+                Upload Foto Pria
+              </button>
 
             </div>
 
 
-            <div class="form-group full">
+            <div class="upload-box">
 
               <label>
                 Foto Mempelai Wanita
               </label>
 
-              <div class="image-upload">
-
-                <input
-                  type="file"
-                  id="bridePhotoFile"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                >
-
-                <div
-                  id="bridePhotoPreview"
-                  class="image-preview"
-                ></div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- COVER -->
-
-          <h3>
-            Cover Invitation
-          </h3>
-
-          <div class="form-group">
-
-            <label>
-              Cover Image
-            </label>
-
-            <div class="image-upload">
-
               <input
+                id="brideUpload"
                 type="file"
-                id="coverImageFile"
                 accept="image/jpeg,image/png,image/webp,image/gif"
               >
 
-              <div
-                id="coverImagePreview"
-                class="image-preview"
-              ></div>
+              <p class="hint">
+                Maksimal ±1.2 MB.
+              </p>
+
+              <button
+                class="button"
+                type="button"
+                onclick="uploadSingle('brideUpload','bride')"
+              >
+                Upload Foto Wanita
+              </button>
+
+            </div>
+
+
+            <div class="upload-box">
+
+              <label>
+                MP3 / Music
+              </label>
+
+              <input
+                id="musicUpload"
+                type="file"
+                accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
+              >
+
+              <p class="hint">
+                Maksimal ±3 MB karena batas
+                request Vercel.
+              </p>
+
+              <button
+                class="button"
+                type="button"
+                onclick="uploadSingle('musicUpload','music')"
+              >
+                Upload Music
+              </button>
 
             </div>
 
           </div>
 
 
-          <!-- EVENTS -->
-
-          <h3>
-            Event / Acara
-          </h3>
-
-          <div id="eventsContainer"></div>
-
-          <button
-            type="button"
-            class="secondary"
-            id="addEventBtn"
+          <div
+            class="upload-box"
+            style="margin-top:20px;"
           >
-            + Tambah Event
-          </button>
-
-
-          <!-- STORY -->
-
-          <h3 style="margin-top:30px">
-            Story / Timeline
-          </h3>
-
-          <div id="storyContainer"></div>
-
-          <button
-            type="button"
-            class="secondary"
-            id="addStoryBtn"
-          >
-            + Tambah Story
-          </button>
-
-
-          <!-- GALLERY -->
-
-          <h3 style="margin-top:30px">
-            Gallery
-          </h3>
-
-          <div class="notice warning">
-
-            <strong>Upload Base64:</strong>
-
-            Foto diproses di browser,
-            dikompresi, kemudian dikirim
-            ke server dan disimpan di
-            Upstash Redis.
-
-            Maksimal sekitar
-            <strong>1 MB per gambar</strong>
-            setelah kompresi.
-
-          </div>
-
-
-          <div class="form-group">
 
             <label>
-              Upload Gallery
+              Gallery
             </label>
 
             <input
+              id="galleryUpload"
               type="file"
-              id="galleryFiles"
               multiple
               accept="image/jpeg,image/png,image/webp,image/gif"
             >
 
+            <p class="hint">
+              Gallery akan diupload satu file per request
+              agar tidak terkena batas payload Vercel.
+            </p>
+
+            <button
+              class="button"
+              type="button"
+              onclick="uploadGallery()"
+            >
+              Upload Semua Gallery
+            </button>
+
           </div>
 
 
           <div
-            id="galleryPreview"
-            class="gallery-grid"
+            id="mediaGrid"
+            class="media-grid"
+            style="margin-top:20px;"
           ></div>
 
-
-          <!-- GIFT -->
-
-          <h3 style="margin-top:30px">
-            Wedding Gift
-          </h3>
-
-          <div id="giftContainer"></div>
-
-          <button
-            type="button"
-            class="secondary"
-            id="addGiftBtn"
-          >
-            + Tambah Rekening
-          </button>
+        </div>
 
 
-          <!-- MUSIC -->
+        <!-- =====================================================
+             THEME
+        ====================================================== -->
 
-          <h3 style="margin-top:30px">
-            Music
-          </h3>
+        <div class="section">
 
-          <div class="form-group">
+          <div class="section-title">
 
-            <label>
-              URL Music
-            </label>
-
-            <input
-              id="musicUrl"
-              type="url"
-              placeholder="https://..."
-            >
-
-            <small class="muted">
-              Untuk MVP music menggunakan URL.
-            </small>
+            <h3>
+              09. Theme
+            </h3>
 
           </div>
 
 
-          <!-- SUBMIT -->
+          <div class="grid-3">
 
-          <div
-            class="actions"
-            style="margin-top:30px"
-          >
+            <div class="field">
 
-            <button
-              type="submit"
-            >
-              Simpan Wedding
-            </button>
+              <label>
+                Background
+              </label>
 
-            <button
-              type="reset"
-              class="secondary"
-              id="resetFormBtn"
-            >
-              Reset
-            </button>
+              <input
+                id="themeBackground"
+                type="color"
+              >
 
-          </div>
-
-        </form>
-
-      </div>
-
-    </section>
+            </div>
 
 
-    <!-- ===================================================
-         WEDDING LIST
-    ==================================================== -->
+            <div class="field">
 
-    <section class="panel">
+              <label>
+                Surface
+              </label>
 
-      <div class="panel-header">
+              <input
+                id="themeSurface"
+                type="color"
+              >
 
-        <div>
+            </div>
 
-          <strong>
-            Wedding Invitation
-          </strong>
 
-          <div class="muted">
-            Daftar seluruh wedding.
+            <div class="field">
+
+              <label>
+                Text
+              </label>
+
+              <input
+                id="themeText"
+                type="color"
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Muted
+              </label>
+
+              <input
+                id="themeMuted"
+                type="color"
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Accent
+              </label>
+
+              <input
+                id="themeAccent"
+                type="color"
+              >
+
+            </div>
+
           </div>
 
         </div>
 
-      </div>
 
+        <!-- =====================================================
+             SETTINGS
+        ====================================================== -->
 
-      <div class="panel-body">
+        <div class="section">
 
-        <% if (!weddings.length) { %>
+          <div class="section-title">
 
-          <div class="notice">
-            Belum ada wedding.
+            <h3>
+              10. Section Settings
+            </h3>
+
           </div>
 
-        <% } %>
+
+          <div class="grid-3">
+
+            <label>
+              <input
+                id="showCountdown"
+                type="checkbox"
+              >
+              Countdown
+            </label>
 
 
-        <% weddings.forEach(function(wedding) { %>
+            <label>
+              <input
+                id="showStory"
+                type="checkbox"
+              >
+              Story
+            </label>
 
-          <article
-            class="wedding-card"
-            data-slug="<%= wedding.slug %>"
+
+            <label>
+              <input
+                id="showGallery"
+                type="checkbox"
+              >
+              Gallery
+            </label>
+
+
+            <label>
+              <input
+                id="showGift"
+                type="checkbox"
+              >
+              Gift
+            </label>
+
+
+            <label>
+              <input
+                id="showRSVP"
+                type="checkbox"
+              >
+              RSVP
+            </label>
+
+
+            <label>
+              <input
+                id="showMusic"
+                type="checkbox"
+              >
+              Music
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SAVE
+        ====================================================== -->
+
+        <div class="sticky-actions">
+
+          <button
+            type="button"
+            class="button secondary"
+            onclick="newWedding()"
           >
-
-            <div class="wedding-card-header">
-
-              <div>
-
-                <h3>
-
-                  <%= wedding.bride?.name || "Bride" %>
-
-                  &
-
-                  <%= wedding.groom?.name || "Groom" %>
-
-                </h3>
-
-                <div class="wedding-meta">
-
-                  Slug:
-                  <strong>
-                    <%= wedding.slug %>
-                  </strong>
-
-                  <br>
-
-                  URL:
-                  <a
-                    href="/<%= wedding.slug %>"
-                    target="_blank"
-                  >
-                    /<%= wedding.slug %>
-                  </a>
-
-                  <br>
-
-                  Gallery:
-                  <%= wedding.gallery?.length || 0 %>
-                  gambar
-
-                  <br>
-
-                  RSVP:
-                  <%= wedding.stats?.total || 0 %>
-
-                </div>
-
-              </div>
+            Wedding Baru
+          </button>
 
 
-              <div>
-
-                <% if (
-                  wedding.status ===
-                  "published"
-                ) { %>
-
-                  <span
-                    class="status status-published"
-                  >
-                    PUBLISHED
-                  </span>
-
-                <% } else { %>
-
-                  <span
-                    class="status status-draft"
-                  >
-                    DRAFT
-                  </span>
-
-                <% } %>
-
-              </div>
-
-            </div>
+          <button
+            type="button"
+            class="button secondary"
+            id="previewButton"
+            onclick="previewWedding()"
+          >
+            Preview
+          </button>
 
 
-            <div class="actions">
-
-              <button
-                type="button"
-                class="secondary"
-                onclick="editWedding('<%= wedding.slug %>')"
-              >
-                Edit
-              </button>
+          <button
+            type="button"
+            class="button success"
+            onclick="saveWedding()"
+          >
+            Simpan Wedding
+          </button>
 
 
-              <a
-                href="/<%= wedding.slug %>"
-                target="_blank"
-                class="button-link secondary"
-              >
-                Preview
-              </a>
+          <button
+            type="button"
+            class="button danger"
+            onclick="deleteCurrentWedding()"
+          >
+            Hapus Wedding
+          </button>
 
+        </div>
 
-              <button
-                type="button"
-                class="secondary"
-                onclick="showRsvp('<%= wedding.slug %>')"
-              >
-                RSVP
-              </button>
-
-
-              <% if (
-                wedding.status ===
-                "published"
-              ) { %>
-
-                <button
-                  type="button"
-                  onclick="changePublish('<%= wedding.slug %>', 'unpublish')"
-                >
-                  Unpublish
-                </button>
-
-              <% } else { %>
-
-                <button
-                  type="button"
-                  class="success"
-                  onclick="changePublish('<%= wedding.slug %>', 'publish')"
-                >
-                  Publish
-                </button>
-
-              <% } %>
-
-
-              <button
-                type="button"
-                class="danger"
-                onclick="deleteWedding('<%= wedding.slug %>')"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </article>
-
-        <% }); %>
-
-      </div>
-
-    </section>
-
-
-  </main>
-
-</div>
-
-
-<!-- =======================================================
-     EDIT MODAL
-======================================================== -->
-
-<div
-  id="editModal"
-  class="modal"
->
-
-  <div class="modal-content">
-
-    <div class="modal-header">
-
-      <h2>
-        Edit Wedding
-      </h2>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="closeEditModal()"
-      >
-        Tutup
-      </button>
+      </form>
 
     </div>
 
-    <div
-      id="editContent"
-    ></div>
-
-  </div>
-
-</div>
+  </section>
 
 
-<!-- =======================================================
-     RSVP MODAL
-======================================================== -->
+  <!-- =========================================================
+       RSVP
+  ========================================================== -->
 
-<div
-  id="rsvpModal"
-  class="modal"
->
+  <section class="panel">
 
-  <div class="modal-content">
-
-    <div class="modal-header">
+    <div class="panel-header">
 
       <h2>
         RSVP
       </h2>
 
-      <button
-        type="button"
-        class="secondary"
-        onclick="closeRsvpModal()"
-      >
-        Tutup
-      </button>
+      <p class="hint">
+        Data RSVP dari wedding yang sedang dipilih.
+      </p>
 
     </div>
 
-    <div
-      id="rsvpContent"
-    ></div>
+    <div class="panel-body">
 
-  </div>
+      <div
+        id="rsvpContainer"
+      ></div>
 
-</div>
+    </div>
+
+  </section>
+
+</main>
 
 
 <script>
 
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-const CSRF_TOKEN =
-  document.getElementById(
-    "csrfToken"
-  ).value;
-
-const MAX_IMAGE_BYTES =
-  1024 * 1024;
-
-const MAX_GALLERY =
-  15;
-
-let galleryImages = [];
-
-let editSlug = null;
+  const state = {
+    currentWedding: null,
+    currentSlug: null
+  };
 
 
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-function showMessage(
-  message,
-  type = "success"
-) {
-
-  const box =
+  const selector =
     document.getElementById(
-      "globalMessage"
+      "weddingSelector"
     );
 
-  box.innerHTML = `
-    <div class="notice ${type}">
-      ${escapeHtml(message)}
-    </div>
-  `;
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  function showAlert(
+    message,
+    type = "warning"
+  ) {
 
-  setTimeout(() => {
-    box.innerHTML = "";
-  }, 5000);
-
-}
-
-
-/* =========================================================
-   ESCAPE
-========================================================= */
-
-function escapeHtml(
-  value
-) {
-
-  return String(value ?? "")
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================================================
-   IMAGE PROCESSING
-========================================================= */
-
-function readAndCompressImage(
-  file
-) {
-
-  return new Promise(
-    (resolve, reject) => {
-
-      if (!file) {
-        resolve(null);
-        return;
-      }
-
-      if (
-        !file.type.startsWith(
-          "image/"
-        )
-      ) {
-        reject(
-          new Error(
-            "File harus berupa gambar."
-          )
-        );
-
-        return;
-      }
-
-      const reader =
-        new FileReader();
-
-      reader.onload = event => {
-
-        const image =
-          new Image();
-
-        image.onload = () => {
-
-          let width =
-            image.naturalWidth;
-
-          let height =
-            image.naturalHeight;
-
-          const MAX_DIMENSION =
-            1800;
-
-          if (
-            width >
-              MAX_DIMENSION ||
-            height >
-              MAX_DIMENSION
-          ) {
-
-            const ratio =
-              Math.min(
-                MAX_DIMENSION /
-                  width,
-
-                MAX_DIMENSION /
-                  height
-              );
-
-            width =
-              Math.round(
-                width * ratio
-              );
-
-            height =
-              Math.round(
-                height * ratio
-              );
-
-          }
-
-          const canvas =
-            document.createElement(
-              "canvas"
-            );
-
-          canvas.width =
-            width;
-
-          canvas.height =
-            height;
-
-          const ctx =
-            canvas.getContext(
-              "2d"
-            );
-
-          ctx.drawImage(
-            image,
-            0,
-            0,
-            width,
-            height
-          );
-
-          let quality =
-            0.82;
-
-          let dataUrl =
-            canvas.toDataURL(
-              "image/jpeg",
-              quality
-            );
-
-          while (
-            dataUrl.length >
-              MAX_IMAGE_BYTES *
-              1.37 &&
-            quality >
-              0.35
-          ) {
-
-            quality -=
-              0.08;
-
-            dataUrl =
-              canvas.toDataURL(
-                "image/jpeg",
-                quality
-              );
-
-          }
-
-          const base64Part =
-            dataUrl.split(
-              ","
-            )[1];
-
-          const estimatedBytes =
-            Math.floor(
-              base64Part.length *
-              0.75
-            );
-
-          if (
-            estimatedBytes >
-            MAX_IMAGE_BYTES
-          ) {
-
-            reject(
-              new Error(
-                "Gambar terlalu besar setelah kompresi. Pilih gambar yang lebih kecil."
-              )
-            );
-
-            return;
-
-          }
-
-          resolve({
-            data:
-              dataUrl,
-
-            mime:
-              "image/jpeg",
-
-            caption:
-              ""
-          });
-
-        };
-
-        image.onerror = () => {
-
-          reject(
-            new Error(
-              "Gagal membaca gambar."
-            )
-          );
-
-        };
-
-        image.src =
-          event.target.result;
-
-      };
-
-      reader.onerror = () => {
-
-        reject(
-          new Error(
-            "Gagal membaca file."
-          )
-        );
-
-      };
-
-      reader.readAsDataURL(
-        file
+    const alert =
+      document.getElementById(
+        "alert"
       );
 
+    alert.style.display =
+      "block";
+
+    alert.textContent =
+      message;
+
+    if (type === "success") {
+      alert.style.background =
+        "#e8f3e9";
+
+      alert.style.color =
+        "#416548";
+    } else {
+      alert.style.background =
+        "#fff2d6";
+
+      alert.style.color =
+        "#73521b";
     }
-  );
 
-}
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
 
-
-/* =========================================================
-   SINGLE IMAGE PREVIEW
-========================================================= */
-
-function setupSingleImage(
-  inputId,
-  previewId,
-  setter
-) {
-
-  const input =
-    document.getElementById(
-      inputId
-    );
-
-  const preview =
-    document.getElementById(
-      previewId
-    );
-
-  input.addEventListener(
-    "change",
-    async () => {
-
-      const file =
-        input.files[0];
-
-      if (!file) {
-        return;
-      }
-
-      try {
-
-        const image =
-          await readAndCompressImage(
-            file
-          );
-
-        setter(image);
-
-        preview.style.display =
-          "block";
-
-        preview.innerHTML = `
-          <img
-            src="${image.data}"
-            alt="Preview"
-          >
-        `;
-
-      } catch (error) {
-
-        input.value = "";
-
-        setter(null);
-
-        showMessage(
-          error.message,
-          "warning"
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-let groomPhoto = null;
-
-let bridePhoto = null;
-
-let coverImage = null;
-
-
-setupSingleImage(
-  "groomPhotoFile",
-  "groomPhotoPreview",
-  image => {
-    groomPhoto = image;
-  }
-);
-
-
-setupSingleImage(
-  "bridePhotoFile",
-  "bridePhotoPreview",
-  image => {
-    bridePhoto = image;
-  }
-);
-
-
-setupSingleImage(
-  "coverImageFile",
-  "coverImagePreview",
-  image => {
-    coverImage = image;
-  }
-);
-
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-const eventsContainer =
-  document.getElementById(
-    "eventsContainer"
-  );
-
-
-function addEvent(
-  data = {}
-) {
-
-  const id =
-    "event-" +
-    Date.now() +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2);
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.dataset.id =
-    id;
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Event
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Type
-        </label>
-
-        <input
-          class="event-type"
-          value="${escapeHtml(data.type || "")}"
-          placeholder="akad / resepsi"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Title
-        </label>
-
-        <input
-          class="event-title"
-          value="${escapeHtml(data.title || "")}"
-          placeholder="Akad Nikah"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Date
-        </label>
-
-        <input
-          class="event-date"
-          value="${escapeHtml(data.date || "")}"
-          type="date"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Start Time
-        </label>
-
-        <input
-          class="event-start"
-          value="${escapeHtml(data.startTime || "")}"
-          type="time"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          End Time
-        </label>
-
-        <input
-          class="event-end"
-          value="${escapeHtml(data.endTime || "")}"
-          type="time"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Venue
-        </label>
-
-        <input
-          class="event-venue"
-          value="${escapeHtml(data.venue || "")}"
-          placeholder="Nama gedung"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Address
-        </label>
-
-        <input
-          class="event-address"
-          value="${escapeHtml(data.address || "")}"
-          placeholder="Alamat lengkap"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Google Maps URL
-        </label>
-
-        <input
-          class="event-maps"
-          value="${escapeHtml(data.mapsUrl || "")}"
-          type="url"
-          placeholder="https://maps.google.com/..."
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Description
-        </label>
-
-        <textarea
-          class="event-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  eventsContainer.appendChild(
-    element
-  );
-
-}
-
-
-document
-  .getElementById(
-    "addEventBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addEvent()
-  );
-
-
-/* =========================================================
-   STORY
-========================================================= */
-
-const storyContainer =
-  document.getElementById(
-    "storyContainer"
-  );
-
-
-function addStory(
-  data = {}
-) {
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Story
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Tanggal / Tahun
-        </label>
-
-        <input
-          class="story-date"
-          value="${escapeHtml(data.date || "")}"
-          placeholder="2020"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Judul
-        </label>
-
-        <input
-          class="story-title"
-          value="${escapeHtml(data.title || "")}"
-          placeholder="First Meeting"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Deskripsi
-        </label>
-
-        <textarea
-          class="story-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  storyContainer.appendChild(
-    element
-  );
-
-}
-
-
-document
-  .getElementById(
-    "addStoryBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addStory()
-  );
-
-
-/* =========================================================
-   GIFT
-========================================================= */
-
-const giftContainer =
-  document.getElementById(
-    "giftContainer"
-  );
-
-
-function addGift(
-  data = {}
-) {
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Wedding Gift
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Type
-        </label>
-
-        <select class="gift-type">
-
-          <option value="bank">
-            Bank
-          </option>
-
-          <option value="ewallet">
-            E-Wallet
-          </option>
-
-          <option value="other">
-            Other
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Bank / Provider
-        </label>
-
-        <input
-          class="gift-bank"
-          value="${escapeHtml(data.bank || "")}"
-          placeholder="BCA"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Nama Pemilik
-        </label>
-
-        <input
-          class="gift-account-name"
-          value="${escapeHtml(data.accountName || "")}"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Nomor Rekening
-        </label>
-
-        <input
-          class="gift-account-number"
-          value="${escapeHtml(data.accountNumber || "")}"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Description
-        </label>
-
-        <textarea
-          class="gift-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  const select =
-    element.querySelector(
-      ".gift-type"
-    );
-
-  if (data.type) {
-    select.value =
-      data.type;
   }
 
-  giftContainer.appendChild(
-    element
-  );
 
-}
+  async function api(
+    url,
+    options = {}
+  ) {
 
-
-document
-  .getElementById(
-    "addGiftBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addGift()
-  );
-
-
-/* =========================================================
-   GALLERY
-========================================================= */
-
-const galleryInput =
-  document.getElementById(
-    "galleryFiles"
-  );
-
-const galleryPreview =
-  document.getElementById(
-    "galleryPreview"
-  );
-
-
-galleryInput.addEventListener(
-  "change",
-  async () => {
-
-    const files =
-      Array.from(
-        galleryInput.files
+    const response =
+      await fetch(
+        url,
+        {
+          credentials: "same-origin",
+          ...options
+        }
       );
+
+    /*
+     * FIX untuk error:
+     *
+     * Unexpected token '<'
+     *
+     * Jangan langsung response.json().
+     * Kita cek content-type dahulu.
+     */
+
+    const contentType =
+      response.headers.get(
+        "content-type"
+      ) || "";
 
     if (
-      galleryImages.length +
-        files.length >
-      MAX_GALLERY
+      !contentType.includes(
+        "application/json"
+      )
     ) {
 
-      showMessage(
-        `Maksimal ${MAX_GALLERY} gambar.`,
-        "warning"
+      const text =
+        await response.text();
+
+      throw new Error(
+        `Server mengembalikan HTML/non-JSON (${response.status}). ` +
+        text.slice(0, 200)
+      );
+
+    }
+
+    const data =
+      await response.json();
+
+    if (!response.ok ||
+        data.success === false) {
+
+      throw new Error(
+        data.error ||
+        "Request gagal."
+      );
+
+    }
+
+    return data;
+
+  }
+
+
+  function value(id) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+    return element
+      ? element.value
+      : "";
+
+  }
+
+
+  function setValue(
+    id,
+    value
+  ) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+    if (element) {
+      element.value =
+        value ?? "";
+    }
+
+  }
+
+
+  function checked(id) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+    return element
+      ? element.checked
+      : false;
+
+  }
+
+
+  function setChecked(
+    id,
+    value
+  ) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+    if (element) {
+      element.checked =
+        Boolean(value);
+    }
+
+  }
+
+
+  function prettyJSON(
+    value
+  ) {
+
+    return JSON.stringify(
+      value || [],
+      null,
+      2
+    );
+
+  }
+
+
+  function fillWedding(
+    wedding
+  ) {
+
+    state.currentWedding =
+      wedding;
+
+    state.currentSlug =
+      wedding.slug;
+
+    setValue(
+      "slug",
+      wedding.slug
+    );
+
+    setValue(
+      "status",
+      wedding.status
+    );
+
+    setValue(
+      "title",
+      wedding.title
+    );
+
+    setValue(
+      "date",
+      wedding.date
+    );
+
+    setValue(
+      "timezone",
+      wedding.timezone
+    );
+
+
+    const opening =
+      wedding.opening ||
+      {};
+
+    setValue(
+      "openingEyebrow",
+      opening.eyebrow
+    );
+
+    setValue(
+      "openingTitle",
+      opening.title
+    );
+
+    setValue(
+      "openingText",
+      opening.text
+    );
+
+    setValue(
+      "openingButton",
+      opening.button
+    );
+
+
+    const groom =
+      wedding.groom ||
+      {};
+
+    setValue(
+      "groomName",
+      groom.name
+    );
+
+    setValue(
+      "groomFullName",
+      groom.fullName
+    );
+
+    setValue(
+      "groomParents",
+      groom.parents
+    );
+
+    setValue(
+      "groomInstagram",
+      groom.instagram
+    );
+
+
+    const bride =
+      wedding.bride ||
+      {};
+
+    setValue(
+      "brideName",
+      bride.name
+    );
+
+    setValue(
+      "brideFullName",
+      bride.fullName
+    );
+
+    setValue(
+      "brideParents",
+      bride.parents
+    );
+
+    setValue(
+      "brideInstagram",
+      bride.instagram
+    );
+
+
+    const quote =
+      wedding.quote ||
+      {};
+
+    setValue(
+      "quoteText",
+      quote.text
+    );
+
+    setValue(
+      "quoteSource",
+      quote.source
+    );
+
+
+    setValue(
+      "storyJSON",
+      prettyJSON(
+        wedding.story
+      )
+    );
+
+    setValue(
+      "eventsJSON",
+      prettyJSON(
+        wedding.events
+      )
+    );
+
+
+    const gift =
+      wedding.gift ||
+      {};
+
+    setValue(
+      "bankName",
+      gift.bankName
+    );
+
+    setValue(
+      "accountNumber",
+      gift.accountNumber
+    );
+
+    setValue(
+      "accountName",
+      gift.accountName
+    );
+
+    setValue(
+      "giftAddress",
+      gift.address
+    );
+
+    setValue(
+      "giftText",
+      gift.text
+    );
+
+
+    const theme =
+      wedding.theme ||
+      {};
+
+    setValue(
+      "themeBackground",
+      theme.background ||
+      "#f7f2eb"
+    );
+
+    setValue(
+      "themeSurface",
+      theme.surface ||
+      "#fffdf9"
+    );
+
+    setValue(
+      "themeText",
+      theme.text ||
+      "#2e2925"
+    );
+
+    setValue(
+      "themeMuted",
+      theme.muted ||
+      "#8c837b"
+    );
+
+    setValue(
+      "themeAccent",
+      theme.accent ||
+      "#7c6b5d"
+    );
+
+
+    const settings =
+      wedding.settings ||
+      {};
+
+    setChecked(
+      "showCountdown",
+      settings.showCountdown
+    );
+
+    setChecked(
+      "showStory",
+      settings.showStory
+    );
+
+    setChecked(
+      "showGallery",
+      settings.showGallery
+    );
+
+    setChecked(
+      "showGift",
+      settings.showGift
+    );
+
+    setChecked(
+      "showRSVP",
+      settings.showRSVP
+    );
+
+    setChecked(
+      "showMusic",
+      settings.showMusic
+    );
+
+
+    renderMedia(
+      wedding
+    );
+
+  }
+
+
+  function parseJSONField(
+    id,
+    fallback
+  ) {
+
+    try {
+
+      const parsed =
+        JSON.parse(
+          value(id)
+        );
+
+      return parsed;
+
+    } catch {
+
+      throw new Error(
+        `JSON pada ${id} tidak valid.`
+      );
+
+    }
+
+  }
+
+
+  function buildWeddingPayload() {
+
+    if (
+      !state.currentWedding
+    ) {
+
+      return {
+        slug:
+          value("slug"),
+        status:
+          value("status")
+      };
+
+    }
+
+
+    const wedding =
+      JSON.parse(
+        JSON.stringify(
+          state.currentWedding
+        )
+      );
+
+
+    wedding.slug =
+      value("slug")
+        .trim()
+        .toLowerCase();
+
+    wedding.status =
+      value("status");
+
+    wedding.title =
+      value("title");
+
+    wedding.date =
+      value("date");
+
+    wedding.timezone =
+      value("timezone");
+
+
+    wedding.opening = {
+      ...(wedding.opening || {}),
+      eyebrow:
+        value(
+          "openingEyebrow"
+        ),
+      title:
+        value(
+          "openingTitle"
+        ),
+      text:
+        value(
+          "openingText"
+        ),
+      button:
+        value(
+          "openingButton"
+        )
+    };
+
+
+    wedding.groom = {
+      ...(wedding.groom || {}),
+      name:
+        value("groomName"),
+      fullName:
+        value("groomFullName"),
+      parents:
+        value("groomParents"),
+      instagram:
+        value("groomInstagram")
+    };
+
+
+    wedding.bride = {
+      ...(wedding.bride || {}),
+      name:
+        value("brideName"),
+      fullName:
+        value("brideFullName"),
+      parents:
+        value("brideParents"),
+      instagram:
+        value("brideInstagram")
+    };
+
+
+    wedding.quote = {
+      ...(wedding.quote || {}),
+      text:
+        value("quoteText"),
+      source:
+        value("quoteSource")
+    };
+
+
+    wedding.story =
+      parseJSONField(
+        "storyJSON",
+        []
+      );
+
+
+    wedding.events =
+      parseJSONField(
+        "eventsJSON",
+        []
+      );
+
+
+    wedding.gift = {
+      ...(wedding.gift || {}),
+      bankName:
+        value("bankName"),
+      accountNumber:
+        value("accountNumber"),
+      accountName:
+        value("accountName"),
+      address:
+        value("giftAddress"),
+      text:
+        value("giftText")
+    };
+
+
+    wedding.theme = {
+      ...(wedding.theme || {}),
+      background:
+        value(
+          "themeBackground"
+        ),
+      surface:
+        value(
+          "themeSurface"
+        ),
+      text:
+        value(
+          "themeText"
+        ),
+      muted:
+        value(
+          "themeMuted"
+        ),
+      accent:
+        value(
+          "themeAccent"
+        )
+    };
+
+
+    wedding.settings = {
+      ...(wedding.settings || {}),
+      showCountdown:
+        checked(
+          "showCountdown"
+        ),
+      showStory:
+        checked(
+          "showStory"
+        ),
+      showGallery:
+        checked(
+          "showGallery"
+        ),
+      showGift:
+        checked(
+          "showGift"
+        ),
+      showRSVP:
+        checked(
+          "showRSVP"
+        ),
+      showMusic:
+        checked(
+          "showMusic"
+        ),
+      bottomNavigation:
+        true
+    };
+
+
+    return wedding;
+
+  }
+
+
+  async function loadWedding(
+    slug
+  ) {
+
+    if (!slug) {
+      newWedding();
+      return;
+    }
+
+    try {
+
+      const data =
+        await api(
+          `/api/weddings/${encodeURIComponent(
+            slug
+          )}`
+        );
+
+      fillWedding(
+        data.wedding
+      );
+
+      renderRSVP(
+        data.rsvps
+      );
+
+      selector.value =
+        slug;
+
+      showAlert(
+        "Wedding berhasil dimuat.",
+        "success"
+      );
+
+    } catch (error) {
+
+      showAlert(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  function newWedding() {
+
+    state.currentWedding =
+      null;
+
+    state.currentSlug =
+      null;
+
+    document
+      .getElementById(
+        "weddingForm"
+      )
+      .reset();
+
+    setValue(
+      "status",
+      "draft"
+    );
+
+    setValue(
+      "title",
+      "The Wedding Of"
+    );
+
+    setValue(
+      "timezone",
+      "Asia/Jakarta"
+    );
+
+    setValue(
+      "openingButton",
+      "BUKA UNDANGAN"
+    );
+
+    setValue(
+      "storyJSON",
+      "[]"
+    );
+
+    setValue(
+      "eventsJSON",
+      prettyJSON([
+        {
+          title: "Akad Nikah",
+          date: "",
+          time: "",
+          venue: "",
+          address: "",
+          mapsUrl: ""
+        },
+        {
+          title: "Resepsi",
+          date: "",
+          time: "",
+          venue: "",
+          address: "",
+          mapsUrl: ""
+        }
+      ])
+    );
+
+    setValue(
+      "quoteText",
+      "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri supaya kamu mendapatkan ketenangan hati dan dijadikan-Nya kasih sayang di antara kamu."
+    );
+
+    setValue(
+      "quoteSource",
+      "QS. Ar-Rum: 21"
+    );
+
+    setValue(
+      "themeBackground",
+      "#f7f2eb"
+    );
+
+    setValue(
+      "themeSurface",
+      "#fffdf9"
+    );
+
+    setValue(
+      "themeText",
+      "#2e2925"
+    );
+
+    setValue(
+      "themeMuted",
+      "#8c837b"
+    );
+
+    setValue(
+      "themeAccent",
+      "#7c6b5d"
+    );
+
+    setChecked(
+      "showCountdown",
+      true
+    );
+
+    setChecked(
+      "showStory",
+      true
+    );
+
+    setChecked(
+      "showGallery",
+      true
+    );
+
+    setChecked(
+      "showGift",
+      true
+    );
+
+    setChecked(
+      "showRSVP",
+      true
+    );
+
+    setChecked(
+      "showMusic",
+      true
+    );
+
+    document
+      .getElementById(
+        "mediaGrid"
+      )
+      .innerHTML = "";
+
+    document
+      .getElementById(
+        "rsvpContainer"
+      )
+      .innerHTML =
+      '<div class="empty">Belum ada RSVP.</div>';
+
+    selector.value = "";
+
+    showAlert(
+      "Mode Wedding Baru aktif."
+    );
+
+  }
+
+
+  async function saveWedding() {
+
+    try {
+
+      const payload =
+        buildWeddingPayload();
+
+      if (!payload.slug) {
+        throw new Error(
+          "Slug wajib diisi."
+        );
+      }
+
+
+      const isNew =
+        !state.currentSlug;
+
+
+      const url =
+        isNew
+          ? "/api/weddings"
+          : `/api/weddings/${encodeURIComponent(
+              state.currentSlug
+            )}`;
+
+
+      const method =
+        isNew
+          ? "POST"
+          : "PUT";
+
+
+      const data =
+        await api(
+          url,
+          {
+            method,
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body:
+              JSON.stringify(
+                payload
+              )
+          }
+        );
+
+
+      state.currentWedding =
+        data.wedding;
+
+      state.currentSlug =
+        data.wedding.slug;
+
+
+      await refreshSelector();
+
+      selector.value =
+        data.wedding.slug;
+
+
+      fillWedding(
+        data.wedding
+      );
+
+
+      showAlert(
+        "Wedding berhasil disimpan.",
+        "success"
+      );
+
+    } catch (error) {
+
+      showAlert(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  async function refreshSelector() {
+
+    try {
+
+      const data =
+        await api(
+          "/api/weddings"
+        );
+
+      selector.innerHTML =
+        '<option value="">+ Buat Wedding Baru</option>';
+
+      data.weddings.forEach(
+        wedding => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            wedding.slug;
+
+          option.textContent =
+            `${wedding.slug} — ${wedding.status}`;
+
+          selector.appendChild(
+            option
+          );
+
+        }
+      );
+
+
+      document
+        .getElementById(
+          "totalWedding"
+        )
+        .textContent =
+        data.weddings.length;
+
+
+      document
+        .getElementById(
+          "publishedWedding"
+        )
+        .textContent =
+        data.weddings.filter(
+          item =>
+            item.status ===
+            "published"
+        ).length;
+
+
+      document
+        .getElementById(
+          "draftWedding"
+        )
+        .textContent =
+        data.weddings.filter(
+          item =>
+            item.status ===
+            "draft"
+        ).length;
+
+
+      document
+        .getElementById(
+          "totalRSVP"
+        )
+        .textContent =
+        data.weddings.reduce(
+          (
+            total,
+            item
+          ) =>
+            total +
+            (
+              item.rsvpCount ||
+              0
+            ),
+          0
+        );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
+
+  }
+
+
+  async function uploadSingle(
+    inputId,
+    type
+  ) {
+
+    if (!state.currentSlug) {
+
+      showAlert(
+        "Simpan wedding terlebih dahulu sebelum upload media."
       );
 
       return;
 
     }
+
+
+    const input =
+      document.getElementById(
+        inputId
+      );
+
+    if (
+      !input.files ||
+      !input.files[0]
+    ) {
+
+      showAlert(
+        "Pilih file terlebih dahulu."
+      );
+
+      return;
+
+    }
+
+
+    const file =
+      input.files[0];
+
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      file
+    );
+
+
+    try {
+
+      const data =
+        await api(
+          `/api/weddings/${encodeURIComponent(
+            state.currentSlug
+          )}/assets`,
+          {
+            method: "POST",
+            body:
+              formData
+          }
+        );
+
+
+      const asset =
+        data.asset;
+
+
+      const wedding =
+        state.currentWedding;
+
+
+      if (type === "cover") {
+
+        wedding.cover = {
+          assetId:
+            asset.assetId,
+          filename:
+            asset.filename,
+          mime:
+            asset.mime,
+          url:
+            asset.url
+        };
+
+      }
+
+
+      if (type === "groom") {
+
+        wedding.groom =
+          wedding.groom ||
+          {};
+
+        wedding.groom.photo = {
+          assetId:
+            asset.assetId,
+          filename:
+            asset.filename,
+          mime:
+            asset.mime,
+          url:
+            asset.url
+        };
+
+      }
+
+
+      if (type === "bride") {
+
+        wedding.bride =
+          wedding.bride ||
+          {};
+
+        wedding.bride.photo = {
+          assetId:
+            asset.assetId,
+          filename:
+            asset.filename,
+          mime:
+            asset.mime,
+          url:
+            asset.url
+        };
+
+      }
+
+
+      if (type === "music") {
+
+        wedding.music =
+          wedding.music ||
+          {};
+
+        wedding.music.assetId =
+          asset.assetId;
+
+        wedding.music.title =
+          asset.filename;
+
+        wedding.music.url =
+          asset.url;
+
+      }
+
+
+      await saveWedding();
+
+      input.value = "";
+
+      showAlert(
+        `${asset.filename} berhasil diupload.`,
+        "success"
+      );
+
+    } catch (error) {
+
+      showAlert(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  async function uploadGallery() {
+
+    if (!state.currentSlug) {
+
+      showAlert(
+        "Simpan wedding terlebih dahulu."
+      );
+
+      return;
+
+    }
+
+
+    const input =
+      document.getElementById(
+        "galleryUpload"
+      );
+
+
+    if (
+      !input.files ||
+      !input.files.length
+    ) {
+
+      showAlert(
+        "Pilih foto gallery."
+      );
+
+      return;
+
+    }
+
+
+    const files =
+      Array.from(
+        input.files
+      );
+
 
     for (
       const file of files
@@ -2190,2025 +2778,447 @@ galleryInput.addEventListener(
 
       try {
 
-        const image =
-          await readAndCompressImage(
-            file
-          );
+        const formData =
+          new FormData();
 
-        galleryImages.push(
-          image
+        formData.append(
+          "file",
+          file
         );
 
-      } catch (error) {
 
-        showMessage(
-          error.message,
-          "warning"
-        );
-
-      }
-
-    }
-
-    renderGallery();
-
-    galleryInput.value = "";
-
-  }
-);
-
-
-function renderGallery() {
-
-  galleryPreview.innerHTML =
-    "";
-
-  galleryImages.forEach(
-    (image, index) => {
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-      item.className =
-        "gallery-item";
-
-      item.innerHTML = `
-
-        <img
-          src="${image.data}"
-          alt="Gallery ${index + 1}"
-        >
-
-        <input
-          type="text"
-          placeholder="Caption"
-          value="${escapeHtml(image.caption || "")}"
-          class="gallery-caption"
-          style="margin-top:8px"
-        >
-
-        <button
-          type="button"
-          class="danger"
-          style="margin-top:8px;width:100%"
-          onclick="removeGallery(${index})"
-        >
-          Hapus
-        </button>
-
-      `;
-
-      item
-        .querySelector(
-          ".gallery-caption"
-        )
-        .addEventListener(
-          "input",
-          event => {
-
-            galleryImages[
-              index
-            ].caption =
-              event.target.value;
-
-          }
-        );
-
-      galleryPreview.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-function removeGallery(
-  index
-) {
-
-  galleryImages.splice(
-    index,
-    1
-  );
-
-  renderGallery();
-
-}
-
-
-/* =========================================================
-   COLLECT FORM
-========================================================= */
-
-function collectEvents() {
-
-  return Array
-    .from(
-      eventsContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        type:
-          element.querySelector(
-            ".event-type"
-          ).value,
-
-        title:
-          element.querySelector(
-            ".event-title"
-          ).value,
-
-        date:
-          element.querySelector(
-            ".event-date"
-          ).value,
-
-        startTime:
-          element.querySelector(
-            ".event-start"
-          ).value,
-
-        endTime:
-          element.querySelector(
-            ".event-end"
-          ).value,
-
-        venue:
-          element.querySelector(
-            ".event-venue"
-          ).value,
-
-        address:
-          element.querySelector(
-            ".event-address"
-          ).value,
-
-        mapsUrl:
-          element.querySelector(
-            ".event-maps"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".event-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectStory() {
-
-  return Array
-    .from(
-      storyContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        date:
-          element.querySelector(
-            ".story-date"
-          ).value,
-
-        title:
-          element.querySelector(
-            ".story-title"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".story-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectGift() {
-
-  return Array
-    .from(
-      giftContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        type:
-          element.querySelector(
-            ".gift-type"
-          ).value,
-
-        bank:
-          element.querySelector(
-            ".gift-bank"
-          ).value,
-
-        accountName:
-          element.querySelector(
-            ".gift-account-name"
-          ).value,
-
-        accountNumber:
-          element.querySelector(
-            ".gift-account-number"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".gift-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectForm() {
-
-  return {
-
-    slug:
-      document.getElementById(
-        "slug"
-      ).value,
-
-    status:
-      document.getElementById(
-        "status"
-      ).value,
-
-    groomName:
-      document.getElementById(
-        "groomName"
-      ).value,
-
-    groomFullName:
-      document.getElementById(
-        "groomFullName"
-      ).value,
-
-    groomPhoto,
-
-    brideName:
-      document.getElementById(
-        "brideName"
-      ).value,
-
-    brideFullName:
-      document.getElementById(
-        "brideFullName"
-      ).value,
-
-    bridePhoto,
-
-    coverImage,
-
-    quote:
-      document.getElementById(
-        "quote"
-      ).value,
-
-    description:
-      document.getElementById(
-        "description"
-      ).value,
-
-    date:
-      document.getElementById(
-        "date"
-      ).value,
-
-    timezone:
-      document.getElementById(
-        "timezone"
-      ).value,
-
-    events:
-      collectEvents(),
-
-    story:
-      collectStory(),
-
-    gallery:
-      galleryImages,
-
-    gift:
-      collectGift(),
-
-    musicUrl:
-      document.getElementById(
-        "musicUrl"
-      ).value
-  };
-
-}
-
-
-/* =========================================================
-   CREATE
-========================================================= */
-
-document
-  .getElementById(
-    "createWeddingForm"
-  )
-  .addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-      const payload =
-        collectForm();
-
-      if (
-        !payload.slug.trim()
-      ) {
-
-        showMessage(
-          "Slug wajib diisi.",
-          "warning"
-        );
-
-        return;
-
-      }
-
-      try {
-
-        const response =
-          await fetch(
-            "/admin/wedding/new",
+        const data =
+          await api(
+            `/api/weddings/${encodeURIComponent(
+              state.currentSlug
+            )}/assets`,
             {
-              method:
-                "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json",
-
-                "X-CSRF-Token":
-                  CSRF_TOKEN
-              },
-
+              method: "POST",
               body:
-                JSON.stringify(
-                  payload
-                )
+                formData
             }
           );
 
-        const result =
-          await response.json();
 
-        if (
-          !response.ok ||
-          !result.success
-        ) {
+        const asset =
+          data.asset;
 
-          throw new Error(
-            result.message ||
-            "Gagal menyimpan."
-          );
 
-        }
+        state.currentWedding.gallery =
+          state.currentWedding.gallery ||
+          [];
 
-        showMessage(
-          result.message
+
+        state.currentWedding.gallery.push({
+          assetId:
+            asset.assetId,
+          filename:
+            asset.filename,
+          mime:
+            asset.mime,
+          url:
+            asset.url,
+          caption:
+            asset.filename
+        });
+
+
+        renderMedia(
+          state.currentWedding
         );
 
-        setTimeout(
-          () => {
-            location.reload();
-          },
-          800
-        );
 
       } catch (error) {
 
-        showMessage(
-          error.message,
-          "warning"
+        showAlert(
+          `${file.name}: ${error.message}`
         );
 
       }
 
     }
-  );
 
 
-/* =========================================================
-   EDIT WEDDING
-========================================================= */
+    await saveWedding();
 
-async function editWedding(
-  slug
-) {
+    input.value = "";
 
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/rsvp`
-      );
-
-    /*
-      Endpoint RSVP hanya digunakan
-      sebagai pengecekan bahwa wedding
-      ada.
-
-      Untuk menjaga struktur sederhana,
-      data wedding akan diambil dari
-      server melalui endpoint khusus
-      di bawah.
-    */
-
-    if (!response.ok) {
-      throw new Error(
-        "Wedding tidak ditemukan."
-      );
-    }
-
-    const data =
-      await fetchWeddingForEdit(
-        slug
-      );
-
-    openEditForm(
-      data
-    );
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
+    showAlert(
+      "Gallery berhasil diupload.",
+      "success"
     );
 
   }
 
-}
 
-
-/* =========================================================
-   FETCH WEDDING FOR EDIT
-========================================================= */
-
-async function fetchWeddingForEdit(
-  slug
-) {
-
-  const response =
-    await fetch(
-      `/admin/wedding/${encodeURIComponent(slug)}/data`
-    );
-
-  const result =
-    await response.json();
-
-  if (
-    !response.ok ||
-    !result.success
+  function renderMedia(
+    wedding
   ) {
 
-    throw new Error(
-      result.message ||
-      "Gagal mengambil data."
-    );
-
-  }
-
-  return result.wedding;
-
-}
-
-
-/* =========================================================
-   EDIT FORM
-========================================================= */
-
-function openEditForm(
-  wedding
-) {
-
-  editSlug =
-    wedding.slug;
-
-  const modal =
-    document.getElementById(
-      "editModal"
-    );
-
-  const content =
-    document.getElementById(
-      "editContent"
-    );
-
-  const gallery =
-    Array.isArray(
-      wedding.gallery
-    )
-      ? wedding.gallery
-      : [];
-
-  const events =
-    Array.isArray(
-      wedding.events
-    )
-      ? wedding.events
-      : [];
-
-  const story =
-    Array.isArray(
-      wedding.story
-    )
-      ? wedding.story
-      : [];
-
-  const gift =
-    Array.isArray(
-      wedding.gift
-    )
-      ? wedding.gift
-      : [];
-
-
-  content.innerHTML = `
-
-    <form id="editWeddingForm">
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label>
-            Slug
-          </label>
-
-          <input
-            id="editSlug"
-            value="${escapeHtml(wedding.slug || "")}"
-            required
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Status
-          </label>
-
-          <select id="editStatus">
-
-            <option value="draft">
-              Draft
-            </option>
-
-            <option value="published">
-              Published
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Bride
-          </label>
-
-          <input
-            id="editBrideName"
-            value="${escapeHtml(wedding.bride?.name || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Bride Full Name
-          </label>
-
-          <input
-            id="editBrideFullName"
-            value="${escapeHtml(wedding.bride?.fullName || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom
-          </label>
-
-          <input
-            id="editGroomName"
-            value="${escapeHtml(wedding.groom?.name || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom Full Name
-          </label>
-
-          <input
-            id="editGroomFullName"
-            value="${escapeHtml(wedding.groom?.fullName || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Quote
-          </label>
-
-          <textarea
-            id="editQuote"
-          >${escapeHtml(wedding.quote || "")}</textarea>
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Description
-          </label>
-
-          <textarea
-            id="editDescription"
-          >${escapeHtml(wedding.description || "")}</textarea>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Date
-          </label>
-
-          <input
-            id="editDate"
-            type="datetime-local"
-            value="${escapeHtml(wedding.date || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Timezone
-          </label>
-
-          <select id="editTimezone">
-
-            <option value="Asia/Makassar">
-              Asia/Makassar
-            </option>
-
-            <option value="Asia/Jakarta">
-              Asia/Jakarta
-            </option>
-
-            <option value="Asia/Jayapura">
-              Asia/Jayapura
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Music URL
-          </label>
-
-          <input
-            id="editMusicUrl"
-            value="${escapeHtml(wedding.music?.url || "")}"
-          >
-
-        </div>
-
-      </div>
-
-
-      <h3>
-        Upload Foto Baru
-      </h3>
-
-      <div class="notice">
-        Jika tidak upload foto baru,
-        foto lama tetap digunakan.
-      </div>
-
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label>
-            Bride Photo
-          </label>
-
-          <input
-            type="file"
-            id="editBridePhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom Photo
-          </label>
-
-          <input
-            type="file"
-            id="editGroomPhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Cover Photo
-          </label>
-
-          <input
-            type="file"
-            id="editCoverPhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-      </div>
-
-
-      <h3>
-        Event
-      </h3>
-
-      <div id="editEvents"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditEvent()"
-      >
-        + Event
-      </button>
-
-
-      <h3>
-        Story
-      </h3>
-
-      <div id="editStories"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditStory()"
-      >
-        + Story
-      </button>
-
-
-      <h3>
-        Gallery
-      </h3>
-
-      <div
-        id="editGallery"
-        class="gallery-grid"
-      ></div>
-
-      <div
-        style="margin-top:15px"
-      >
-
-        <input
-          type="file"
-          id="editGalleryFiles"
-          multiple
-          accept="image/*"
-        >
-
-      </div>
-
-
-      <h3>
-        Wedding Gift
-      </h3>
-
-      <div id="editGift"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditGift()"
-      >
-        + Rekening
-      </button>
-
-
-      <div
-        class="actions"
-        style="margin-top:30px"
-      >
-
-        <button
-          type="submit"
-        >
-          Simpan Perubahan
-        </button>
-
-        <button
-          type="button"
-          class="secondary"
-          onclick="closeEditModal()"
-        >
-          Batal
-        </button>
-
-      </div>
-
-    </form>
-
-  `;
-
-
-  document.getElementById(
-    "editStatus"
-  ).value =
-    wedding.status || "draft";
-
-
-  document.getElementById(
-    "editTimezone"
-  ).value =
-    wedding.timezone ||
-    "Asia/Makassar";
-
-
-  const editEvents =
-    document.getElementById(
-      "editEvents"
-    );
-
-  events.forEach(
-    item => {
-
-      addEditEvent(
-        item
+    const container =
+      document.getElementById(
+        "mediaGrid"
       );
 
-    }
-  );
+
+    const items = [];
 
 
-  const editStories =
-    document.getElementById(
-      "editStories"
-    );
+    if (
+      wedding.cover &&
+      wedding.cover.assetId
+    ) {
 
-  story.forEach(
-    item => {
-
-      addEditStory(
-        item
-      );
-
-    }
-  );
-
-
-  const editGift =
-    document.getElementById(
-      "editGift"
-    );
-
-  gift.forEach(
-    item => {
-
-      addEditGift(
-        item
-      );
+      items.push({
+        ...wedding.cover,
+        label:
+          "Cover"
+      });
 
     }
-  );
 
 
-  window.editGalleryImages =
-    gallery.map(
-      item => ({
-        data:
-          item.data,
+    if (
+      wedding.groom &&
+      wedding.groom.photo &&
+      wedding.groom.photo.assetId
+    ) {
 
+      items.push({
+        ...wedding.groom.photo,
+        label:
+          "Mempelai Pria"
+      });
+
+    }
+
+
+    if (
+      wedding.bride &&
+      wedding.bride.photo &&
+      wedding.bride.photo.assetId
+    ) {
+
+      items.push({
+        ...wedding.bride.photo,
+        label:
+          "Mempelai Wanita"
+      });
+
+    }
+
+
+    if (
+      wedding.music &&
+      wedding.music.assetId
+    ) {
+
+      items.push({
+        assetId:
+          wedding.music.assetId,
+        filename:
+          wedding.music.title,
         mime:
-          item.mime,
-
-        caption:
-          item.caption || ""
-      })
-    );
-
-
-  renderEditGallery();
-
-
-  document
-    .getElementById(
-      "editGalleryFiles"
-    )
-    .addEventListener(
-      "change",
-      async event => {
-
-        const files =
-          Array.from(
-            event.target.files
-          );
-
-        for (
-          const file of files
-        ) {
-
-          try {
-
-            const image =
-              await readAndCompressImage(
-                file
-              );
-
-            if (
-              window
-                .editGalleryImages
-                .length <
-              MAX_GALLERY
-            ) {
-
-              window
-                .editGalleryImages
-                .push(
-                  image
-                );
-
-            }
-
-          } catch (error) {
-
-            showMessage(
-              error.message,
-              "warning"
-            );
-
-          }
-
-        }
-
-        renderEditGallery();
-
-        event.target.value =
-          "";
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "editWeddingForm"
-    )
-    .addEventListener(
-      "submit",
-      event => {
-
-        event.preventDefault();
-
-        submitEditWedding(
-          wedding
-        );
-
-      }
-    );
-
-
-  modal.classList.add(
-    "open"
-  );
-
-}
-
-
-function closeEditModal() {
-
-  document
-    .getElementById(
-      "editModal"
-    )
-    .classList.remove(
-      "open"
-    );
-
-  editSlug = null;
-
-}
-
-
-function addEditEvent(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editEvents"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Event
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <div class="form-grid">
-
-      <input
-        class="event-type"
-        placeholder="Type"
-        value="${escapeHtml(data.type || "")}"
-      >
-
-      <input
-        class="event-title"
-        placeholder="Title"
-        value="${escapeHtml(data.title || "")}"
-      >
-
-      <input
-        class="event-date"
-        type="date"
-        value="${escapeHtml(data.date || "")}"
-      >
-
-      <input
-        class="event-start"
-        type="time"
-        value="${escapeHtml(data.startTime || "")}"
-      >
-
-      <input
-        class="event-end"
-        type="time"
-        value="${escapeHtml(data.endTime || "")}"
-      >
-
-      <input
-        class="event-venue"
-        placeholder="Venue"
-        value="${escapeHtml(data.venue || "")}"
-      >
-
-      <input
-        class="event-address"
-        placeholder="Address"
-        value="${escapeHtml(data.address || "")}"
-      >
-
-      <input
-        class="event-maps"
-        placeholder="Google Maps URL"
-        value="${escapeHtml(data.mapsUrl || "")}"
-      >
-
-      <textarea
-        class="event-description"
-        placeholder="Description"
-      >${escapeHtml(data.description || "")}</textarea>
-
-    </div>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function addEditStory(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editStories"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Story
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <input
-      class="story-date"
-      placeholder="Date / Year"
-      value="${escapeHtml(data.date || "")}"
-    >
-
-    <input
-      class="story-title"
-      placeholder="Title"
-      value="${escapeHtml(data.title || "")}"
-      style="margin-top:8px"
-    >
-
-    <textarea
-      class="story-description"
-      placeholder="Description"
-      style="margin-top:8px"
-    >${escapeHtml(data.description || "")}</textarea>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function addEditGift(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editGift"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Gift
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <input
-      class="gift-type"
-      placeholder="Type"
-      value="${escapeHtml(data.type || "bank")}"
-    >
-
-    <input
-      class="gift-bank"
-      placeholder="Bank / Provider"
-      value="${escapeHtml(data.bank || "")}"
-      style="margin-top:8px"
-    >
-
-    <input
-      class="gift-account-name"
-      placeholder="Account Name"
-      value="${escapeHtml(data.accountName || "")}"
-      style="margin-top:8px"
-    >
-
-    <input
-      class="gift-account-number"
-      placeholder="Account Number"
-      value="${escapeHtml(data.accountNumber || "")}"
-      style="margin-top:8px"
-    >
-
-    <textarea
-      class="gift-description"
-      placeholder="Description"
-      style="margin-top:8px"
-    >${escapeHtml(data.description || "")}</textarea>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function renderEditGallery() {
-
-  const container =
-    document.getElementById(
-      "editGallery"
-    );
-
-  container.innerHTML =
-    "";
-
-  (
-    window.editGalleryImages ||
-    []
-  ).forEach(
-    (image, index) => {
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-      item.className =
-        "gallery-item";
-
-      item.innerHTML = `
-
-        <img
-          src="${image.data}"
-          alt="Gallery"
-        >
-
-        <input
-          class="edit-gallery-caption"
-          value="${escapeHtml(image.caption || "")}"
-          placeholder="Caption"
-          style="margin-top:8px"
-        >
-
-        <button
-          type="button"
-          class="danger"
-          style="width:100%;margin-top:8px"
-          onclick="removeEditGallery(${index})"
-        >
-          Hapus
-        </button>
-
-      `;
-
-      item
-        .querySelector(
-          ".edit-gallery-caption"
-        )
-        .addEventListener(
-          "input",
-          event => {
-
-            window
-              .editGalleryImages[
-                index
-              ]
-              .caption =
-              event.target.value;
-
-          }
-        );
-
-      container.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-function removeEditGallery(
-  index
-) {
-
-  window
-    .editGalleryImages
-    .splice(
-      index,
-      1
-    );
-
-  renderEditGallery();
-
-}
-
-
-/* =========================================================
-   SUBMIT EDIT
-========================================================= */
-
-async function submitEditWedding(
-  originalWedding
-) {
-
-  let bridePhoto =
-    originalWedding.bride?.photo ||
-    null;
-
-  let groomPhoto =
-    originalWedding.groom?.photo ||
-    null;
-
-  let coverImage =
-    originalWedding.coverImage ||
-    null;
-
-
-  try {
-
-    const brideFile =
-      document.getElementById(
-        "editBridePhoto"
-      ).files[0];
-
-    if (brideFile) {
-
-      bridePhoto =
-        await readAndCompressImage(
-          brideFile
-        );
+          "audio/mpeg",
+        url:
+          wedding.music.url,
+        label:
+          "Music"
+      });
 
     }
 
 
-    const groomFile =
-      document.getElementById(
-        "editGroomPhoto"
-      ).files[0];
+    if (
+      Array.isArray(
+        wedding.gallery
+      )
+    ) {
 
-    if (groomFile) {
+      wedding.gallery.forEach(
+        item => {
 
-      groomPhoto =
-        await readAndCompressImage(
-          groomFile
-        );
+          items.push({
+            ...item,
+            label:
+              "Gallery"
+          });
 
-    }
-
-
-    const coverFile =
-      document.getElementById(
-        "editCoverPhoto"
-      ).files[0];
-
-    if (coverFile) {
-
-      coverImage =
-        await readAndCompressImage(
-          coverFile
-        );
-
-    }
-
-
-    const events =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editEvents .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            type:
-              element.querySelector(
-                ".event-type"
-              ).value,
-
-            title:
-              element.querySelector(
-                ".event-title"
-              ).value,
-
-            date:
-              element.querySelector(
-                ".event-date"
-              ).value,
-
-            startTime:
-              element.querySelector(
-                ".event-start"
-              ).value,
-
-            endTime:
-              element.querySelector(
-                ".event-end"
-              ).value,
-
-            venue:
-              element.querySelector(
-                ".event-venue"
-              ).value,
-
-            address:
-              element.querySelector(
-                ".event-address"
-              ).value,
-
-            mapsUrl:
-              element.querySelector(
-                ".event-maps"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".event-description"
-              ).value
-          })
-        );
-
-
-    const story =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editStories .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            date:
-              element.querySelector(
-                ".story-date"
-              ).value,
-
-            title:
-              element.querySelector(
-                ".story-title"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".story-description"
-              ).value
-          })
-        );
-
-
-    const gift =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editGift .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            type:
-              element.querySelector(
-                ".gift-type"
-              ).value,
-
-            bank:
-              element.querySelector(
-                ".gift-bank"
-              ).value,
-
-            accountName:
-              element.querySelector(
-                ".gift-account-name"
-              ).value,
-
-            accountNumber:
-              element.querySelector(
-                ".gift-account-number"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".gift-description"
-              ).value
-          })
-        );
-
-
-    const payload = {
-
-      slug:
-        document.getElementById(
-          "editSlug"
-        ).value,
-
-      status:
-        document.getElementById(
-          "editStatus"
-        ).value,
-
-      brideName:
-        document.getElementById(
-          "editBrideName"
-        ).value,
-
-      brideFullName:
-        document.getElementById(
-          "editBrideFullName"
-        ).value,
-
-      bridePhoto,
-
-      groomName:
-        document.getElementById(
-          "editGroomName"
-        ).value,
-
-      groomFullName:
-        document.getElementById(
-          "editGroomFullName"
-        ).value,
-
-      groomPhoto,
-
-      coverImage,
-
-      quote:
-        document.getElementById(
-          "editQuote"
-        ).value,
-
-      description:
-        document.getElementById(
-          "editDescription"
-        ).value,
-
-      date:
-        document.getElementById(
-          "editDate"
-        ).value,
-
-      timezone:
-        document.getElementById(
-          "editTimezone"
-        ).value,
-
-      events,
-
-      story,
-
-      gallery:
-        window.editGalleryImages,
-
-      gift,
-
-      musicUrl:
-        document.getElementById(
-          "editMusicUrl"
-        ).value
-    };
-
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(editSlug)}/edit`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          },
-
-          body:
-            JSON.stringify(
-              payload
-            )
         }
       );
 
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal update wedding."
-      );
-
     }
 
 
-    showMessage(
-      result.message
-    );
+    if (!items.length) {
 
-    closeEditModal();
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      800
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   PUBLISH / UNPUBLISH
-========================================================= */
-
-async function changePublish(
-  slug,
-  action
-) {
-
-  const confirmation =
-    action ===
-    "publish"
-      ? "Publish wedding ini?"
-      : "Unpublish wedding ini?";
-
-  if (
-    !confirm(
-      confirmation
-    )
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/${action}`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          }
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal mengubah status."
-      );
-
-    }
-
-
-    showMessage(
-      result.message
-    );
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      700
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-async function deleteWedding(
-  slug
-) {
-
-  if (
-    !confirm(
-      "PERINGATAN: Wedding, gallery Base64 dan RSVP akan dihapus. Lanjutkan?"
-    )
-  ) {
-    return;
-  }
-
-
-  if (
-    !confirm(
-      "Konfirmasi sekali lagi: hapus wedding ini?"
-    )
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/delete`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          }
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal menghapus."
-      );
-
-    }
-
-
-    showMessage(
-      result.message
-    );
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      700
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   RSVP
-========================================================= */
-
-async function showRsvp(
-  slug
-) {
-
-  const modal =
-    document.getElementById(
-      "rsvpModal"
-    );
-
-  const content =
-    document.getElementById(
-      "rsvpContent"
-    );
-
-
-  modal.classList.add(
-    "open"
-  );
-
-
-  content.innerHTML =
-    "<p>Loading...</p>";
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/rsvp`
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal mengambil RSVP."
-      );
-
-    }
-
-
-    if (
-      !result.rsvps.length
-    ) {
-
-      content.innerHTML = `
-        <div class="notice">
-          Belum ada RSVP.
-        </div>
-      `;
+      container.innerHTML =
+        '<div class="empty">Belum ada media.</div>';
 
       return;
 
     }
 
 
-    const rows =
-      result.rsvps
+    container.innerHTML =
+      items
         .map(
-          item => `
-            <tr>
+          item => {
 
-              <td>
-                ${escapeHtml(item.name)}
-              </td>
+            const isAudio =
+              item.mime &&
+              item.mime.startsWith(
+                "audio/"
+              );
 
-              <td>
-                ${escapeHtml(item.attendance)}
-              </td>
 
-              <td>
-                ${escapeHtml(item.guestCount)}
-              </td>
+            return `
+              <article class="media-card">
 
-              <td style="white-space:normal">
-                ${escapeHtml(item.message || "-")}
-              </td>
+                <div class="media-preview">
 
-              <td>
-                ${escapeHtml(item.createdAt)}
-              </td>
+                  ${
+                    isAudio
+                      ? `
+                        <audio
+                          controls
+                          style="width:90%;"
+                          src="${escapeHTML(
+                            item.url || ""
+                          )}"
+                        ></audio>
+                      `
+                      : `
+                        <img
+                          src="${escapeHTML(
+                            item.url || ""
+                          )}"
+                          alt="${escapeHTML(
+                            item.label || ""
+                          )}"
+                        >
+                      `
+                  }
 
-            </tr>
-          `
+                </div>
+
+
+                <div class="media-info">
+
+                  <strong>
+                    ${escapeHTML(
+                      item.label || ""
+                    )}
+                  </strong>
+
+                  <small>
+                    ${escapeHTML(
+                      item.filename || ""
+                    )}
+                  </small>
+
+
+                  <div class="media-actions">
+
+                    <button
+                      class="button danger"
+                      type="button"
+                      onclick="deleteMedia('${escapeHTML(
+                        item.assetId
+                      )}')"
+                    >
+                      Hapus
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </article>
+            `;
+
+          }
         )
         .join("");
 
-
-    content.innerHTML = `
-
-      <div class="summary-grid">
-
-        <div class="summary-card">
-
-          <small>
-            Total
-          </small>
-
-          <strong>
-            ${result.total}
-          </strong>
-
-        </div>
-
-      </div>
+  }
 
 
-      <div class="rsvp-table-wrapper">
+  function escapeHTML(
+    value
+  ) {
 
-        <table>
+    return String(
+      value || ""
+    )
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  async function deleteMedia(
+    assetId
+  ) {
+
+    if (
+      !confirm(
+        "Hapus media ini?"
+      )
+    ) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        `/api/assets/${encodeURIComponent(
+          assetId
+        )}`,
+        {
+          method:
+            "DELETE"
+        }
+      );
+
+
+      const wedding =
+        state.currentWedding;
+
+
+      if (
+        wedding.cover &&
+        wedding.cover.assetId ===
+          assetId
+      ) {
+
+        wedding.cover =
+          null;
+
+      }
+
+
+      if (
+        wedding.groom &&
+        wedding.groom.photo &&
+        wedding.groom.photo.assetId ===
+          assetId
+      ) {
+
+        wedding.groom.photo =
+          null;
+
+      }
+
+
+      if (
+        wedding.bride &&
+        wedding.bride.photo &&
+        wedding.bride.photo.assetId ===
+          assetId
+      ) {
+
+        wedding.bride.photo =
+          null;
+
+      }
+
+
+      if (
+        wedding.music &&
+        wedding.music.assetId ===
+          assetId
+      ) {
+
+        wedding.music.assetId =
+          null;
+
+        wedding.music.url =
+          null;
+
+      }
+
+
+      wedding.gallery =
+        (
+          wedding.gallery ||
+          []
+        ).filter(
+          item =>
+            item.assetId !==
+            assetId
+        );
+
+
+      await saveWedding();
+
+      renderMedia(
+        wedding
+      );
+
+      showAlert(
+        "Media berhasil dihapus.",
+        "success"
+      );
+
+    } catch (error) {
+
+      showAlert(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  function renderRSVP(
+    rsvps
+  ) {
+
+    const container =
+      document.getElementById(
+        "rsvpContainer"
+      );
+
+
+    if (
+      !rsvps ||
+      !rsvps.length
+    ) {
+
+      container.innerHTML =
+        '<div class="empty">Belum ada RSVP.</div>';
+
+      return;
+
+    }
+
+
+    container.innerHTML = `
+
+      <div style="overflow:auto;">
+
+        <table class="rsvp-table">
 
           <thead>
 
@@ -4223,7 +3233,7 @@ async function showRsvp(
               </th>
 
               <th>
-                Tamu
+                Jumlah Tamu
               </th>
 
               <th>
@@ -4239,7 +3249,47 @@ async function showRsvp(
           </thead>
 
           <tbody>
-            ${rows}
+
+            ${rsvps.map(
+              item => `
+
+                <tr>
+
+                  <td>
+                    ${escapeHTML(
+                      item.name
+                    )}
+                  </td>
+
+                  <td>
+                    ${escapeHTML(
+                      item.attendance
+                    )}
+                  </td>
+
+                  <td>
+                    ${escapeHTML(
+                      item.guestCount
+                    )}
+                  </td>
+
+                  <td>
+                    ${escapeHTML(
+                      item.message
+                    )}
+                  </td>
+
+                  <td>
+                    ${escapeHTML(
+                      item.createdAt
+                    )}
+                  </td>
+
+                </tr>
+
+              `
+            ).join("")}
+
           </tbody>
 
         </table>
@@ -4248,89 +3298,158 @@ async function showRsvp(
 
     `;
 
+  }
 
-  } catch (error) {
 
-    content.innerHTML = `
-      <div class="notice warning">
-        ${escapeHtml(
-          error.message
-        )}
-      </div>
-    `;
+  async function deleteCurrentWedding() {
+
+    if (
+      !state.currentSlug
+    ) {
+
+      showAlert(
+        "Belum ada wedding yang dipilih."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !confirm(
+        `Hapus wedding "${state.currentSlug}" beserta RSVP dan media?`
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    try {
+
+      await api(
+        `/api/weddings/${encodeURIComponent(
+          state.currentSlug
+        )}`,
+        {
+          method:
+            "DELETE"
+        }
+      );
+
+
+      newWedding();
+
+      await refreshSelector();
+
+      showAlert(
+        "Wedding berhasil dihapus.",
+        "success"
+      );
+
+    } catch (error) {
+
+      showAlert(
+        error.message
+      );
+
+    }
 
   }
 
-}
+
+  function previewWedding() {
+
+    if (
+      !state.currentSlug
+    ) {
+
+      showAlert(
+        "Simpan wedding terlebih dahulu."
+      );
+
+      return;
+
+    }
 
 
-function closeRsvpModal() {
-
-  document
-    .getElementById(
-      "rsvpModal"
-    )
-    .classList.remove(
-      "open"
+    window.open(
+      `/${encodeURIComponent(
+        state.currentSlug
+      )}`,
+      "_blank"
     );
 
-}
+  }
 
 
-/* =========================================================
-   INITIAL SAMPLE ROWS
-========================================================= */
-
-addEvent();
-
-addStory();
-
-addGift();
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-document
-  .getElementById(
-    "resetFormBtn"
-  )
-  .addEventListener(
-    "click",
+  selector.addEventListener(
+    "change",
     () => {
 
-      eventsContainer.innerHTML =
-        "";
+      if (
+        selector.value
+      ) {
 
-      storyContainer.innerHTML =
-        "";
+        loadWedding(
+          selector.value
+        );
 
-      giftContainer.innerHTML =
-        "";
+      } else {
 
-      galleryImages =
-        [];
+        newWedding();
 
-      renderGallery();
-
-      groomPhoto =
-        null;
-
-      bridePhoto =
-        null;
-
-      coverImage =
-        null;
-
-      addEvent();
-
-      addStory();
-
-      addGift();
+      }
 
     }
   );
+
+
+  document
+    .getElementById(
+      "loadWeddingButton"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        if (
+          selector.value
+        ) {
+
+          loadWedding(
+            selector.value
+          );
+
+        } else {
+
+          newWedding();
+
+        }
+
+      }
+    );
+
+
+  /*
+   * Initial state:
+   * jika wedding pertama tersedia,
+   * otomatis load wedding tersebut.
+   */
+
+  <% if (weddings.length) { %>
+
+    loadWedding(
+      "<%= weddings[0].slug %>"
+    );
+
+  <% } else { %>
+
+    newWedding();
+
+  <% } %>
 
 </script>
 
