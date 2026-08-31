@@ -1,3319 +1,518 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
-  >
-
-  <meta
-    name="theme-color"
-    content="<%= wedding.theme?.background || '#f7f2eb' %>"
-  >
-
-  <title>
-    <%= wedding.bride?.name || '' %>
-    &
-    <%= wedding.groom?.name || '' %>
-    — LOVEFOREVER
-  </title>
-
-
-  <meta
-    name="description"
-    content="<%= wedding.opening?.text || 'Wedding Invitation' %>"
-  >
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="<%= wedding.theme?.background || '#f7f2eb' %>">
+  <title><%= wedding.bride?.name || '' %> & <%= wedding.groom?.name || '' %> — LOVEFOREVER</title>
+  <meta name="description" content="<%= wedding.opening?.text || 'Wedding Invitation' %>">
   <style>
-
-    @import url(
-      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap'
-    );
-
-
-    * {
-      box-sizing: border-box;
-    }
-
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-
-    body {
-
-      margin:
-        0;
-
-      background:
-        <%= wedding.theme?.background || '#f7f2eb' %>;
-
-      color:
-        <%= wedding.theme?.text || '#2e2925' %>;
-
-      font-family:
-        Inter,
-        Arial,
-        sans-serif;
-
-      overflow-x:
-        hidden;
-
-    }
-
-
-    body.locked {
-      overflow:
-        hidden;
-    }
-
-
-    button,
-    input,
-    textarea,
-    select {
-      font:
-        inherit;
-    }
-
-
-    img {
-      max-width:
-        100%;
-    }
-
-
-    .serif {
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-    }
-
-
-    /* ========================================================
-       COVER
-    ======================================================== */
-
-    .cover {
-
-      position:
-        fixed;
-
-      inset:
-        0;
-
-      z-index:
-        9999;
-
-      display:
-        flex;
-
-      align-items:
-        center;
-
-      justify-content:
-        center;
-
-      min-height:
-        100svh;
-
-      padding:
-        30px;
-
-      text-align:
-        center;
-
-      background:
-        <%= wedding.theme?.background || '#f7f2eb' %>;
-
-      transition:
-        opacity .9s ease,
-        visibility .9s ease,
-        transform .9s ease;
-
-    }
-
-
-    .cover.opened {
-
-      opacity:
-        0;
-
-      visibility:
-        hidden;
-
-      pointer-events:
-        none;
-
-      transform:
-        scale(1.03);
-
-    }
-
-
-    .cover-inner {
-
-      width:
-        min(
-          100%,
-          720px
-        );
-
-      animation:
-        coverIn 1.2s
-        ease both;
-
-    }
-
-
-    @keyframes coverIn {
-
-      from {
-        opacity: 0;
-        transform:
-          translateY(25px);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateY(0);
-      }
-
-    }
-
-
-    .cover-eyebrow {
-
-      letter-spacing:
-        .45em;
-
-      font-size:
-        10px;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      margin-bottom:
-        25px;
-
-    }
-
-
-    .cover-title {
-
-      margin:
-        0;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        clamp(
-          56px,
-          11vw,
-          110px
-        );
-
-      line-height:
-        .85;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .cover-subtitle {
-
-      margin:
-        25px 0;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      font-size:
-        14px;
-
-      line-height:
-        1.8;
-
-    }
-
-
-    .guest {
-
-      margin:
-        15px auto 30px;
-
-      padding:
-        20px;
-
-      max-width:
-        500px;
-
-      border-top:
-        1px solid
-        rgba(
-          120,
-          110,
-          100,
-          .25
-        );
-
-      border-bottom:
-        1px solid
-        rgba(
-          120,
-          110,
-          100,
-          .25
-        );
-
-    }
-
-
-    .guest small {
-
-      display:
-        block;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      margin-bottom:
-        8px;
-
-    }
-
-
-    .guest strong {
-
-      display:
-        block;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        30px;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .open-button {
-
-      border:
-        0;
-
-      padding:
-        15px 28px;
-
-      border-radius:
-        999px;
-
-      background:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      color:
-        white;
-
-      font-weight:
-        700;
-
-      letter-spacing:
-        .08em;
-
-      cursor:
-        pointer;
-
-      box-shadow:
-        0 15px 30px
-        rgba(
-          70,
-          55,
-          45,
-          .15
-        );
-
-    }
-
-
-    /* ========================================================
-       MAIN
-    ======================================================== */
-
-    .page {
-
-      width:
-        min(
-          100%,
-          1200px
-        );
-
-      margin:
-        auto;
-
-      padding:
-        0 22px 130px;
-
-    }
-
-
-    section {
-
-      scroll-margin-top:
-        40px;
-
-    }
-
-
-    .section {
-
-      min-height:
-        60vh;
-
-      padding:
-        120px 0;
-
-      display:
-        flex;
-
-      align-items:
-        center;
-
-      justify-content:
-        center;
-
-    }
-
-
-    .section-inner {
-
-      width:
-        min(
-          100%,
-          950px
-        );
-
-      text-align:
-        center;
-
-    }
-
-
-    .section-eyebrow {
-
-      letter-spacing:
-        .45em;
-
-      font-size:
-        10px;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      margin-bottom:
-        18px;
-
-    }
-
-
-    .section-title {
-
-      margin:
-        0;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        clamp(
-          40px,
-          7vw,
-          75px
-        );
-
-      line-height:
-        1;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .section-text {
-
-      max-width:
-        700px;
-
-      margin:
-        25px auto 0;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      line-height:
-        1.9;
-
-    }
-
-
-    /* ========================================================
-       OPENING
-    ======================================================== */
-
-    #opening {
-
-      min-height:
-        100svh;
-
-    }
-
-
-    .opening-title {
-
-      margin:
-        0;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        clamp(
-          42px,
-          8vw,
-          88px
-        );
-
-      font-weight:
-        500;
-
-    }
-
-
-    /* ========================================================
-       COUPLE
-    ======================================================== */
-
-    .couple-grid {
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          2,
-          minmax(
-            0,
-            1fr
-          )
-        );
-
-      gap:
-        90px;
-
-      margin-top:
-        70px;
-
-    }
-
-
-    .person {
-
-      text-align:
-        center;
-
-    }
-
-
-    .person-photo {
-
-      width:
-        min(
-          330px,
-          70vw
-        );
-
-      aspect-ratio:
-        1;
-
-      margin:
-        0 auto 30px;
-
-      border-radius:
-        50%;
-
-      overflow:
-        hidden;
-
-      background:
-        #ded8d0;
-
-      box-shadow:
-        0 30px 70px
-        rgba(
-          50,
-          40,
-          30,
-          .12
-        );
-
-    }
-
-
-    .person-photo img {
-
-      width:
-        100%;
-
-      height:
-        100%;
-
-      object-fit:
-        cover;
-
-    }
-
-
-    .person-name {
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        40px;
-
-      font-weight:
-        500;
-
-      margin:
-        0 0 8px;
-
-    }
-
-
-    .person-fullname {
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      line-height:
-        1.6;
-
-    }
-
-
-    /* ========================================================
-       COUNTDOWN
-    ======================================================== */
-
-    .countdown {
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          4,
-          minmax(
-            0,
-            1fr
-          )
-        );
-
-      gap:
-        15px;
-
-      max-width:
-        760px;
-
-      margin:
-        50px auto 0;
-
-    }
-
-
-    .count-item {
-
-      padding:
-        25px 10px;
-
-      border-top:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .25
-        );
-
-      border-bottom:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .25
-        );
-
-    }
-
-
-    .count-item strong {
-
-      display:
-        block;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        50px;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .count-item span {
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      font-size:
-        10px;
-
-      letter-spacing:
-        .25em;
-
-    }
-
-
-    /* ========================================================
-       STORY
-    ======================================================== */
-
-    .story-list {
-
-      max-width:
-        800px;
-
-      margin:
-        70px auto 0;
-
-      text-align:
-        left;
-
-    }
-
-
-    .story-item {
-
-      position:
-        relative;
-
-      padding:
-        0 0 50px 35px;
-
-      border-left:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .25
-        );
-
-    }
-
-
-    .story-item::before {
-
-      content:
-        "";
-
-      position:
-        absolute;
-
-      left:
-        -5px;
-
-      top:
-        0;
-
-      width:
-        9px;
-
-      height:
-        9px;
-
-      border-radius:
-        50%;
-
-      background:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-    }
-
-
-    .story-year {
-
-      color:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      font-size:
-        11px;
-
-      letter-spacing:
-        .2em;
-
-      margin-bottom:
-        10px;
-
-    }
-
-
-    .story-title {
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        34px;
-
-      margin:
-        0 0 10px;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .story-text {
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      line-height:
-        1.8;
-
-    }
-
-
-    /* ========================================================
-       EVENTS
-    ======================================================== */
-
-    .event-grid {
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          2,
-          minmax(
-            0,
-            1fr
-          )
-        );
-
-      gap:
-        25px;
-
-      margin-top:
-        60px;
-
-    }
-
-
-    .event-card {
-
-      padding:
-        40px 25px;
-
-      border:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .18
-        );
-
-      background:
-        rgba(
-          255,
-          255,
-          255,
-          .25
-        );
-
-    }
-
-
-    .event-card h3 {
-
-      margin:
-        0 0 20px;
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        38px;
-
-      font-weight:
-        500;
-
-    }
-
-
-    .event-card p {
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      line-height:
-        1.8;
-
-    }
-
-
-    .map-link {
-
-      display:
-        inline-flex;
-
-      margin-top:
-        10px;
-
-      color:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      text-decoration:
-        none;
-
-      font-weight:
-        700;
-
-    }
-
-
-    /* ========================================================
-       GALLERY
-    ======================================================== */
-
-    .gallery {
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          3,
-          minmax(
-            0,
-            1fr
-          )
-        );
-
-      gap:
-        12px;
-
-      margin-top:
-        60px;
-
-    }
-
-
-    .gallery-item {
-
-      aspect-ratio:
-        1;
-
-      overflow:
-        hidden;
-
-      background:
-        #ddd5cc;
-
-      cursor:
-        pointer;
-
-    }
-
-
-    .gallery-item img {
-
-      width:
-        100%;
-
-      height:
-        100%;
-
-      object-fit:
-        cover;
-
-      transition:
-        transform .5s ease;
-
-    }
-
-
-    .gallery-item:hover img {
-
-      transform:
-        scale(1.04);
-
-    }
-
-
-    /* ========================================================
-       GIFT
-    ======================================================== */
-
-    .gift-card {
-
-      max-width:
-        600px;
-
-      margin:
-        50px auto 0;
-
-      padding:
-        45px 25px;
-
-      border:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .18
-        );
-
-    }
-
-
-    .gift-bank {
-
-      font-family:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-      font-size:
-        38px;
-
-    }
-
-
-    .account-number {
-
-      font-size:
-        24px;
-
-      letter-spacing:
-        .08em;
-
-      margin:
-        15px 0;
-
-    }
-
-
-    .copy-button {
-
-      border:
-        0;
-
-      border-radius:
-        999px;
-
-      padding:
-        12px 22px;
-
-      background:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      color:
-        white;
-
-      cursor:
-        pointer;
-
-    }
-
-
-    /* ========================================================
-       RSVP
-    ======================================================== */
-
-    .rsvp-form {
-
-      max-width:
-        600px;
-
-      margin:
-        50px auto 0;
-
-      text-align:
-        left;
-
-    }
-
-
-    .form-group {
-
-      margin-bottom:
-        18px;
-
-    }
-
-
-    .form-group label {
-
-      display:
-        block;
-
-      margin-bottom:
-        7px;
-
-      font-size:
-        13px;
-
-      font-weight:
-        700;
-
-    }
-
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-
-      width:
-        100%;
-
-      border:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .25
-        );
-
-      background:
-        rgba(
-          255,
-          255,
-          255,
-          .35
-        );
-
-      padding:
-        14px;
-
-      border-radius:
-        12px;
-
-      outline:
-        none;
-
-    }
-
-
-    .submit-rsvp {
-
-      width:
-        100%;
-
-      padding:
-        15px;
-
-      border:
-        0;
-
-      border-radius:
-        999px;
-
-      background:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      color:
-        white;
-
-      font-weight:
-        700;
-
-      cursor:
-        pointer;
-
-    }
-
-
-    .rsvp-message {
-
-      margin-top:
-        15px;
-
-      padding:
-        15px;
-
-      border-radius:
-        12px;
-
-      display:
-        none;
-
-    }
-
-
-    /* ========================================================
-       BOTTOM NAVIGATION
-    ======================================================== */
-
-    .bottom-nav {
-
-      position:
-        fixed;
-
-      z-index:
-        500;
-
-      left:
-        50%;
-
-      bottom:
-        max(
-          12px,
-          env(
-            safe-area-inset-bottom
-          )
-        );
-
-      transform:
-        translateX(-50%);
-
-      width:
-        min(
-          calc(100% - 20px),
-          720px
-        );
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          6,
-          1fr
-        );
-
-      gap:
-        3px;
-
-      padding:
-        8px;
-
-      border:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .15
-        );
-
-      border-radius:
-        999px;
-
-      background:
-        rgba(
-          255,
-          253,
-          249,
-          .88
-        );
-
-      box-shadow:
-        0 20px 60px
-        rgba(
-          40,
-          30,
-          20,
-          .15
-        );
-
-      backdrop-filter:
-        blur(18px);
-
-    }
-
-
-    .bottom-nav a {
-
-      display:
-        flex;
-
-      flex-direction:
-        column;
-
-      align-items:
-        center;
-
-      justify-content:
-        center;
-
-      min-height:
-        48px;
-
-      border-radius:
-        999px;
-
-      color:
-        <%= wedding.theme?.muted || '#8c837b' %>;
-
-      text-decoration:
-        none;
-
-      font-size:
-        9px;
-
-      gap:
-        4px;
-
-    }
-
-
-    .bottom-nav a span:first-child {
-
-      font-size:
-        17px;
-
-    }
-
-
-    .bottom-nav a.active {
-
-      color:
-        <%= wedding.theme?.accent || '#7c6b5d' %>;
-
-      background:
-        rgba(
-          120,
-          100,
-          80,
-          .09
-        );
-
-    }
-
-
-    /* ========================================================
-       MUSIC
-    ======================================================== */
-
-    .music-button {
-
-      position:
-        fixed;
-
-      z-index:
-        600;
-
-      top:
-        18px;
-
-      right:
-        18px;
-
-      width:
-        46px;
-
-      height:
-        46px;
-
-      border:
-        1px solid
-        rgba(
-          100,
-          90,
-          80,
-          .15
-        );
-
-      border-radius:
-        50%;
-
-      background:
-        rgba(
-          255,
-          253,
-          249,
-          .88
-        );
-
-      backdrop-filter:
-        blur(12px);
-
-      cursor:
-        pointer;
-
-    }
-
-
-    /* ========================================================
-       LIGHTBOX
-    ======================================================== */
-
-    .lightbox {
-
-      position:
-        fixed;
-
-      inset:
-        0;
-
-      z-index:
-        10000;
-
-      display:
-        none;
-
-      align-items:
-        center;
-
-      justify-content:
-        center;
-
-      padding:
-        20px;
-
-      background:
-        rgba(
-          20,
-          16,
-          13,
-          .9
-        );
-
-    }
-
-
-    .lightbox.open {
-      display:
-        flex;
-    }
-
-
-    .lightbox img {
-
-      max-width:
-        95vw;
-
-      max-height:
-        90vh;
-
-      object-fit:
-        contain;
-
-    }
-
-
-    .lightbox button {
-
-      position:
-        absolute;
-
-      top:
-        20px;
-
-      right:
-        20px;
-
-      border:
-        0;
-
-      background:
-        transparent;
-
-      color:
-        white;
-
-      font-size:
-        35px;
-
-      cursor:
-        pointer;
-
-    }
-
-
-    /* ========================================================
-       RESPONSIVE
-    ======================================================== */
-
-    @media (
-      max-width: 800px
-    ) {
-
-      .section {
-        padding:
-          90px 0;
-      }
-
-
-      .couple-grid,
-      .event-grid {
-        grid-template-columns:
-          1fr;
-
-        gap:
-          55px;
-      }
-
-
-      .gallery {
-        grid-template-columns:
-          repeat(
-            2,
-            minmax(
-              0,
-              1fr
-            )
-          );
-      }
-
-    }
-
-
-    @media (
-      max-width: 500px
-    ) {
-
-      .page {
-        padding:
-          0 15px 120px;
-      }
-
-
-      .cover {
-        padding:
-          20px;
-      }
-
-
-      .cover-title {
-        font-size:
-          clamp(
-            54px,
-            18vw,
-            82px
-          );
-      }
-
-
-      .guest strong {
-        font-size:
-          25px;
-      }
-
-
-      .countdown {
-        gap:
-          7px;
-      }
-
-
-      .count-item {
-        padding:
-          18px 4px;
-      }
-
-
-      .count-item strong {
-        font-size:
-          34px;
-      }
-
-
-      .count-item span {
-        font-size:
-          8px;
-          letter-spacing:
-          .12em;
-      }
-
-
-      .person-name {
-        font-size:
-          34px;
-      }
-
-
-      .gallery {
-        gap:
-          8px;
-      }
-
-
-      .bottom-nav {
-        width:
-          calc(
-            100% - 14px
-          );
-      }
-
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: <%= wedding.theme?.background || '#f7f2eb' %>; color: <%= wedding.theme?.text || '#2e2925' %>; font-family: Inter, Arial, sans-serif; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+    button, input, textarea, select { font: inherit; }
+    img { max-width: 100%; }
+    .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+
+    .cover { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; min-height: 100svh; padding: 30px; text-align: center; background: <%= wedding.theme?.background || '#f7f2eb' %>; transition: opacity .9s ease, visibility .9s ease, transform .9s ease; }
+    .cover.opened { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(1.03); }
+    .cover-inner { width: min(100%, 720px); animation: coverIn 1.2s ease both; }
+    @keyframes coverIn { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+    .cover-eyebrow { letter-spacing: .45em; font-size: 10px; color: <%= wedding.theme?.muted || '#8c837b' %>; margin-bottom: 25px; }
+    .cover-title { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(56px, 11vw, 110px); line-height: .85; font-weight: 500; }
+    .cover-subtitle { margin: 25px 0; color: <%= wedding.theme?.muted || '#8c837b' %>; font-size: 14px; line-height: 1.8; }
+    .guest { margin: 15px auto 30px; padding: 20px; max-width: 500px; border-top: 1px solid rgba(120, 110, 100, .25); border-bottom: 1px solid rgba(120, 110, 100, .25); }
+    .guest small { display: block; color: <%= wedding.theme?.muted || '#8c837b' %>; margin-bottom: 8px; }
+    .guest strong { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 30px; font-weight: 500; }
+    .open-button { border: 0; padding: 15px 28px; border-radius: 999px; background: <%= wedding.theme?.accent || '#7c6b5d' %>; color: white; font-weight: 700; letter-spacing: .08em; cursor: pointer; box-shadow: 0 15px 30px rgba(70, 55, 45, .15); }
+
+    .page { width: min(100%, 1200px); margin: auto; padding: 0 22px 130px; }
+    section { scroll-margin-top: 40px; }
+    .section { min-height: 60vh; padding: 120px 0; display: flex; align-items: center; justify-content: center; }
+    .section-inner { width: min(100%, 950px); text-align: center; }
+    .section-eyebrow { letter-spacing: .45em; font-size: 10px; color: <%= wedding.theme?.muted || '#8c837b' %>; margin-bottom: 18px; }
+    .section-title { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(40px, 7vw, 75px); line-height: 1; font-weight: 500; }
+    .section-text { max-width: 700px; margin: 25px auto 0; color: <%= wedding.theme?.muted || '#8c837b' %>; line-height: 1.9; }
+
+    #opening { min-height: 100svh; }
+    .opening-title { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(42px, 8vw, 88px); font-weight: 500; }
+
+    .couple-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 90px; margin-top: 70px; }
+    .person { text-align: center; }
+    .person-photo { width: min(330px, 70vw); aspect-ratio: 1; margin: 0 auto 30px; border-radius: 50%; overflow: hidden; background: #ded8d0; box-shadow: 0 30px 70px rgba(50, 40, 30, .12); }
+    .person-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .person-name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 40px; font-weight: 500; margin: 0 0 8px; }
+    .person-fullname { color: <%= wedding.theme?.muted || '#8c837b' %>; line-height: 1.6; }
+
+    .countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; max-width: 760px; margin: 50px auto 0; }
+    .count-item { padding: 25px 10px; border-top: 1px solid rgba(100, 90, 80, .25); border-bottom: 1px solid rgba(100, 90, 80, .25); }
+    .count-item strong { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 50px; font-weight: 500; }
+    .count-item span { color: <%= wedding.theme?.muted || '#8c837b' %>; font-size: 10px; letter-spacing: .25em; }
+
+    .story-list { max-width: 800px; margin: 70px auto 0; text-align: left; }
+    .story-item { position: relative; padding: 0 0 50px 35px; border-left: 1px solid rgba(100, 90, 80, .25); }
+    .story-item::before { content: ""; position: absolute; left: -5px; top: 0; width: 9px; height: 9px; border-radius: 50%; background: <%= wedding.theme?.accent || '#7c6b5d' %>; }
+    .story-year { color: <%= wedding.theme?.accent || '#7c6b5d' %>; font-size: 11px; letter-spacing: .2em; margin-bottom: 10px; }
+    .story-title { font-family: "Cormorant Garamond", Georgia, serif; font-size: 34px; margin: 0 0 10px; font-weight: 500; }
+    .story-text { color: <%= wedding.theme?.muted || '#8c837b' %>; line-height: 1.8; }
+
+    .event-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px; margin-top: 60px; }
+    .event-card { padding: 40px 25px; border: 1px solid rgba(100, 90, 80, .18); background: rgba(255, 255, 255, .25); }
+    .event-card h3 { margin: 0 0 20px; font-family: "Cormorant Garamond", Georgia, serif; font-size: 38px; font-weight: 500; }
+    .event-card p { color: <%= wedding.theme?.muted || '#8c837b' %>; line-height: 1.8; }
+    .map-link { display: inline-flex; margin-top: 10px; color: <%= wedding.theme?.accent || '#7c6b5d' %>; text-decoration: none; font-weight: 700; }
+
+    .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 60px; }
+    .gallery-item { aspect-ratio: 1; overflow: hidden; background: #ddd5cc; cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .gallery-item:hover img { transform: scale(1.04); }
+
+    .gift-card { max-width: 600px; margin: 50px auto 0; padding: 45px 25px; border: 1px solid rgba(100, 90, 80, .18); }
+    .gift-bank { font-family: "Cormorant Garamond", Georgia, serif; font-size: 38px; }
+    .account-number { font-size: 24px; letter-spacing: .08em; margin: 15px 0; }
+    .copy-button { border: 0; border-radius: 999px; padding: 12px 22px; background: <%= wedding.theme?.accent || '#7c6b5d' %>; color: white; cursor: pointer; }
+
+    .rsvp-form { max-width: 600px; margin: 50px auto 0; text-align: left; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 700; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; border: 1px solid rgba(100, 90, 80, .25); background: rgba(255, 255, 255, .35); padding: 14px; border-radius: 12px; outline: none; }
+    .submit-rsvp { width: 100%; padding: 15px; border: 0; border-radius: 999px; background: <%= wedding.theme?.accent || '#7c6b5d' %>; color: white; font-weight: 700; cursor: pointer; }
+    .rsvp-message { margin-top: 15px; padding: 15px; border-radius: 12px; display: none; }
+
+    .bottom-nav { position: fixed; z-index: 500; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(calc(100% - 20px), 720px); display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; padding: 8px; border: 1px solid rgba(100, 90, 80, .15); border-radius: 999px; background: rgba(255, 253, 249, .88); box-shadow: 0 20px 60px rgba(40, 30, 20, .15); backdrop-filter: blur(18px); }
+    .bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px; color: <%= wedding.theme?.muted || '#8c837b' %>; text-decoration: none; font-size: 9px; gap: 4px; }
+    .bottom-nav a span:first-child { font-size: 17px; }
+    .bottom-nav a.active { color: <%= wedding.theme?.accent || '#7c6b5d' %>; background: rgba(120, 100, 80, .09); }
+
+    .music-button { position: fixed; z-index: 600; top: 18px; right: 18px; width: 46px; height: 46px; border: 1px solid rgba(100, 90, 80, .15); border-radius: 50%; background: rgba(255, 253, 249, .88); backdrop-filter: blur(12px); cursor: pointer; }
+
+    .lightbox { position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20, 16, 13, .9); }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 95vw; max-height: 90vh; object-fit: contain; }
+    .lightbox button { position: absolute; top: 20px; right: 20px; border: 0; background: transparent; color: white; font-size: 35px; cursor: pointer; }
+
+    @media (max-width: 800px) {
+      .section { padding: 90px 0; }
+      .couple-grid, .event-grid { grid-template-columns: 1fr; gap: 55px; }
+      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 500px) {
+      .page { padding: 0 15px 120px; }
+      .cover { padding: 20px; }
+      .cover-title { font-size: clamp(54px, 18vw, 82px); }
+      .guest strong { font-size: 25px; }
+      .countdown { gap: 7px; }
+      .count-item { padding: 18px 4px; }
+      .count-item strong { font-size: 34px; }
+      .count-item span { font-size: 8px; letter-spacing: .12em; }
+      .person-name { font-size: 34px; }
+      .gallery { gap: 8px; }
+      .bottom-nav { width: calc(100% - 14px); }
     }
-
   </style>
-
 </head>
-
-
 <body class="locked">
 
-
-<!-- ==========================================================
-     OPENING COVER
-=========================================================== -->
-
-<div
-  id="cover"
-  class="cover"
->
-
+<div id="cover" class="cover">
   <div class="cover-inner">
-
-    <div class="cover-eyebrow">
-
-      <%= wedding.title || 'THE WEDDING OF' %>
-
-    </div>
-
-
+    <div class="cover-eyebrow"><%= wedding.title || 'THE WEDDING OF' %></div>
     <h1 class="cover-title">
-
-      <%= wedding.bride?.name || '' %>
-
-      <br>
-
-      <span style="font-size:.55em;">
-        &
-      </span>
-
-      <br>
-
+      <%= wedding.bride?.name || '' %><br>
+      <span style="font-size:.55em;">&</span><br>
       <%= wedding.groom?.name || '' %>
-
     </h1>
-
-
-    <div class="cover-subtitle">
-
-      <%= wedding.opening?.text || '' %>
-
-    </div>
-
-
+    <div class="cover-subtitle"><%= wedding.opening?.text || '' %></div>
     <div class="guest">
-
-      <small>
-        Kepada Yth.
-      </small>
-
-      <strong>
-        <%= guestName %>
-      </strong>
-
+      <small>Kepada Yth.</small>
+      <strong><%= guestName %></strong>
     </div>
-
-
-    <button
-      id="openInvitation"
-      class="open-button"
-      type="button"
-    >
-
-      <%= wedding.opening?.button ||
-          'BUKA UNDANGAN' %>
-
-    </button>
-
+    <button id="openInvitation" class="open-button" type="button"><%= wedding.opening?.button || 'BUKA UNDANGAN' %></button>
   </div>
-
 </div>
 
-
-<!-- ==========================================================
-     MUSIC
-=========================================================== -->
-
-<% if (
-  wedding.music &&
-  wedding.music.url
-) { %>
-
-  <audio
-    id="weddingMusic"
-    preload="auto"
-    loop
-  >
-
-    <source
-      src="<%= wedding.music.url %>"
-      type="audio/mpeg"
-    >
-
+<% if (wedding.music && wedding.music.url) { %>
+  <audio id="weddingMusic" preload="auto" loop>
+    <source src="<%= wedding.music.url %>" type="audio/mpeg">
   </audio>
-
-
-  <button
-    id="musicButton"
-    class="music-button"
-    type="button"
-    aria-label="Music"
-  >
-    ♪
-  </button>
-
+  <button id="musicButton" class="music-button" type="button" aria-label="Music">♪</button>
 <% } %>
 
-
-<main
-  id="mainContent"
-  class="page"
->
-
-
-<!-- ==========================================================
-     OPENING / TERIMA KASIH
-=========================================================== -->
-
-<section
-  id="opening"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-
-      <%= wedding.opening?.eyebrow ||
-          "ASSALAMU'ALAIKUM WARAHMATULLAHI WABARAKATUH" %>
-
+<main id="mainContent" class="page">
+  <section id="opening" class="section">
+    <div class="section-inner">
+      <div class="section-eyebrow"><%= wedding.opening?.eyebrow || "ASSALAMU'ALAIKUM WARAHMATULLAHI WABARAKATUH" %></div>
+      <h1 class="opening-title"><%= wedding.opening?.title || "Dengan penuh kebahagiaan," %></h1>
+      <p class="section-text"><%= wedding.opening?.text || "Terima kasih telah meluangkan waktu untuk hadir dalam hari bahagia kami." %></p>
     </div>
+  </section>
 
-
-    <h1 class="opening-title">
-
-      <%= wedding.opening?.title ||
-          "Dengan penuh kebahagiaan," %>
-
-    </h1>
-
-
-    <p class="section-text">
-
-      <%= wedding.opening?.text ||
-          "Terima kasih telah meluangkan waktu untuk hadir dalam hari bahagia kami." %>
-
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- ==========================================================
-     QUOTE
-=========================================================== -->
-
-<section
-  id="quote"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      OUR WEDDING
+  <section id="quote" class="section">
+    <div class="section-inner">
+      <div class="section-eyebrow">OUR WEDDING</div>
+      <p class="section-text serif" style="font-size:clamp(28px,5vw,48px);line-height:1.35;">“<%= wedding.quote?.text || '' %>”</p>
+      <p class="section-text"><%= wedding.quote?.source || '' %></p>
     </div>
-
-
-    <p
-      class="section-text serif"
-      style="
-        font-size:
-        clamp(28px,5vw,48px);
-        line-height:1.35;
-      "
-    >
-
-      “<%= wedding.quote?.text || '' %>”
-
-    </p>
-
-
-    <p class="section-text">
-
-      <%= wedding.quote?.source || '' %>
-
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- ==========================================================
-     COUPLE
-=========================================================== -->
-
-<section
-  id="couple"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      THE COUPLE
-    </div>
-
-
-    <h2 class="section-title">
-      Mempelai
-    </h2>
-
-
-    <div class="couple-grid">
-
-
-      <!-- GROOM -->
-
-      <article class="person">
-
-        <div class="person-photo">
-
-          <% if (
-            wedding.groom?.photo?.url
-          ) { %>
-
-            <img
-              src="<%= wedding.groom.photo.url %>"
-              alt="<%= wedding.groom.name %>"
-              loading="lazy"
-            >
-
-          <% } else { %>
-
-            <div
-              style="
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-family:'Cormorant Garamond',Georgia,serif;
-                font-size:70px;
-              "
-            >
-              <%= wedding.groom?.name?.charAt(0) || 'G' %>
-            </div>
-
-          <% } %>
-
-        </div>
-
-
-        <h3 class="person-name">
-
-          <%= wedding.groom?.name || '' %>
-
-        </h3>
-
-
-        <div class="person-fullname">
-
-          <%= wedding.groom?.fullName || '' %>
-
-          <% if (
-            wedding.groom?.parents
-          ) { %>
-
-            <br>
-
-            Putra dari
-            <%= wedding.groom.parents %>
-
-          <% } %>
-
-        </div>
-
-      </article>
-
-
-      <!-- BRIDE -->
-
-      <article class="person">
-
-        <div class="person-photo">
-
-          <% if (
-            wedding.bride?.photo?.url
-          ) { %>
-
-            <img
-              src="<%= wedding.bride.photo.url %>"
-              alt="<%= wedding.bride.name %>"
-              loading="lazy"
-            >
-
-          <% } else { %>
-
-            <div
-              style="
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-family:'Cormorant Garamond',Georgia,serif;
-                font-size:70px;
-              "
-            >
-              <%= wedding.bride?.name?.charAt(0) || 'B' %>
-            </div>
-
-          <% } %>
-
-        </div>
-
-
-        <h3 class="person-name">
-
-          <%= wedding.bride?.name || '' %>
-
-        </h3>
-
-
-        <div class="person-fullname">
-
-          <%= wedding.bride?.fullName || '' %>
-
-          <% if (
-            wedding.bride?.parents
-          ) { %>
-
-            <br>
-
-            Putri dari
-            <%= wedding.bride.parents %>
-
-          <% } %>
-
-        </div>
-
-      </article>
-
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ==========================================================
-     COUNTDOWN
-=========================================================== -->
-
-<% if (
-  wedding.settings?.showCountdown !== false
-) { %>
-
-<section
-  id="countdownSection"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      SAVE THE DATE
-    </div>
-
-
-    <h2 class="section-title">
-      Menuju Hari Bahagia
-    </h2>
-
-
-    <div
-      id="countdown"
-      class="countdown"
-    >
-
-      <div class="count-item">
-        <strong id="days">0</strong>
-        <span>HARI</span>
-      </div>
-
-
-      <div class="count-item">
-        <strong id="hours">0</strong>
-        <span>JAM</span>
-      </div>
-
-
-      <div class="count-item">
-        <strong id="minutes">0</strong>
-        <span>MENIT</span>
-      </div>
-
-
-      <div class="count-item">
-        <strong id="seconds">0</strong>
-        <span>DETIK</span>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<% } %>
-
-
-<!-- ==========================================================
-     STORY
-=========================================================== -->
-
-<% if (
-  wedding.settings?.showStory !== false &&
-  wedding.story &&
-  wedding.story.length
-) { %>
-
-<section
-  id="story"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      OUR STORY
-    </div>
-
-
-    <h2 class="section-title">
-      Kisah Kami
-    </h2>
-
-
-    <div class="story-list">
-
-      <% wedding.story.forEach(function(item) { %>
-
-        <article class="story-item">
-
-          <div class="story-year">
-            <%= item.year || item.date || '' %>
+  </section>
+
+  <section id="couple" class="section">
+    <div class="section-inner">
+      <div class="section-eyebrow">THE COUPLE</div>
+      <h2 class="section-title">Mempelai</h2>
+      <div class="couple-grid">
+        <article class="person">
+          <div class="person-photo">
+            <% if (wedding.groom?.photo?.url) { %>
+              <img src="<%= wedding.groom.photo.url %>" alt="<%= wedding.groom.name %>" loading="lazy">
+            <% } else { %>
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:70px;">
+                <%= wedding.groom?.name?.charAt(0) || 'G' %>
+              </div>
+            <% } %>
           </div>
-
-
-          <h3 class="story-title">
-            <%= item.title || '' %>
-          </h3>
-
-
-          <div class="story-text">
-            <%= item.text || item.description || '' %>
+          <h3 class="person-name"><%= wedding.groom?.name || '' %></h3>
+          <div class="person-fullname">
+            <%= wedding.groom?.fullName || '' %>
+            <% if (wedding.groom?.parents) { %><br>Putra dari <%= wedding.groom.parents %><% } %>
           </div>
-
         </article>
 
-      <% }) %>
-
-    </div>
-
-  </div>
-
-</section>
-
-<% } %>
-
-
-<!-- ==========================================================
-     EVENTS
-=========================================================== -->
-
-<section
-  id="event"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      WEDDING EVENT
-    </div>
-
-
-    <h2 class="section-title">
-      Acara
-    </h2>
-
-
-    <div class="event-grid">
-
-      <% (wedding.events || []).forEach(function(event) { %>
-
-        <article class="event-card">
-
-          <h3>
-            <%= event.title || '' %>
-          </h3>
-
-
-          <p>
-
-            <% if (event.date) { %>
-
-              <strong>
-                <%= event.date %>
-              </strong>
-
-              <br>
-
+        <article class="person">
+          <div class="person-photo">
+            <% if (wedding.bride?.photo?.url) { %>
+              <img src="<%= wedding.bride.photo.url %>" alt="<%= wedding.bride.name %>" loading="lazy">
+            <% } else { %>
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:70px;">
+                <%= wedding.bride?.name?.charAt(0) || 'B' %>
+              </div>
             <% } %>
-
-
-            <% if (event.time) { %>
-
-              <%= event.time %>
-
-              <br>
-
-            <% } %>
-
-
-            <% if (event.venue) { %>
-
-              <%= event.venue %>
-
-              <br>
-
-            <% } %>
-
-
-            <% if (event.address) { %>
-
-              <%= event.address %>
-
-            <% } %>
-
-          </p>
-
-
-          <% if (event.mapsUrl) { %>
-
-            <a
-              class="map-link"
-              href="<%= event.mapsUrl %>"
-              target="_blank"
-              rel="noopener"
-            >
-              Buka Google Maps →
-            </a>
-
-          <% } %>
-
-        </article>
-
-      <% }) %>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ==========================================================
-     GALLERY
-=========================================================== -->
-
-<% if (
-  wedding.settings?.showGallery !== false &&
-  wedding.gallery &&
-  wedding.gallery.length
-) { %>
-
-<section
-  id="gallery"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      MOMENTS
-    </div>
-
-
-    <h2 class="section-title">
-      Gallery
-    </h2>
-
-
-    <div class="gallery">
-
-      <% wedding.gallery.forEach(function(image, index) { %>
-
-        <% if (image.url) { %>
-
-          <div
-            class="gallery-item"
-            onclick="openLightbox('<%= image.url %>')"
-          >
-
-            <img
-              src="<%= image.url %>"
-              alt="<%= image.caption || 'Wedding Gallery' %>"
-              loading="lazy"
-            >
-
           </div>
-
-        <% } %>
-
-      <% }) %>
-
+          <h3 class="person-name"><%= wedding.bride?.name || '' %></h3>
+          <div class="person-fullname">
+            <%= wedding.bride?.fullName || '' %>
+            <% if (wedding.bride?.parents) { %><br>Putri dari <%= wedding.bride.parents %><% } %>
+          </div>
+        </article>
+      </div>
     </div>
+  </section>
 
-  </div>
-
-</section>
-
-<% } %>
-
-
-<!-- ==========================================================
-     GIFT
-=========================================================== -->
-
-<% if (
-  wedding.settings?.showGift !== false &&
-  wedding.gift
-) { %>
-
-<section
-  id="gift"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      WEDDING GIFT
-    </div>
-
-
-    <h2 class="section-title">
-      Hadiah
-    </h2>
-
-
-    <div class="gift-card">
-
-      <p class="section-text">
-
-        <%= wedding.gift.text || '' %>
-
-      </p>
-
-
-      <% if (
-        wedding.gift.bankName
-      ) { %>
-
-        <div class="gift-bank">
-
-          <%= wedding.gift.bankName %>
-
+  <% if (wedding.settings?.showCountdown !== false) { %>
+    <section id="countdownSection" class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">SAVE THE DATE</div>
+        <h2 class="section-title">Menuju Hari Bahagia</h2>
+        <div id="countdown" class="countdown">
+          <div class="count-item"><strong id="days">0</strong><span>HARI</span></div>
+          <div class="count-item"><strong id="hours">0</strong><span>JAM</span></div>
+          <div class="count-item"><strong id="minutes">0</strong><span>MENIT</span></div>
+          <div class="count-item"><strong id="seconds">0</strong><span>DETIK</span></div>
         </div>
+      </div>
+    </section>
+  <% } %>
 
-
-        <div class="account-number">
-
-          <%= wedding.gift.accountNumber %>
-
+  <% if (wedding.settings?.showStory !== false && wedding.story && wedding.story.length) { %>
+    <section id="story" class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">OUR STORY</div>
+        <h2 class="section-title">Kisah Kami</h2>
+        <div class="story-list">
+          <% wedding.story.forEach(function(item) { %>
+            <article class="story-item">
+              <div class="story-year"><%= item.year || item.date || '' %></div>
+              <h3 class="story-title"><%= item.title || '' %></h3>
+              <div class="story-text"><%= item.text || item.description || '' %></div>
+            </article>
+          <% }) %>
         </div>
-
-
-        <p>
-
-          a.n.
-          <strong>
-            <%= wedding.gift.accountName %>
-          </strong>
-
-        </p>
-
-
-        <button
-          class="copy-button"
-          type="button"
-          onclick="copyText('<%= wedding.gift.accountNumber %>')"
-        >
-
-          Salin Nomor Rekening
-
-        </button>
-
-      <% } %>
-
-
-      <% if (
-        wedding.gift.address
-      ) { %>
-
-        <p
-          class="section-text"
-        >
-
-          <strong>
-            Alamat:
-          </strong>
-
-          <br>
-
-          <%= wedding.gift.address %>
-
-        </p>
-
-      <% } %>
-
-    </div>
-
-  </div>
-
-</section>
-
-<% } %>
-
-
-<!-- ==========================================================
-     RSVP
-=========================================================== -->
-
-<% if (
-  wedding.settings?.showRSVP !== false
-) { %>
-
-<section
-  id="rsvp"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      RSVP
-    </div>
-
-
-    <h2 class="section-title">
-      Konfirmasi Kehadiran
-    </h2>
-
-
-    <p class="section-text">
-
-      Mohon konfirmasi kehadiran
-      Anda agar kami dapat mempersiapkan
-      acara dengan lebih baik.
-
-    </p>
-
-
-    <form
-      id="rsvpForm"
-      class="rsvp-form"
-    >
-
-      <div class="form-group">
-
-        <label>
-          Nama
-        </label>
-
-        <input
-          name="name"
-          required
-          maxlength="150"
-          placeholder="Nama Anda"
-        >
-
       </div>
+    </section>
+  <% } %>
 
-
-      <div class="form-group">
-
-        <label>
-          Kehadiran
-        </label>
-
-        <select
-          name="attendance"
-          required
-        >
-
-          <option value="">
-            Pilih status
-          </option>
-
-          <option value="hadir">
-            Hadir
-          </option>
-
-          <option value="tidak_hadir">
-            Tidak Hadir
-          </option>
-
-          <option value="tidak_menentukan">
-            Tidak Menentukan
-          </option>
-
-        </select>
-
+  <section id="event" class="section">
+    <div class="section-inner">
+      <div class="section-eyebrow">WEDDING EVENT</div>
+      <h2 class="section-title">Acara</h2>
+      <div class="event-grid">
+        <% (wedding.events || []).forEach(function(event) { %>
+          <article class="event-card">
+            <h3><%= event.title || '' %></h3>
+            <p>
+              <% if (event.date) { %><strong><%= event.date %></strong><br><% } %>
+              <% if (event.time) { %><%= event.time %><br><% } %>
+              <% if (event.venue) { %><%= event.venue %><br><% } %>
+              <% if (event.address) { %><%= event.address %><% } %>
+            </p>
+            <% if (event.mapsUrl) { %>
+              <a class="map-link" href="<%= event.mapsUrl %>" target="_blank" rel="noopener">Buka Google Maps →</a>
+            <% } %>
+          </article>
+        <% }) %>
       </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Jumlah Tamu
-        </label>
-
-        <input
-          name="guestCount"
-          type="number"
-          min="0"
-          max="20"
-          value="1"
-          required
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Pesan
-        </label>
-
-        <textarea
-          name="message"
-          maxlength="1000"
-          rows="5"
-          placeholder="Tulis ucapan atau doa..."
-        ></textarea>
-
-      </div>
-
-
-      <button
-        class="submit-rsvp"
-        type="submit"
-      >
-
-        Kirim RSVP
-
-      </button>
-
-
-      <div
-        id="rsvpMessage"
-        class="rsvp-message"
-      ></div>
-
-    </form>
-
-  </div>
-
-</section>
-
-<% } %>
-
-
-<!-- ==========================================================
-     CLOSING
-=========================================================== -->
-
-<section
-  id="closing"
-  class="section"
->
-
-  <div class="section-inner">
-
-    <div class="section-eyebrow">
-      WITH LOVE
     </div>
+  </section>
 
+  <% if (wedding.settings?.showGallery !== false && wedding.gallery && wedding.gallery.length) { %>
+    <section id="gallery" class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">MOMENTS</div>
+        <h2 class="section-title">Gallery</h2>
+        <div class="gallery">
+          <% wedding.gallery.forEach(function(image, index) { %>
+            <% if (image.url) { %>
+              <div class="gallery-item" onclick="openLightbox('<%= image.url %>')">
+                <img src="<%= image.url %>" alt="<%= image.caption || 'Wedding Gallery' %>" loading="lazy">
+              </div>
+            <% } %>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
 
-    <h2 class="section-title">
+  <% if (wedding.settings?.showGift !== false && wedding.gift) { %>
+    <section id="gift" class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">WEDDING GIFT</div>
+        <h2 class="section-title">Hadiah</h2>
+        <div class="gift-card">
+          <p class="section-text"><%= wedding.gift.text || '' %></p>
+          <% if (wedding.gift.bankName) { %>
+            <div class="gift-bank"><%= wedding.gift.bankName %></div>
+            <div class="account-number"><%= wedding.gift.accountNumber %></div>
+            <p>a.n. <strong><%= wedding.gift.accountName %></strong></p>
+            <button class="copy-button" type="button" onclick="copyText('<%= wedding.gift.accountNumber %>')">Salin Nomor Rekening</button>
+          <% } %>
+          <% if (wedding.gift.address) { %>
+            <p class="section-text"><strong>Alamat:</strong><br><%= wedding.gift.address %></p>
+          <% } %>
+        </div>
+      </div>
+    </section>
+  <% } %>
 
-      Terima Kasih
+  <% if (wedding.settings?.showRSVP !== false) { %>
+    <section id="rsvp" class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">RSVP</div>
+        <h2 class="section-title">Konfirmasi Kehadiran</h2>
+        <p class="section-text">Mohon konfirmasi kehadiran Anda agar kami dapat mempersiapkan acara dengan lebih baik.</p>
+        <form id="rsvpForm" class="rsvp-form">
+          <div class="form-group">
+            <label>Nama</label>
+            <input name="name" required maxlength="150" placeholder="Nama Anda">
+          </div>
+          <div class="form-group">
+            <label>Kehadiran</label>
+            <select name="attendance" required>
+              <option value="">Pilih status</option>
+              <option value="hadir">Hadir</option>
+              <option value="tidak_hadir">Tidak Hadir</option>
+              <option value="tidak_menentukan">Tidak Menentukan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Jumlah Tamu</label>
+            <input name="guestCount" type="number" min="0" max="20" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Pesan</label>
+            <textarea name="message" maxlength="1000" rows="5" placeholder="Tulis ucapan atau doa..."></textarea>
+          </div>
+          <button class="submit-rsvp" type="submit">Kirim RSVP</button>
+          <div id="rsvpMessage" class="rsvp-message"></div>
+        </form>
+      </div>
+    </section>
+  <% } %>
 
-    </h2>
-
-
-    <p class="section-text">
-
-      Merupakan kebahagiaan bagi kami
-      apabila Bapak/Ibu/Saudara/i
-      berkenan hadir dan memberikan
-      doa restu.
-
-    </p>
-
-
-    <div
-      class="serif"
-      style="
-        margin-top:45px;
-        font-size:42px;
-      "
-    >
-
-      <%= wedding.bride?.name || '' %>
-
-      &
-
-      <%= wedding.groom?.name || '' %>
-
+  <section id="closing" class="section">
+    <div class="section-inner">
+      <div class="section-eyebrow">WITH LOVE</div>
+      <h2 class="section-title">Terima Kasih</h2>
+      <p class="section-text">Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
+      <div class="serif" style="margin-top:45px;font-size:42px;">
+        <%= wedding.bride?.name || '' %> & <%= wedding.groom?.name || '' %>
+      </div>
     </div>
-
-  </div>
-
-</section>
-
-
+  </section>
 </main>
 
-
-<!-- ==========================================================
-     BOTTOM NAV
-=========================================================== -->
-
-<% if (
-  wedding.settings?.bottomNavigation !== false
-) { %>
-
-<nav
-  id="bottomNav"
-  class="bottom-nav"
->
-
-  <a
-    href="#opening"
-    class="active"
-  >
-
-    <span>⌂</span>
-    <span>Home</span>
-
-  </a>
-
-
-  <a
-    href="#couple"
-  >
-
-    <span>♡</span>
-    <span>Couple</span>
-
-  </a>
-
-
-  <a
-    href="#event"
-  >
-
-    <span>⌖</span>
-    <span>Event</span>
-
-  </a>
-
-
-  <a
-    href="#gallery"
-  >
-
-    <span>▧</span>
-    <span>Gallery</span>
-
-  </a>
-
-
-  <a
-    href="#gift"
-  >
-
-    <span>♧</span>
-    <span>Gift</span>
-
-  </a>
-
-
-  <a
-    href="#rsvp"
-  >
-
-    <span>✉</span>
-    <span>RSVP</span>
-
-  </a>
-
-</nav>
-
+<% if (wedding.settings?.bottomNavigation !== false) { %>
+  <nav id="bottomNav" class="bottom-nav">
+    <a href="#opening" class="active"><span>⌂</span><span>Home</span></a>
+    <a href="#couple"><span>♡</span><span>Couple</span></a>
+    <a href="#event"><span>⌖</span><span>Event</span></a>
+    <a href="#gallery"><span>▧</span><span>Gallery</span></a>
+    <a href="#gift"><span>♧</span><span>Gift</span></a>
+    <a href="#rsvp"><span>✉</span><span>RSVP</span></a>
+  </nav>
 <% } %>
 
-
-<!-- ==========================================================
-     LIGHTBOX
-=========================================================== -->
-
-<div
-  id="lightbox"
-  class="lightbox"
-  onclick="closeLightbox()"
->
-
-  <button
-    type="button"
-    onclick="closeLightbox()"
-  >
-    ×
-  </button>
-
-
-  <img
-    id="lightboxImage"
-    src=""
-    alt="Gallery"
-  >
-
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <button type="button" onclick="closeLightbox()">×</button>
+  <img id="lightboxImage" src="" alt="Gallery">
 </div>
 
-
 <script>
+  const wedding = <%- JSON.stringify(wedding).replace(/</g, "\\u003c") %>;
+  const weddingDate = wedding.date ? new Date(wedding.date) : null;
 
-  const wedding =
-    <%- JSON.stringify(
-      wedding
-    ).replace(
-      /</g,
-      "\\u003c"
-    ) %>;
+  const cover = document.getElementById("cover");
+  const openButton = document.getElementById("openInvitation");
 
-
-  const weddingDate =
-    wedding.date
-      ? new Date(
-          wedding.date
-        )
-      : null;
-
-
-  /* ==========================================================
-     OPEN INVITATION
-  ========================================================== */
-
-  const cover =
-    document.getElementById(
-      "cover"
-    );
-
-
-  const openButton =
-    document.getElementById(
-      "openInvitation"
-    );
-
-
-  openButton.addEventListener(
-    "click",
-    async () => {
-
-      /*
-       * Fullscreen harus dipanggil
-       * dari user gesture.
-       */
-
-      try {
-
-        if (
-          document.documentElement
-            .requestFullscreen
-        ) {
-
-          await document
-            .documentElement
-            .requestFullscreen();
-
-        }
-
-      } catch (
-        fullscreenError
-      ) {
-
-        console.log(
-          "Fullscreen tidak tersedia:",
-          fullscreenError
-        );
-
+  openButton.addEventListener("click", async () => {
+    try {
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
       }
-
-
-      cover.classList.add(
-        "opened"
-      );
-
-
-      document.body.classList.remove(
-        "locked"
-      );
-
-
-      /*
-       * Start music hanya
-       * setelah user gesture.
-       */
-
-      const music =
-        document.getElementById(
-          "weddingMusic"
-        );
-
-
-      if (music) {
-
-        music.volume =
-          0.45;
-
-        music.play()
-          .catch(
-            () => {
-              console.log(
-                "Autoplay music diblokir browser."
-              );
-            }
-          );
-
-      }
-
-
-      /*
-       * Scroll sedikit ke opening.
-       */
-
-      setTimeout(
-        () => {
-
-          document
-            .getElementById(
-              "opening"
-            )
-            ?.scrollIntoView({
-              behavior:
-                "smooth"
-            });
-
-        },
-        700
-      );
-
+    } catch (fullscreenError) {
+      console.log("Fullscreen tidak tersedia:", fullscreenError);
     }
-  );
+    cover.classList.add("opened");
+    document.body.classList.remove("locked");
 
+    const music = document.getElementById("weddingMusic");
+    if (music) {
+      music.volume = 0.45;
+      music.play().catch(() => {
+        console.log("Autoplay music diblokir browser.");
+      });
+    }
 
-  /* ==========================================================
-     MUSIC
-  ========================================================== */
+    setTimeout(() => {
+      document.getElementById("opening")?.scrollIntoView({ behavior: "smooth" });
+    }, 700);
+  });
 
-  const music =
-    document.getElementById(
-      "weddingMusic"
-    );
-
-
-  const musicButton =
-    document.getElementById(
-      "musicButton"
-    );
-
-
-  if (
-    music &&
-    musicButton
-  ) {
-
-    musicButton.addEventListener(
-      "click",
-      () => {
-
-        if (
-          music.paused
-        ) {
-
-          music.play();
-
-          musicButton.textContent =
-            "♪";
-
-        } else {
-
-          music.pause();
-
-          musicButton.textContent =
-            "♫";
-
-        }
-
+  const music = document.getElementById("weddingMusic");
+  const musicButton = document.getElementById("musicButton");
+  if (music && musicButton) {
+    musicButton.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        musicButton.textContent = "♪";
+      } else {
+        music.pause();
+        musicButton.textContent = "♫";
       }
-    );
-
+    });
   }
-
-
-  /* ==========================================================
-     COUNTDOWN
-  ========================================================== */
 
   function updateCountdown() {
-
-    if (!weddingDate) {
+    if (!weddingDate) return;
+    const now = new Date();
+    const diff = weddingDate.getTime() - now.getTime();
+    if (diff <= 0) {
+      setCountdown(0, 0, 0, 0);
       return;
     }
-
-
-    const now =
-      new Date();
-
-
-    const diff =
-      weddingDate.getTime() -
-      now.getTime();
-
-
-    if (
-      diff <= 0
-    ) {
-
-      setCountdown(
-        0,
-        0,
-        0,
-        0
-      );
-
-      return;
-
-    }
-
-
-    const days =
-      Math.floor(
-        diff /
-        (
-          1000 *
-          60 *
-          60 *
-          24
-        )
-      );
-
-
-    const hours =
-      Math.floor(
-        (
-          diff /
-          (
-            1000 *
-            60 *
-            60
-          )
-        ) % 24
-      );
-
-
-    const minutes =
-      Math.floor(
-        (
-          diff /
-          (
-            1000 *
-            60
-          )
-        ) % 60
-      );
-
-
-    const seconds =
-      Math.floor(
-        (
-          diff /
-          1000
-        ) % 60
-      );
-
-
-    setCountdown(
-      days,
-      hours,
-      minutes,
-      seconds
-    );
-
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+    setCountdown(days, hours, minutes, seconds);
   }
 
-
-  function setCountdown(
-    days,
-    hours,
-    minutes,
-    seconds
-  ) {
-
-    const d =
-      document.getElementById(
-        "days"
-      );
-
-    const h =
-      document.getElementById(
-        "hours"
-      );
-
-    const m =
-      document.getElementById(
-        "minutes"
-      );
-
-    const s =
-      document.getElementById(
-        "seconds"
-      );
-
-
-    if (d)
-      d.textContent =
-        String(
-          days
-        ).padStart(
-          2,
-          "0"
-        );
-
-
-    if (h)
-      h.textContent =
-        String(
-          hours
-        ).padStart(
-          2,
-          "0"
-        );
-
-
-    if (m)
-      m.textContent =
-        String(
-          minutes
-        ).padStart(
-          2,
-          "0"
-        );
-
-
-    if (s)
-      s.textContent =
-        String(
-          seconds
-        ).padStart(
-          2,
-          "0"
-        );
-
+  function setCountdown(days, hours, minutes, seconds) {
+    const d = document.getElementById("days");
+    const h = document.getElementById("hours");
+    const m = document.getElementById("minutes");
+    const s = document.getElementById("seconds");
+    if (d) d.textContent = String(days).padStart(2, "0");
+    if (h) h.textContent = String(hours).padStart(2, "0");
+    if (m) m.textContent = String(minutes).padStart(2, "0");
+    if (s) s.textContent = String(seconds).padStart(2, "0");
   }
-
 
   updateCountdown();
+  setInterval(updateCountdown, 1000);
 
-  setInterval(
-    updateCountdown,
-    1000
-  );
-
-
-  /* ==========================================================
-     RSVP
-  ========================================================== */
-
-  const rsvpForm =
-    document.getElementById(
-      "rsvpForm"
-    );
-
-
+  const rsvpForm = document.getElementById("rsvpForm");
   if (rsvpForm) {
+    rsvpForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = rsvpForm.querySelector("button[type=submit]");
+      const message = document.getElementById("rsvpMessage");
+      button.disabled = true;
+      button.textContent = "Mengirim...";
 
-    rsvpForm.addEventListener(
-      "submit",
-      async (
-        event
-      ) => {
-
-        event.preventDefault();
-
-
-        const button =
-          rsvpForm.querySelector(
-            "button[type=submit]"
-          );
-
-
-        const message =
-          document.getElementById(
-            "rsvpMessage"
-          );
-
-
-        button.disabled =
-          true;
-
-        button.textContent =
-          "Mengirim...";
-
-
-        try {
-
-          const formData =
-            new FormData(
-              rsvpForm
-            );
-
-
-          const payload =
-            Object.fromEntries(
-              formData.entries()
-            );
-
-
-          const response =
-            await fetch(
-              `/api/weddings/${encodeURIComponent(
-                wedding.slug
-              )}/rsvp`,
-              {
-                method:
-                  "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body:
-                  JSON.stringify(
-                    payload
-                  )
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (
-            !response.ok ||
-            !data.success
-          ) {
-
-            throw new Error(
-              data.error ||
-              "RSVP gagal."
-            );
-
-          }
-
-
-          message.style.display =
-            "block";
-
-          message.style.background =
-            "#e8f3e9";
-
-          message.style.color =
-            "#416548";
-
-          message.textContent =
-            "Terima kasih. RSVP Anda berhasil dikirim.";
-
-
-          rsvpForm.reset();
-
-
-        } catch (
-          error
-        ) {
-
-          message.style.display =
-            "block";
-
-          message.style.background =
-            "#f7e8e8";
-
-          message.style.color =
-            "#8d4545";
-
-          message.textContent =
-            error.message;
-
-        } finally {
-
-          button.disabled =
-            false;
-
-          button.textContent =
-            "Kirim RSVP";
-
+      try {
+        const formData = new FormData(rsvpForm);
+        const payload = Object.fromEntries(formData.entries());
+        const response = await fetch(`/api/weddings/${encodeURIComponent(wedding.slug)}/rsvp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "RSVP gagal.");
         }
-
+        message.style.display = "block";
+        message.style.background = "#e8f3e9";
+        message.style.color = "#416548";
+        message.textContent = "Terima kasih. RSVP Anda berhasil dikirim.";
+        rsvpForm.reset();
+      } catch (error) {
+        message.style.display = "block";
+        message.style.background = "#f7e8e8";
+        message.style.color = "#8d4545";
+        message.textContent = error.message;
+      } finally {
+        button.disabled = false;
+        button.textContent = "Kirim RSVP";
       }
-    );
-
+    });
   }
 
-
-  /* ==========================================================
-     COPY ACCOUNT
-  ========================================================== */
-
-  async function copyText(
-    text
-  ) {
-
+  async function copyText(text) {
     try {
-
-      await navigator
-        .clipboard
-        .writeText(
-          text
-        );
-
-      alert(
-        "Nomor rekening berhasil disalin."
-      );
-
+      await navigator.clipboard.writeText(text);
+      alert("Nomor rekening berhasil disalin.");
     } catch {
-
-      alert(
-        text
-      );
-
+      alert(text);
     }
-
   }
 
-
-  /* ==========================================================
-     LIGHTBOX
-  ========================================================== */
-
-  function openLightbox(
-    src
-  ) {
-
-    const box =
-      document.getElementById(
-        "lightbox"
-      );
-
-
-    const image =
-      document.getElementById(
-        "lightboxImage"
-      );
-
-
-    image.src =
-      src;
-
-
-    box.classList.add(
-      "open"
-    );
-
+  function openLightbox(src) {
+    const box = document.getElementById("lightbox");
+    const image = document.getElementById("lightboxImage");
+    image.src = src;
+    box.classList.add("open");
   }
-
 
   function closeLightbox() {
-
-    document
-      .getElementById(
-        "lightbox"
-      )
-      .classList.remove(
-        "open"
-      );
-
+    document.getElementById("lightbox").classList.remove("open");
   }
 
+  const navLinks = document.querySelectorAll(".bottom-nav a");
+  const observedSections = Array.from(navLinks)
+    .map(link => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
 
-  /* ==========================================================
-     BOTTOM NAV ACTIVE STATE
-  ========================================================== */
-
-  const navLinks =
-    document.querySelectorAll(
-      ".bottom-nav a"
-    );
-
-
-  const observedSections =
-    Array.from(
-      navLinks
-    )
-      .map(
-        link =>
-          document.querySelector(
-            link.getAttribute(
-              "href"
-            )
-          )
-      )
-      .filter(Boolean);
-
-
-  const observer =
-    new IntersectionObserver(
-      entries => {
-
-        entries.forEach(
-          entry => {
-
-            if (
-              entry.isIntersecting
-            ) {
-
-              navLinks.forEach(
-                link => {
-
-                  link.classList.remove(
-                    "active"
-                  );
-
-                  if (
-                    link.getAttribute(
-                      "href"
-                    ) ===
-                    `#${entry.target.id}`
-                  ) {
-
-                    link.classList.add(
-                      "active"
-                    );
-
-                  }
-
-                }
-              );
-
-            }
-
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${entry.target.id}`) {
+            link.classList.add("active");
           }
-        );
-
-      },
-      {
-        threshold:
-          0.35
+        });
       }
-    );
+    });
+  }, { threshold: 0.35 });
 
+  observedSections.forEach(section => observer.observe(section));
 
-  observedSections.forEach(
-    section =>
-      observer.observe(
-        section
-      )
-  );
-
-
-  /* ==========================================================
-     ESC CLOSE LIGHTBOX
-  ========================================================== */
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key ===
-        "Escape"
-      ) {
-
-        closeLightbox();
-
-      }
-
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeLightbox();
     }
-  );
-
+  });
 </script>
-
 </body>
 </html>
