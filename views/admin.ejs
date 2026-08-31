@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 
   <meta charset="UTF-8">
@@ -9,38 +10,45 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <meta
+    name="theme-color"
+    content="#111111"
+  >
+
   <title>
     Admin Dashboard — LOVEFOREVER
   </title>
 
+  <link
+    rel="stylesheet"
+    href="/css/style.css"
+  >
+
   <style>
+
+    /* =========================================================
+       ADMIN SAFE LAYOUT
+    ========================================================= */
 
     * {
       box-sizing: border-box;
     }
 
-    :root {
-      --bg: #f5f3f0;
-      --surface: #ffffff;
-      --surface-soft: #faf8f5;
-      --border: #e3ded8;
-      --text: #292624;
-      --muted: #77716c;
-      --accent: #76685d;
-      --danger: #a94442;
-      --success: #55745d;
-      --radius: 18px;
-      --shadow:
-        0 10px 35px rgba(45, 38, 33, .06);
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: #f7f5f2;
+      color: #24211f;
       font-family:
         Inter,
-        Arial,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
         sans-serif;
     }
 
@@ -51,402 +59,879 @@
       font: inherit;
     }
 
-    button {
-      cursor: pointer;
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .topbar {
+    a {
+      color: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .admin-header {
       position: sticky;
       top: 0;
       z-index: 100;
-      height: 76px;
+
+      min-height: 76px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
-      background: rgba(255,255,255,.95);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
+
+      gap: 20px;
+
+      padding:
+        16px
+        clamp(18px, 4vw, 42px);
+
+      background: rgba(255, 255, 255, 0.94);
+
+      border-bottom:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      backdrop-filter: blur(16px);
     }
 
-    .brand {
+    .admin-brand {
+      font-size: 22px;
       font-weight: 800;
-      letter-spacing: .16em;
+      letter-spacing: 0.14em;
     }
 
-    .logout {
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 18px;
-      background: #ece7e2;
-      color: var(--text);
-    }
 
-    .container {
-      width: min(1500px, calc(100% - 32px));
+    /* =========================================================
+       MAIN
+    ========================================================= */
+
+    .admin-main {
+      width: min(
+        1500px,
+        calc(100% - 32px)
+      );
+
       margin: 0 auto;
-      padding: 45px 0 100px;
+
+      padding:
+        42px
+        0
+        80px;
     }
 
-    h1,
-    h2,
-    h3 {
-      margin-top: 0;
-    }
-
-    .hero {
+    .dashboard-title {
       margin-bottom: 30px;
     }
 
-    .hero h1 {
-      font-size: clamp(36px, 5vw, 64px);
-      margin-bottom: 10px;
+    .dashboard-title h1 {
+      margin:
+        0
+        0
+        10px;
+
+      font-size:
+        clamp(
+          32px,
+          5vw,
+          58px
+        );
+
+      line-height: 1.05;
+
+      letter-spacing:
+        -0.04em;
     }
 
-    .hero p {
-      color: var(--muted);
-      font-size: 18px;
+    .dashboard-title p {
+      margin: 0;
+
+      color: #77716d;
+
+      font-size:
+        clamp(
+          15px,
+          2vw,
+          18px
+        );
+
+      line-height: 1.7;
     }
 
-    .alert {
-      display: none;
+
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
+
+    #globalMessage {
+      margin-bottom: 24px;
+    }
+
+    .notice {
       padding: 15px 18px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      background: #fff2d6;
-      color: #73521b;
+
+      border-radius: 14px;
+
+      background: #ffffff;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      line-height: 1.6;
     }
 
-    .stats {
+    .notice.success {
+      border-color:
+        rgba(35, 120, 65, 0.25);
+
+      background:
+        rgba(35, 120, 65, 0.06);
+    }
+
+    .notice.warning {
+      border-color:
+        rgba(180, 110, 20, 0.28);
+
+      background:
+        rgba(180, 110, 20, 0.07);
+    }
+
+    .notice.error {
+      border-color:
+        rgba(180, 45, 45, 0.28);
+
+      background:
+        rgba(180, 45, 45, 0.07);
+    }
+
+
+    /* =========================================================
+       SUMMARY
+    ========================================================= */
+
+    .summary-grid {
       display: grid;
+
       grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(
+          4,
+          minmax(0, 1fr)
+        );
+
       gap: 18px;
+
       margin-bottom: 30px;
     }
 
-    .stat {
-      padding: 28px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .summary-card {
+      min-height: 150px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: space-between;
+
+      padding: 24px;
+
+      background: #ffffff;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      border-radius: 20px;
+
+      box-shadow:
+        0 8px 30px
+        rgba(0, 0, 0, 0.035);
     }
 
-    .stat span {
-      display: block;
-      color: var(--muted);
-      margin-bottom: 14px;
+    .summary-card small {
+      color: #77716d;
+
+      font-size: 14px;
     }
 
-    .stat strong {
-      display: block;
-      font-size: 38px;
+    .summary-card strong {
+      font-size: 42px;
+
+      line-height: 1;
+
+      letter-spacing:
+        -0.04em;
     }
+
+
+    /* =========================================================
+       PANEL
+    ========================================================= */
 
     .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 25px;
       overflow: hidden;
+
+      margin-bottom: 28px;
+
+      background: #ffffff;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 12px 40px
+        rgba(0, 0, 0, 0.035);
     }
 
     .panel-header {
-      padding: 25px 28px;
-      border-bottom: 1px solid var(--border);
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 24px 28px;
+
+      border-bottom:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+    }
+
+    .panel-header strong {
+      display: block;
+
+      margin-bottom: 5px;
+
+      font-size: 20px;
     }
 
     .panel-body {
       padding: 28px;
     }
 
-    .toolbar {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+    .muted {
+      color: #77716d;
     }
 
-    .toolbar select {
-      min-width: 280px;
-    }
 
-    input,
-    textarea,
-    select {
+    /* =========================================================
+       FORM
+    ========================================================= */
+
+    .form {
       width: 100%;
-      border: 1px solid #d8d2cb;
-      background: #fff;
+    }
+
+    .form h3 {
+      margin:
+        28px
+        0
+        18px;
+
+      font-size: 20px;
+    }
+
+    .form h3:first-child {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+
+      gap: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-grid .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-weight: 650;
+
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.14);
+
       border-radius: 12px;
-      padding: 13px 14px;
-      color: var(--text);
+
+      background: #fff;
+
+      padding:
+        13px
+        14px;
+
+      color: #24211f;
+
       outline: none;
+
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--accent);
-      box-shadow:
-        0 0 0 3px rgba(118,104,93,.10);
-    }
-
-    textarea {
-      min-height: 140px;
+    .form-group textarea {
       resize: vertical;
+
+      min-height: 100px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #24211f;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(36, 33, 31, 0.08);
+    }
+
+    .form-group small {
+      display: block;
+
+      margin-top: 7px;
+
+      color: #817b76;
+
+      line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+
+    .button,
+    button.button,
+    .secondary {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      min-height: 44px;
+
+      padding:
+        11px
+        17px;
+
+      border: 0;
+
+      border-radius: 11px;
+
+      background: #24211f;
+
+      color: #ffffff;
+
+      text-decoration: none;
+
+      cursor: pointer;
+
+      transition:
+        transform .18s ease,
+        opacity .18s ease,
+        background .18s ease;
+    }
+
+    .button:hover,
+    .secondary:hover {
+      opacity: .88;
+    }
+
+    .button:active,
+    .secondary:active {
+      transform: scale(.98);
+    }
+
+    .button-outline {
+      background: transparent;
+
+      color: #24211f;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.16);
+    }
+
+    .button-danger {
+      background: #a92f2f;
+    }
+
+    .button-success {
+      background: #286d45;
+    }
+
+    .form-actions {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+
+      margin-top: 24px;
+    }
+
+
+    /* =========================================================
+       WEDDING LIST
+    ========================================================= */
+
+    .wedding-list {
+      display: grid;
+
+      gap: 16px;
+    }
+
+    .wedding-item {
+      padding: 22px;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      border-radius: 18px;
+
+      background: #fcfbfa;
+    }
+
+    .wedding-item-header {
+      display: flex;
+
+      align-items: flex-start;
+
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .wedding-item h3 {
+      margin:
+        12px
+        0
+        7px;
+
+      font-size: 22px;
+    }
+
+    .wedding-item p {
+      margin:
+        5px
+        0;
+
+      color: #77716d;
+
       line-height: 1.6;
     }
 
-    label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+    .wedding-item code {
+      display: inline-block;
 
-    .field {
-      margin-bottom: 20px;
-    }
+      max-width: 100%;
 
-    .grid {
-      display: grid;
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-      gap: 20px;
-    }
+      margin-top: 5px;
 
-    .grid-3 {
-      display: grid;
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
+      padding: 7px 9px;
 
-    .section {
-      padding: 25px 0;
-      border-bottom: 1px solid var(--border);
-    }
+      border-radius: 8px;
 
-    .section:last-child {
-      border-bottom: 0;
-    }
+      background: #f0eeeb;
 
-    .section-title {
-      margin-bottom: 20px;
-    }
+      overflow-wrap: anywhere;
 
-    .section-title h3 {
-      margin-bottom: 5px;
-    }
-
-    .section-title p {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .button {
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 18px;
-      background: var(--accent);
-      color: white;
-      font-weight: 700;
-    }
-
-    .button.secondary {
-      background: #ece7e2;
-      color: var(--text);
-    }
-
-    .button.danger {
-      background: var(--danger);
-    }
-
-    .button.success {
-      background: var(--success);
-    }
-
-    .button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .media-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-      gap: 15px;
-    }
-
-    .media-card {
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      overflow: hidden;
-      background: var(--surface-soft);
-    }
-
-    .media-preview {
-      aspect-ratio: 1 / 1;
-      background: #eee9e4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .media-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .media-info {
-      padding: 12px;
-    }
-
-    .media-info strong {
-      display: block;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    .media-info small {
-      color: var(--muted);
-    }
-
-    .media-actions {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .media-actions button {
-      flex: 1;
-    }
-
-    .rsvp-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .rsvp-table th,
-    .rsvp-table td {
-      text-align: left;
-      padding: 13px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 35px;
-      color: var(--muted);
+      font-size: 12px;
     }
 
     .status {
       display: inline-flex;
-      padding: 6px 10px;
+
+      align-items: center;
+
+      min-height: 28px;
+
+      padding:
+        5px
+        10px;
+
       border-radius: 999px;
+
       font-size: 12px;
-      font-weight: 800;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
     }
 
-    .status.published {
-      background: #e6f2e8;
-      color: #416548;
+    .status-published {
+      background:
+        rgba(40, 109, 69, .11);
+
+      color: #286d45;
     }
 
-    .status.draft {
-      background: #eeeae6;
-      color: #766e67;
+    .status-draft {
+      background:
+        rgba(120, 110, 100, .12);
+
+      color: #68615c;
     }
 
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .upload-box {
-      padding: 20px;
-      border: 1px dashed #cfc7bf;
-      border-radius: 15px;
-      background: var(--surface-soft);
-    }
-
-    .sticky-actions {
-      position: sticky;
-      bottom: 15px;
-      z-index: 50;
+    .wedding-actions {
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 15px;
-      background: rgba(255,255,255,.94);
-      border: 1px solid var(--border);
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      margin-top: 18px;
+    }
+
+
+    /* =========================================================
+       EDIT FORM
+    ========================================================= */
+
+    .edit-panel {
+      margin-top: 20px;
+
+      padding: 24px;
+
       border-radius: 18px;
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
+
+      background: #f7f5f2;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, 0.08);
     }
 
-    @media (max-width: 900px) {
-
-      .stats {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-      }
-
-      .grid,
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .media-grid {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-      }
-
-      .topbar {
-        padding: 0 18px;
-      }
-
+    .edit-panel h3 {
+      margin:
+        0
+        0
+        20px;
     }
 
-    @media (max-width: 600px) {
 
-      .container {
-        width: min(
-          100% - 20px,
-          1500px
+    /* =========================================================
+       RSVP TABLE
+    ========================================================= */
+
+    .table-wrapper {
+      width: 100%;
+
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+
+      border-collapse: collapse;
+
+      min-width: 720px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding:
+        13px
+        14px;
+
+      text-align: left;
+
+      border-bottom:
+        1px solid
+        rgba(0, 0, 0, 0.08);
+
+      vertical-align: top;
+
+      line-height: 1.5;
+    }
+
+    .data-table th {
+      background: #faf9f7;
+
+      font-size: 13px;
+    }
+
+    .empty-table {
+      padding: 30px !important;
+
+      text-align: center !important;
+
+      color: #77716d;
+    }
+
+
+    /* =========================================================
+       MODAL
+    ========================================================= */
+
+    .modal {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 1000;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 20px;
+
+      background:
+        rgba(0, 0, 0, .55);
+
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      width: min(
+        1000px,
+        100%
+      );
+
+      max-height:
+        min(
+          85vh,
+          800px
         );
-        padding-top: 25px;
+
+      overflow-y: auto;
+
+      padding: 26px;
+
+      background: #ffffff;
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, .25);
+    }
+
+    .modal-header {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 42px;
+
+      height: 42px;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      background: #efebe7;
+
+      cursor: pointer;
+
+      font-size: 22px;
+    }
+
+    .rsvp-summary {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(0, 1fr)
+        );
+
+      gap: 12px;
+
+      margin-bottom: 20px;
+    }
+
+    .rsvp-summary-card {
+      padding: 16px;
+
+      border:
+        1px solid
+        rgba(0, 0, 0, .08);
+
+      border-radius: 14px;
+
+      background: #faf9f7;
+    }
+
+    .rsvp-summary-card small {
+      display: block;
+
+      color: #77716d;
+
+      margin-bottom: 6px;
+    }
+
+    .rsvp-summary-card strong {
+      font-size: 24px;
+    }
+
+
+    /* =========================================================
+       EMPTY
+    ========================================================= */
+
+    .empty-state {
+      padding: 40px 20px;
+
+      text-align: center;
+
+      color: #77716d;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1000px) {
+
+      .summary-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
       }
 
-      .stats {
+    }
+
+
+    @media (max-width: 760px) {
+
+      .admin-header {
+        min-height: 64px;
+
+        padding:
+          12px
+          16px;
+      }
+
+      .admin-brand {
+        font-size: 18px;
+      }
+
+      .admin-main {
+        width:
+          calc(100% - 24px);
+
+        padding:
+          28px
+          0
+          60px;
+      }
+
+      .summary-grid {
         grid-template-columns: 1fr;
       }
 
-      .media-grid {
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .panel-body,
-      .panel-header {
+      .panel-header,
+      .panel-body {
         padding: 20px;
       }
 
-      .toolbar select {
-        min-width: 100%;
-      }
-
-      .sticky-actions {
+      .wedding-item-header {
         flex-direction: column;
       }
 
-      .sticky-actions button {
+      .wedding-actions {
+        flex-direction: column;
+      }
+
+      .wedding-actions .button,
+      .wedding-actions form,
+      .wedding-actions form button {
         width: 100%;
+      }
+
+      .rsvp-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        padding: 18px;
+
+        border-radius: 18px;
+      }
+
+    }
+
+
+    @media (max-width: 420px) {
+
+      .dashboard-title h1 {
+        font-size: 32px;
+      }
+
+      .summary-card {
+        min-height: 125px;
+      }
+
+      .summary-card strong {
+        font-size: 34px;
       }
 
     }
@@ -455,228 +940,669 @@
 
 </head>
 
+
 <body>
 
-<header class="topbar">
+<div class="admin-layout">
 
-  <div class="brand">
-    LOVEFOREVER
-  </div>
 
-  <form
-    method="POST"
-    action="/admin/logout"
-  >
+  <!-- =======================================================
+       HEADER
+  ======================================================== -->
 
-    <button
-      class="logout"
-      type="submit"
+  <header class="admin-header">
+
+    <div class="admin-brand">
+      LOVEFOREVER
+    </div>
+
+
+    <form
+      method="POST"
+      action="/admin/logout"
     >
-      Logout
-    </button>
 
-  </form>
+      <input
+        type="hidden"
+        name="_csrf"
+        value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+      >
 
-</header>
+      <button
+        type="submit"
+        class="secondary"
+      >
+        Logout
+      </button>
 
+    </form>
 
-<main class="container">
-
-  <div
-    id="alert"
-    class="alert"
-  ></div>
-
-
-  <section class="hero">
-
-    <h1>
-      Admin Dashboard
-    </h1>
-
-    <p>
-      Kelola wedding invitation,
-      media, event, gallery,
-      music, RSVP dan konten.
-    </p>
-
-  </section>
+  </header>
 
 
-  <section class="stats">
+  <!-- =======================================================
+       MAIN
+  ======================================================== -->
 
-    <div class="stat">
-      <span>
-        Total Wedding
-      </span>
-
-      <strong id="totalWedding">
-        <%= totalWedding %>
-      </strong>
-    </div>
+  <main class="admin-main">
 
 
-    <div class="stat">
-      <span>
-        Published
-      </span>
+    <!-- =====================================================
+         TITLE
+    ====================================================== -->
 
-      <strong id="publishedWedding">
-        <%= published %>
-      </strong>
-    </div>
+    <div class="dashboard-title">
 
+      <h1>
+        Admin Dashboard
+      </h1>
 
-    <div class="stat">
-      <span>
-        Draft
-      </span>
-
-      <strong id="draftWedding">
-        <%= draft %>
-      </strong>
-    </div>
-
-
-    <div class="stat">
-      <span>
-        Total RSVP
-      </span>
-
-      <strong id="totalRSVP">
-        <%= weddings.reduce(
-          (sum, item) =>
-            sum + (item.rsvpCount || 0),
-          0
-        ) %>
-      </strong>
-    </div>
-
-  </section>
-
-
-  <section class="panel">
-
-    <div class="panel-header">
-
-      <div class="toolbar">
-
-        <select id="weddingSelector">
-
-          <option value="">
-            + Buat Wedding Baru
-          </option>
-
-          <% weddings.forEach(function(wedding) { %>
-
-            <option
-              value="<%= wedding.slug %>"
-            >
-              <%= wedding.slug %>
-              —
-              <%= wedding.status %>
-            </option>
-
-          <% }) %>
-
-        </select>
-
-
-        <button
-          id="loadWeddingButton"
-          class="button secondary"
-          type="button"
-        >
-          Edit Wedding
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="panel">
-
-    <div class="panel-header">
-
-      <h2>
-        Wedding Editor
-      </h2>
-
-      <p class="hint">
-        Editor ini dapat digunakan untuk
-        wedding yang sudah Published maupun Draft.
+      <p>
+        Kelola wedding invitation,
+        gallery, event, RSVP dan konten
+        dari satu dashboard.
       </p>
 
     </div>
 
 
-    <div class="panel-body">
+    <!-- =====================================================
+         SERVER MESSAGE
+    ====================================================== -->
 
-      <form
-        id="weddingForm"
-      >
+    <div id="globalMessage">
 
-        <!-- =====================================================
-             GENERAL
-        ====================================================== -->
+      <% if (
+        typeof message !== 'undefined' &&
+        message
+      ) { %>
 
-        <div class="section">
+        <div class="notice success">
+          <%= message %>
+        </div>
 
-          <div class="section-title">
+      <% } %>
 
-            <h3>
-              01. Informasi Dasar
-            </h3>
 
-            <p>
-              Slug adalah URL wedding
-              dan ditentukan manual oleh Admin.
-            </p>
+      <% if (
+        typeof error !== 'undefined' &&
+        error
+      ) { %>
+
+        <div class="notice error">
+          <%= error %>
+        </div>
+
+      <% } %>
+
+    </div>
+
+
+    <!-- =====================================================
+         SAFE DATA NORMALIZATION
+    ====================================================== -->
+
+    <%
+      /*
+       * Jangan menggunakan:
+       *
+       * totalWedding
+       * totalWeddings
+       *
+       * secara langsung.
+       *
+       * Semua statistik dihitung dari weddings.
+       */
+
+      const safeWeddings =
+        typeof weddings !== "undefined" &&
+        Array.isArray(weddings)
+          ? weddings
+          : [];
+
+      const safeStats =
+        typeof stats !== "undefined" &&
+        stats
+          ? stats
+          : {};
+
+      const totalWeddingCount =
+        safeWeddings.length;
+
+      const publishedWeddingCount =
+        safeWeddings.filter(
+          function (wedding) {
+            return wedding &&
+              wedding.status === "published";
+          }
+        ).length;
+
+      const draftWeddingCount =
+        safeWeddings.filter(
+          function (wedding) {
+            return !wedding ||
+              wedding.status !== "published";
+          }
+        ).length;
+
+      /*
+       * RSVP total bisa berasal dari server.
+       * Jika server tidak menyediakan stats.totalRsvp,
+       * fallback ke stats.total.
+       *
+       * Jika keduanya tidak ada,
+       * gunakan 0.
+       */
+
+      const totalRsvpCount =
+        Number(
+          safeStats.totalRsvp ??
+          safeStats.totalRSVP ??
+          safeStats.total ??
+          0
+        ) || 0;
+    %>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <section class="summary-grid">
+
+
+      <div class="summary-card">
+
+        <small>
+          Total Wedding
+        </small>
+
+        <strong>
+          <%= totalWeddingCount %>
+        </strong>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <small>
+          Published
+        </small>
+
+        <strong>
+          <%= publishedWeddingCount %>
+        </strong>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <small>
+          Draft
+        </small>
+
+        <strong>
+          <%= draftWeddingCount %>
+        </strong>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <small>
+          Total RSVP
+        </small>
+
+        <strong>
+          <%= totalRsvpCount %>
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CREATE MODE
+    ====================================================== -->
+
+    <% if (
+      typeof createMode !== "undefined" &&
+      createMode
+    ) { %>
+
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <strong>
+              Buat Wedding Invitation
+            </strong>
+
+            <div class="muted">
+              Slug ditentukan manual oleh Admin.
+            </div>
 
           </div>
 
+        </div>
 
-          <div class="grid">
 
-            <div class="field">
+        <div class="panel-body">
+
+
+          <form
+            method="POST"
+            action="/admin/wedding/new"
+            class="form"
+          >
+
+            <input
+              type="hidden"
+              name="_csrf"
+              value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+            >
+
+
+            <h3>
+              Informasi Dasar
+            </h3>
+
+
+            <div class="form-group">
 
               <label>
-                Slug
+                Custom Slug
               </label>
 
               <input
-                id="slug"
+                type="text"
                 name="slug"
-                placeholder="contoh-aulia-rizky"
+                placeholder="contoh: aulia-rizky"
+                pattern="[a-z0-9-]+"
+                minlength="3"
+                maxlength="100"
                 required
               >
 
-              <div class="hint">
+              <small>
+                Slug menentukan URL invitation.
                 Contoh:
-                /contoh-aulia-rizky
-              </div>
+                /aulia-rizky
+              </small>
 
             </div>
 
 
-            <div class="field">
+            <div class="form-grid">
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Mempelai Pria
+                </label>
+
+                <input
+                  type="text"
+                  name="groomName"
+                  maxlength="100"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Mempelai Wanita
+                </label>
+
+                <input
+                  type="text"
+                  name="brideName"
+                  maxlength="100"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Lengkap Pria
+                </label>
+
+                <input
+                  type="text"
+                  name="groomFullName"
+                  maxlength="150"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Lengkap Wanita
+                </label>
+
+                <input
+                  type="text"
+                  name="brideFullName"
+                  maxlength="150"
+                >
+
+              </div>
+
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Tanggal Wedding
+              </label>
+
+              <input
+                type="date"
+                name="weddingDate"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Quote
+              </label>
+
+              <textarea
+                name="quote"
+                rows="4"
+                maxlength="1000"
+                placeholder="Quote pernikahan..."
+              ></textarea>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <button
+                type="submit"
+                class="button"
+              >
+                Buat Wedding
+              </button>
+
+
+              <a
+                href="/admin"
+                class="button button-outline"
+              >
+                Batal
+              </a>
+
+            </div>
+
+
+          </form>
+
+
+        </div>
+
+      </section>
+
+
+    <!-- =====================================================
+         EDIT MODE
+    ====================================================== -->
+
+    <% } else if (
+      typeof editWedding !== "undefined" &&
+      editWedding
+    ) { %>
+
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <strong>
+              Edit Wedding
+            </strong>
+
+            <div class="muted">
+              Perbarui data wedding invitation.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel-body">
+
+
+          <form
+            method="POST"
+            action="/admin/wedding/<%= encodeURIComponent(editWedding.slug) %>/edit"
+            class="form"
+          >
+
+            <input
+              type="hidden"
+              name="_csrf"
+              value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+            >
+
+
+            <h3>
+              Informasi Dasar
+            </h3>
+
+
+            <div class="form-group">
+
+              <label>
+                Custom Slug
+              </label>
+
+              <input
+                type="text"
+                name="slug"
+                value="<%= editWedding.slug || '' %>"
+                pattern="[a-z0-9-]+"
+                minlength="3"
+                maxlength="100"
+                required
+              >
+
+              <small>
+                Mengubah slug akan mengubah URL
+                invitation.
+              </small>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Mempelai Pria
+                </label>
+
+                <input
+                  type="text"
+                  name="groomName"
+                  value="<%= editWedding.groom ? (editWedding.groom.name || '') : '' %>"
+                  maxlength="100"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Mempelai Wanita
+                </label>
+
+                <input
+                  type="text"
+                  name="brideName"
+                  value="<%= editWedding.bride ? (editWedding.bride.name || '') : '' %>"
+                  maxlength="100"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Lengkap Pria
+                </label>
+
+                <input
+                  type="text"
+                  name="groomFullName"
+                  value="<%= editWedding.groom ? (editWedding.groom.fullName || '') : '' %>"
+                  maxlength="150"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Nama Lengkap Wanita
+                </label>
+
+                <input
+                  type="text"
+                  name="brideFullName"
+                  value="<%= editWedding.bride ? (editWedding.bride.fullName || '') : '' %>"
+                  maxlength="150"
+                >
+
+              </div>
+
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Tanggal Wedding
+              </label>
+
+              <input
+                type="date"
+                name="weddingDate"
+                value="<%= editWedding.date || '' %>"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Quote
+              </label>
+
+              <textarea
+                name="quote"
+                rows="4"
+                maxlength="1000"
+              ><%= editWedding.quote || '' %></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Deskripsi
+              </label>
+
+              <textarea
+                name="description"
+                rows="6"
+                maxlength="2000"
+              ><%= editWedding.description || '' %></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Music URL
+              </label>
+
+              <input
+                type="url"
+                name="musicUrl"
+                value="<%= editWedding.music ? (editWedding.music.url || '') : '' %>"
+                placeholder="https://..."
+              >
+
+              <small>
+                Field ini dipertahankan agar kompatibel
+                dengan data lama.
+              </small>
+
+            </div>
+
+
+            <div class="form-group">
 
               <label>
                 Status
               </label>
 
               <select
-                id="status"
+                name="status"
               >
 
-                <option value="draft">
+                <option
+                  value="draft"
+                  <%= editWedding.status === "draft"
+                    ? "selected"
+                    : "" %>
+                >
                   Draft
                 </option>
 
-                <option value="published">
+                <option
+                  value="published"
+                  <%= editWedding.status === "published"
+                    ? "selected"
+                    : "" %>
+                  >
                   Published
                 </option>
 
@@ -684,2748 +1610,1199 @@
 
             </div>
 
-          </div>
 
-
-          <div class="field">
-
-            <label>
-              Judul
-            </label>
-
-            <input
-              id="title"
-              placeholder="The Wedding Of"
-            >
-
-          </div>
-
-
-          <div class="grid">
-
-            <div class="field">
-
-              <label>
-                Tanggal Pernikahan
-              </label>
-
-              <input
-                id="date"
-                type="datetime-local"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Timezone
-              </label>
-
-              <select id="timezone">
-
-                <option value="Asia/Jakarta">
-                  Asia/Jakarta — WIB
-                </option>
-
-                <option value="Asia/Makassar">
-                  Asia/Makassar — WITA
-                </option>
-
-                <option value="Asia/Jayapura">
-                  Asia/Jayapura — WIT
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             OPENING
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              02. Opening
-            </h3>
-
-            <p>
-              Bagian yang muncul setelah
-              user menekan BUKA UNDANGAN.
-            </p>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Eyebrow
-            </label>
-
-            <input id="openingEyebrow">
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Opening Title
-            </label>
-
-            <input id="openingTitle">
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Opening Text
-            </label>
-
-            <textarea
-              id="openingText"
-            ></textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Button
-            </label>
-
-            <input
-              id="openingButton"
-              value="BUKA UNDANGAN"
-            >
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             COUPLE
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              03. Mempelai
-            </h3>
-
-            <p>
-              Data mempelai pria dan wanita.
-            </p>
-
-          </div>
-
-
-          <div class="grid">
-
-            <div>
-
-              <h3>
-                Mempelai Pria
-              </h3>
-
-              <div class="field">
-
-                <label>
-                  Nama
-                </label>
-
-                <input id="groomName">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Nama Lengkap
-                </label>
-
-                <input id="groomFullName">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Orang Tua
-                </label>
-
-                <input id="groomParents">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Instagram
-                </label>
-
-                <input id="groomInstagram">
-
-              </div>
-
-            </div>
-
-
-            <div>
-
-              <h3>
-                Mempelai Wanita
-              </h3>
-
-              <div class="field">
-
-                <label>
-                  Nama
-                </label>
-
-                <input id="brideName">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Nama Lengkap
-                </label>
-
-                <input id="brideFullName">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Orang Tua
-                </label>
-
-                <input id="brideParents">
-
-              </div>
-
-              <div class="field">
-
-                <label>
-                  Instagram
-                </label>
-
-                <input id="brideInstagram">
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             QUOTE
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              04. Quote
-            </h3>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Quote
-            </label>
-
-            <textarea
-              id="quoteText"
-            ></textarea>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Source
-            </label>
-
-            <input
-              id="quoteSource"
-            >
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             STORY
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              05. Story / Timeline
-            </h3>
-
-            <p>
-              Gunakan format JSON.
-            </p>
-
-          </div>
-
-
-          <div class="field">
-
-            <textarea
-              id="storyJSON"
-              spellcheck="false"
-            ></textarea>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             EVENTS
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              06. Events
-            </h3>
-
-            <p>
-              Akad, resepsi atau event lainnya.
-            </p>
-
-          </div>
-
-
-          <div class="field">
-
-            <textarea
-              id="eventsJSON"
-              spellcheck="false"
-            ></textarea>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             GIFT
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              07. Wedding Gift
-            </h3>
-
-          </div>
-
-
-          <div class="grid">
-
-            <div class="field">
-
-              <label>
-                Bank
-              </label>
-
-              <input id="bankName">
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Nomor Rekening
-              </label>
-
-              <input id="accountNumber">
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Nama Pemilik
-              </label>
-
-              <input id="accountName">
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Alamat
-              </label>
-
-              <input id="giftAddress">
-
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Pesan Gift
-            </label>
-
-            <textarea
-              id="giftText"
-            ></textarea>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             MEDIA
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              08. Media
-            </h3>
-
-            <p>
-              Semua file disimpan sebagai Base64
-              di Upstash Redis.
-            </p>
-
-          </div>
-
-
-          <div class="grid">
-
-            <div class="upload-box">
-
-              <label>
-                Cover / Opening Image
-              </label>
-
-              <input
-                id="coverUpload"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-              >
-
-              <p class="hint">
-                Maksimal ±1.2 MB.
-              </p>
+            <div class="form-actions">
 
               <button
+                type="submit"
                 class="button"
-                type="button"
-                onclick="uploadSingle('coverUpload','cover')"
               >
-                Upload Cover
+                Simpan Perubahan
               </button>
+
+
+              <a
+                href="/admin"
+                class="button button-outline"
+              >
+                Batal
+              </a>
 
             </div>
 
 
-            <div class="upload-box">
+          </form>
 
-              <label>
-                Foto Mempelai Pria
-              </label>
 
-              <input
-                id="groomUpload"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-              >
+        </div>
 
-              <p class="hint">
-                Maksimal ±1.2 MB.
+      </section>
+
+
+    <!-- =====================================================
+         RSVP MODE
+    ====================================================== -->
+
+    <% } else if (
+      typeof rsvpWedding !== "undefined" &&
+      rsvpWedding
+    ) { %>
+
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <strong>
+              Data RSVP
+            </strong>
+
+            <div class="muted">
+
+              <%= rsvpWedding.groom
+                ? (rsvpWedding.groom.name || "Groom")
+                : "Groom" %>
+
+              &
+
+              <%= rsvpWedding.bride
+                ? (rsvpWedding.bride.name || "Bride")
+                : "Bride" %>
+
+            </div>
+
+          </div>
+
+
+          <a
+            href="/admin"
+            class="button button-outline"
+          >
+            ← Kembali
+          </a>
+
+        </div>
+
+
+        <div class="panel-body">
+
+
+          <%
+            const safeRsvps =
+              typeof rsvps !== "undefined" &&
+              Array.isArray(rsvps)
+                ? rsvps
+                : [];
+
+            const hadirCount =
+              safeRsvps.filter(
+                function (item) {
+                  return item &&
+                    item.attendance === "hadir";
+                }
+              ).length;
+
+            const tidakHadirCount =
+              safeRsvps.filter(
+                function (item) {
+                  return item &&
+                    item.attendance === "tidak_hadir";
+                }
+              ).length;
+
+            const menentukanCount =
+              safeRsvps.filter(
+                function (item) {
+                  return item &&
+                    item.attendance === "masih_menentukan";
+                }
+              ).length;
+          %>
+
+
+          <div class="rsvp-summary">
+
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Total RSVP
+              </small>
+
+              <strong>
+                <%= safeRsvps.length %>
+              </strong>
+
+            </div>
+
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Hadir
+              </small>
+
+              <strong>
+                <%= hadirCount %>
+              </strong>
+
+            </div>
+
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Belum Pasti
+              </small>
+
+              <strong>
+                <%= menentukanCount %>
+              </strong>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Nama
+                  </th>
+
+                  <th>
+                    Kehadiran
+                  </th>
+
+                  <th>
+                    Jumlah Tamu
+                  </th>
+
+                  <th>
+                    Pesan
+                  </th>
+
+                  <th>
+                    Waktu
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+
+                <% if (!safeRsvps.length) { %>
+
+                  <tr>
+
+                    <td
+                      colspan="5"
+                      class="empty-table"
+                    >
+                      Belum ada RSVP.
+                    </td>
+
+                  </tr>
+
+                <% } else { %>
+
+
+                  <% safeRsvps.forEach(
+                    function (rsvp) {
+                  { %>
+
+                    <tr>
+
+                      <td>
+                        <%= rsvp.name || "-" %>
+                      </td>
+
+                      <td>
+                        <%= rsvp.attendance || "-" %>
+                      </td>
+
+                      <td>
+                        <%= rsvp.guestCount || 0 %>
+                      </td>
+
+                      <td>
+                        <%= rsvp.message || "-" %>
+                      </td>
+
+                      <td>
+                        <%= rsvp.createdAt || "-" %>
+                      </td>
+
+                    </tr>
+
+                  <% }); %>
+
+
+                <% } %>
+
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+
+    <!-- =====================================================
+         NORMAL DASHBOARD
+    ====================================================== -->
+
+    <% } else { %>
+
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <strong>
+              Daftar Wedding
+            </strong>
+
+            <div class="muted">
+              Semua invitation yang tersimpan.
+            </div>
+
+          </div>
+
+
+          <a
+            href="/admin/wedding/new"
+            class="button"
+          >
+            + Buat Wedding
+          </a>
+
+        </div>
+
+
+        <div class="panel-body">
+
+
+          <% if (!safeWeddings.length) { %>
+
+
+            <div class="empty-state">
+
+              <p>
+                Belum ada wedding invitation.
               </p>
 
-              <button
+
+              <a
+                href="/admin/wedding/new"
                 class="button"
-                type="button"
-                onclick="uploadSingle('groomUpload','groom')"
               >
-                Upload Foto Pria
-              </button>
+                Buat Wedding Pertama
+              </a>
 
             </div>
 
 
-            <div class="upload-box">
+          <% } else { %>
 
-              <label>
-                Foto Mempelai Wanita
-              </label>
 
-              <input
-                id="brideUpload"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-              >
+            <div class="wedding-list">
 
-              <p class="hint">
-                Maksimal ±1.2 MB.
-              </p>
 
-              <button
-                class="button"
-                type="button"
-                onclick="uploadSingle('brideUpload','bride')"
-              >
-                Upload Foto Wanita
-              </button>
+              <% safeWeddings.forEach(
+                function (wedding) {
+              { %>
+
+
+                <article
+                  class="wedding-item"
+                >
+
+
+                  <div
+                    class="wedding-item-header"
+                  >
+
+
+                    <div>
+
+
+                      <span
+                        class="status status-<%= wedding.status === 'published' ? 'published' : 'draft' %>"
+                      >
+                        <%= wedding.status || "draft" %>
+                      </span>
+
+
+                      <h3>
+
+                        <%= wedding.groom
+                          ? (wedding.groom.name || "Groom")
+                          : "Groom" %>
+
+                        &
+
+                        <%= wedding.bride
+                          ? (wedding.bride.name || "Bride")
+                          : "Bride" %>
+
+                      </h3>
+
+
+                      <p>
+
+                        Slug:
+
+                        <strong>
+                          <%= wedding.slug %>
+                        </strong>
+
+                      </p>
+
+
+                      <p>
+
+                        URL:
+
+                        <br>
+
+                        <code>
+                          https://loveforever.vercel.app/<%= wedding.slug %>
+                        </code>
+
+                      </p>
+
+
+                      <p>
+
+                        Personalized:
+
+                        <br>
+
+                        <code>
+                          https://loveforever.vercel.app/<%= wedding.slug %>?to=Nama%20Tamu
+                        </code>
+
+                      </p>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                  <div
+                    class="wedding-actions"
+                  >
+
+
+                    <!-- VIEW -->
+
+                    <a
+                      href="/<%= encodeURIComponent(wedding.slug) %>"
+                      class="button"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Lihat Invitation
+                    </a>
+
+
+                    <!-- EDIT -->
+
+                    <a
+                      href="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/edit"
+                      class="button button-outline"
+                    >
+                      Edit
+                    </a>
+
+
+                    <!-- RSVP -->
+
+                    <button
+                      type="button"
+                      class="button button-outline"
+                      onclick="viewRSVP('<%= wedding.slug %>')"
+                    >
+                      Lihat RSVP
+                    </button>
+
+
+                    <!-- PUBLISH / UNPUBLISH -->
+
+                    <% if (
+                      wedding.status === "published"
+                    ) { %>
+
+
+                      <form
+                        method="POST"
+                        action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/unpublish"
+                        onsubmit="return confirmUnpublish('<%= wedding.slug %>')"
+                      >
+
+                        <input
+                          type="hidden"
+                          name="_csrf"
+                          value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+                        >
+
+                        <button
+                          type="submit"
+                          class="button button-outline"
+                        >
+                          Unpublish
+                        </button>
+
+                      </form>
+
+
+                    <% } else { %>
+
+
+                      <form
+                        method="POST"
+                        action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/publish"
+                        onsubmit="return confirmPublish('<%= wedding.slug %>')"
+                      >
+
+                        <input
+                          type="hidden"
+                          name="_csrf"
+                          value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+                        >
+
+                        <button
+                          type="submit"
+                          class="button button-success"
+                        >
+                          Publish
+                        </button>
+
+                      </form>
+
+
+                    <% } %>
+
+
+                    <!-- DELETE -->
+
+                    <form
+                      method="POST"
+                      action="/admin/wedding/<%= encodeURIComponent(wedding.slug) %>/delete"
+                      onsubmit="return confirmDelete('<%= wedding.slug %>')"
+                    >
+
+                      <input
+                        type="hidden"
+                        name="_csrf"
+                        value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+                      >
+
+                      <button
+                        type="submit"
+                        class="button button-danger"
+                      >
+                        Hapus
+                      </button>
+
+                    </form>
+
+
+                  </div>
+
+
+                </article>
+
+
+              <% }); %>
+
 
             </div>
 
 
-            <div class="upload-box">
+          <% } %>
 
-              <label>
-                MP3 / Music
-              </label>
-
-              <input
-                id="musicUpload"
-                type="file"
-                accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
-              >
-
-              <p class="hint">
-                Maksimal ±3 MB karena batas
-                request Vercel.
-              </p>
-
-              <button
-                class="button"
-                type="button"
-                onclick="uploadSingle('musicUpload','music')"
-              >
-                Upload Music
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div
-            class="upload-box"
-            style="margin-top:20px;"
-          >
-
-            <label>
-              Gallery
-            </label>
-
-            <input
-              id="galleryUpload"
-              type="file"
-              multiple
-              accept="image/jpeg,image/png,image/webp,image/gif"
-            >
-
-            <p class="hint">
-              Gallery akan diupload satu file per request
-              agar tidak terkena batas payload Vercel.
-            </p>
-
-            <button
-              class="button"
-              type="button"
-              onclick="uploadGallery()"
-            >
-              Upload Semua Gallery
-            </button>
-
-          </div>
-
-
-          <div
-            id="mediaGrid"
-            class="media-grid"
-            style="margin-top:20px;"
-          ></div>
 
         </div>
 
+      </section>
 
-        <!-- =====================================================
-             THEME
-        ====================================================== -->
 
-        <div class="section">
+    <% } %>
 
-          <div class="section-title">
 
-            <h3>
-              09. Theme
-            </h3>
+  </main>
 
-          </div>
 
+  <!-- =======================================================
+       RSVP MODAL
+  ======================================================== -->
 
-          <div class="grid-3">
+  <div
+    id="rsvpModal"
+    class="modal"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rsvpModalTitle"
+  >
 
-            <div class="field">
 
-              <label>
-                Background
-              </label>
+    <div class="modal-content">
 
-              <input
-                id="themeBackground"
-                type="color"
-              >
 
-            </div>
+      <div class="modal-header">
 
 
-            <div class="field">
+        <h2
+          id="rsvpModalTitle"
+        >
+          Data RSVP
+        </h2>
 
-              <label>
-                Surface
-              </label>
 
-              <input
-                id="themeSurface"
-                type="color"
-              >
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeRsvpModal()"
+          aria-label="Tutup"
+        >
+          ×
+        </button>
 
-            </div>
 
+      </div>
 
-            <div class="field">
-
-              <label>
-                Text
-              </label>
-
-              <input
-                id="themeText"
-                type="color"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Muted
-              </label>
-
-              <input
-                id="themeMuted"
-                type="color"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Accent
-              </label>
-
-              <input
-                id="themeAccent"
-                type="color"
-              >
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             SETTINGS
-        ====================================================== -->
-
-        <div class="section">
-
-          <div class="section-title">
-
-            <h3>
-              10. Section Settings
-            </h3>
-
-          </div>
-
-
-          <div class="grid-3">
-
-            <label>
-              <input
-                id="showCountdown"
-                type="checkbox"
-              >
-              Countdown
-            </label>
-
-
-            <label>
-              <input
-                id="showStory"
-                type="checkbox"
-              >
-              Story
-            </label>
-
-
-            <label>
-              <input
-                id="showGallery"
-                type="checkbox"
-              >
-              Gallery
-            </label>
-
-
-            <label>
-              <input
-                id="showGift"
-                type="checkbox"
-              >
-              Gift
-            </label>
-
-
-            <label>
-              <input
-                id="showRSVP"
-                type="checkbox"
-              >
-              RSVP
-            </label>
-
-
-            <label>
-              <input
-                id="showMusic"
-                type="checkbox"
-              >
-              Music
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             SAVE
-        ====================================================== -->
-
-        <div class="sticky-actions">
-
-          <button
-            type="button"
-            class="button secondary"
-            onclick="newWedding()"
-          >
-            Wedding Baru
-          </button>
-
-
-          <button
-            type="button"
-            class="button secondary"
-            id="previewButton"
-            onclick="previewWedding()"
-          >
-            Preview
-          </button>
-
-
-          <button
-            type="button"
-            class="button success"
-            onclick="saveWedding()"
-          >
-            Simpan Wedding
-          </button>
-
-
-          <button
-            type="button"
-            class="button danger"
-            onclick="deleteCurrentWedding()"
-          >
-            Hapus Wedding
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================================================
-       RSVP
-  ========================================================== -->
-
-  <section class="panel">
-
-    <div class="panel-header">
-
-      <h2>
-        RSVP
-      </h2>
-
-      <p class="hint">
-        Data RSVP dari wedding yang sedang dipilih.
-      </p>
-
-    </div>
-
-    <div class="panel-body">
 
       <div
-        id="rsvpContainer"
-      ></div>
+        id="rsvpContent"
+      >
+        <p>
+          Memuat data RSVP...
+        </p>
+      </div>
+
 
     </div>
 
-  </section>
-
-</main>
+  </div>
 
 
-<script>
+  <script>
 
-  const state = {
-    currentWedding: null,
-    currentSlug: null
-  };
+    /* =========================================================
+       GLOBAL CONFIG
+    ========================================================= */
 
-
-  const selector =
-    document.getElementById(
-      "weddingSelector"
-    );
-
-
-  function showAlert(
-    message,
-    type = "warning"
-  ) {
-
-    const alert =
-      document.getElementById(
-        "alert"
-      );
-
-    alert.style.display =
-      "block";
-
-    alert.textContent =
-      message;
-
-    if (type === "success") {
-      alert.style.background =
-        "#e8f3e9";
-
-      alert.style.color =
-        "#416548";
-    } else {
-      alert.style.background =
-        "#fff2d6";
-
-      alert.style.color =
-        "#73521b";
-    }
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-  }
+    const csrfToken =
+      <%- JSON.stringify(
+        typeof csrfToken !== "undefined"
+          ? csrfToken
+          : ""
+      ) %>;
 
 
-  async function api(
-    url,
-    options = {}
-  ) {
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
 
-    const response =
-      await fetch(
-        url,
-        {
-          credentials: "same-origin",
-          ...options
-        }
-      );
-
-    /*
-     * FIX untuk error:
-     *
-     * Unexpected token '<'
-     *
-     * Jangan langsung response.json().
-     * Kita cek content-type dahulu.
-     */
-
-    const contentType =
-      response.headers.get(
-        "content-type"
-      ) || "";
-
-    if (
-      !contentType.includes(
-        "application/json"
-      )
+    function showMessage(
+      message,
+      type = "success"
     ) {
 
-      const text =
-        await response.text();
-
-      throw new Error(
-        `Server mengembalikan HTML/non-JSON (${response.status}). ` +
-        text.slice(0, 200)
-      );
-
-    }
-
-    const data =
-      await response.json();
-
-    if (!response.ok ||
-        data.success === false) {
-
-      throw new Error(
-        data.error ||
-        "Request gagal."
-      );
-
-    }
-
-    return data;
-
-  }
-
-
-  function value(id) {
-
-    const element =
-      document.getElementById(
-        id
-      );
-
-    return element
-      ? element.value
-      : "";
-
-  }
-
-
-  function setValue(
-    id,
-    value
-  ) {
-
-    const element =
-      document.getElementById(
-        id
-      );
-
-    if (element) {
-      element.value =
-        value ?? "";
-    }
-
-  }
-
-
-  function checked(id) {
-
-    const element =
-      document.getElementById(
-        id
-      );
-
-    return element
-      ? element.checked
-      : false;
-
-  }
-
-
-  function setChecked(
-    id,
-    value
-  ) {
-
-    const element =
-      document.getElementById(
-        id
-      );
-
-    if (element) {
-      element.checked =
-        Boolean(value);
-    }
-
-  }
-
-
-  function prettyJSON(
-    value
-  ) {
-
-    return JSON.stringify(
-      value || [],
-      null,
-      2
-    );
-
-  }
-
-
-  function fillWedding(
-    wedding
-  ) {
-
-    state.currentWedding =
-      wedding;
-
-    state.currentSlug =
-      wedding.slug;
-
-    setValue(
-      "slug",
-      wedding.slug
-    );
-
-    setValue(
-      "status",
-      wedding.status
-    );
-
-    setValue(
-      "title",
-      wedding.title
-    );
-
-    setValue(
-      "date",
-      wedding.date
-    );
-
-    setValue(
-      "timezone",
-      wedding.timezone
-    );
-
-
-    const opening =
-      wedding.opening ||
-      {};
-
-    setValue(
-      "openingEyebrow",
-      opening.eyebrow
-    );
-
-    setValue(
-      "openingTitle",
-      opening.title
-    );
-
-    setValue(
-      "openingText",
-      opening.text
-    );
-
-    setValue(
-      "openingButton",
-      opening.button
-    );
-
-
-    const groom =
-      wedding.groom ||
-      {};
-
-    setValue(
-      "groomName",
-      groom.name
-    );
-
-    setValue(
-      "groomFullName",
-      groom.fullName
-    );
-
-    setValue(
-      "groomParents",
-      groom.parents
-    );
-
-    setValue(
-      "groomInstagram",
-      groom.instagram
-    );
-
-
-    const bride =
-      wedding.bride ||
-      {};
-
-    setValue(
-      "brideName",
-      bride.name
-    );
-
-    setValue(
-      "brideFullName",
-      bride.fullName
-    );
-
-    setValue(
-      "brideParents",
-      bride.parents
-    );
-
-    setValue(
-      "brideInstagram",
-      bride.instagram
-    );
-
-
-    const quote =
-      wedding.quote ||
-      {};
-
-    setValue(
-      "quoteText",
-      quote.text
-    );
-
-    setValue(
-      "quoteSource",
-      quote.source
-    );
-
-
-    setValue(
-      "storyJSON",
-      prettyJSON(
-        wedding.story
-      )
-    );
-
-    setValue(
-      "eventsJSON",
-      prettyJSON(
-        wedding.events
-      )
-    );
-
-
-    const gift =
-      wedding.gift ||
-      {};
-
-    setValue(
-      "bankName",
-      gift.bankName
-    );
-
-    setValue(
-      "accountNumber",
-      gift.accountNumber
-    );
-
-    setValue(
-      "accountName",
-      gift.accountName
-    );
-
-    setValue(
-      "giftAddress",
-      gift.address
-    );
-
-    setValue(
-      "giftText",
-      gift.text
-    );
-
-
-    const theme =
-      wedding.theme ||
-      {};
-
-    setValue(
-      "themeBackground",
-      theme.background ||
-      "#f7f2eb"
-    );
-
-    setValue(
-      "themeSurface",
-      theme.surface ||
-      "#fffdf9"
-    );
-
-    setValue(
-      "themeText",
-      theme.text ||
-      "#2e2925"
-    );
-
-    setValue(
-      "themeMuted",
-      theme.muted ||
-      "#8c837b"
-    );
-
-    setValue(
-      "themeAccent",
-      theme.accent ||
-      "#7c6b5d"
-    );
-
-
-    const settings =
-      wedding.settings ||
-      {};
-
-    setChecked(
-      "showCountdown",
-      settings.showCountdown
-    );
-
-    setChecked(
-      "showStory",
-      settings.showStory
-    );
-
-    setChecked(
-      "showGallery",
-      settings.showGallery
-    );
-
-    setChecked(
-      "showGift",
-      settings.showGift
-    );
-
-    setChecked(
-      "showRSVP",
-      settings.showRSVP
-    );
-
-    setChecked(
-      "showMusic",
-      settings.showMusic
-    );
-
-
-    renderMedia(
-      wedding
-    );
-
-  }
-
-
-  function parseJSONField(
-    id,
-    fallback
-  ) {
-
-    try {
-
-      const parsed =
-        JSON.parse(
-          value(id)
+      const container =
+        document.getElementById(
+          "globalMessage"
         );
 
-      return parsed;
-
-    } catch {
-
-      throw new Error(
-        `JSON pada ${id} tidak valid.`
-      );
-
-    }
-
-  }
-
-
-  function buildWeddingPayload() {
-
-    if (
-      !state.currentWedding
-    ) {
-
-      return {
-        slug:
-          value("slug"),
-        status:
-          value("status")
-      };
-
-    }
-
-
-    const wedding =
-      JSON.parse(
-        JSON.stringify(
-          state.currentWedding
-        )
-      );
-
-
-    wedding.slug =
-      value("slug")
-        .trim()
-        .toLowerCase();
-
-    wedding.status =
-      value("status");
-
-    wedding.title =
-      value("title");
-
-    wedding.date =
-      value("date");
-
-    wedding.timezone =
-      value("timezone");
-
-
-    wedding.opening = {
-      ...(wedding.opening || {}),
-      eyebrow:
-        value(
-          "openingEyebrow"
-        ),
-      title:
-        value(
-          "openingTitle"
-        ),
-      text:
-        value(
-          "openingText"
-        ),
-      button:
-        value(
-          "openingButton"
-        )
-    };
-
-
-    wedding.groom = {
-      ...(wedding.groom || {}),
-      name:
-        value("groomName"),
-      fullName:
-        value("groomFullName"),
-      parents:
-        value("groomParents"),
-      instagram:
-        value("groomInstagram")
-    };
-
-
-    wedding.bride = {
-      ...(wedding.bride || {}),
-      name:
-        value("brideName"),
-      fullName:
-        value("brideFullName"),
-      parents:
-        value("brideParents"),
-      instagram:
-        value("brideInstagram")
-    };
-
-
-    wedding.quote = {
-      ...(wedding.quote || {}),
-      text:
-        value("quoteText"),
-      source:
-        value("quoteSource")
-    };
-
-
-    wedding.story =
-      parseJSONField(
-        "storyJSON",
-        []
-      );
-
-
-    wedding.events =
-      parseJSONField(
-        "eventsJSON",
-        []
-      );
-
-
-    wedding.gift = {
-      ...(wedding.gift || {}),
-      bankName:
-        value("bankName"),
-      accountNumber:
-        value("accountNumber"),
-      accountName:
-        value("accountName"),
-      address:
-        value("giftAddress"),
-      text:
-        value("giftText")
-    };
-
-
-    wedding.theme = {
-      ...(wedding.theme || {}),
-      background:
-        value(
-          "themeBackground"
-        ),
-      surface:
-        value(
-          "themeSurface"
-        ),
-      text:
-        value(
-          "themeText"
-        ),
-      muted:
-        value(
-          "themeMuted"
-        ),
-      accent:
-        value(
-          "themeAccent"
-        )
-    };
-
-
-    wedding.settings = {
-      ...(wedding.settings || {}),
-      showCountdown:
-        checked(
-          "showCountdown"
-        ),
-      showStory:
-        checked(
-          "showStory"
-        ),
-      showGallery:
-        checked(
-          "showGallery"
-        ),
-      showGift:
-        checked(
-          "showGift"
-        ),
-      showRSVP:
-        checked(
-          "showRSVP"
-        ),
-      showMusic:
-        checked(
-          "showMusic"
-        ),
-      bottomNavigation:
-        true
-    };
-
-
-    return wedding;
-
-  }
-
-
-  async function loadWedding(
-    slug
-  ) {
-
-    if (!slug) {
-      newWedding();
-      return;
-    }
-
-    try {
-
-      const data =
-        await api(
-          `/api/weddings/${encodeURIComponent(
-            slug
-          )}`
-        );
-
-      fillWedding(
-        data.wedding
-      );
-
-      renderRSVP(
-        data.rsvps
-      );
-
-      selector.value =
-        slug;
-
-      showAlert(
-        "Wedding berhasil dimuat.",
-        "success"
-      );
-
-    } catch (error) {
-
-      showAlert(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  function newWedding() {
-
-    state.currentWedding =
-      null;
-
-    state.currentSlug =
-      null;
-
-    document
-      .getElementById(
-        "weddingForm"
-      )
-      .reset();
-
-    setValue(
-      "status",
-      "draft"
-    );
-
-    setValue(
-      "title",
-      "The Wedding Of"
-    );
-
-    setValue(
-      "timezone",
-      "Asia/Jakarta"
-    );
-
-    setValue(
-      "openingButton",
-      "BUKA UNDANGAN"
-    );
-
-    setValue(
-      "storyJSON",
-      "[]"
-    );
-
-    setValue(
-      "eventsJSON",
-      prettyJSON([
-        {
-          title: "Akad Nikah",
-          date: "",
-          time: "",
-          venue: "",
-          address: "",
-          mapsUrl: ""
-        },
-        {
-          title: "Resepsi",
-          date: "",
-          time: "",
-          venue: "",
-          address: "",
-          mapsUrl: ""
-        }
-      ])
-    );
-
-    setValue(
-      "quoteText",
-      "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri supaya kamu mendapatkan ketenangan hati dan dijadikan-Nya kasih sayang di antara kamu."
-    );
-
-    setValue(
-      "quoteSource",
-      "QS. Ar-Rum: 21"
-    );
-
-    setValue(
-      "themeBackground",
-      "#f7f2eb"
-    );
-
-    setValue(
-      "themeSurface",
-      "#fffdf9"
-    );
-
-    setValue(
-      "themeText",
-      "#2e2925"
-    );
-
-    setValue(
-      "themeMuted",
-      "#8c837b"
-    );
-
-    setValue(
-      "themeAccent",
-      "#7c6b5d"
-    );
-
-    setChecked(
-      "showCountdown",
-      true
-    );
-
-    setChecked(
-      "showStory",
-      true
-    );
-
-    setChecked(
-      "showGallery",
-      true
-    );
-
-    setChecked(
-      "showGift",
-      true
-    );
-
-    setChecked(
-      "showRSVP",
-      true
-    );
-
-    setChecked(
-      "showMusic",
-      true
-    );
-
-    document
-      .getElementById(
-        "mediaGrid"
-      )
-      .innerHTML = "";
-
-    document
-      .getElementById(
-        "rsvpContainer"
-      )
-      .innerHTML =
-      '<div class="empty">Belum ada RSVP.</div>';
-
-    selector.value = "";
-
-    showAlert(
-      "Mode Wedding Baru aktif."
-    );
-
-  }
-
-
-  async function saveWedding() {
-
-    try {
-
-      const payload =
-        buildWeddingPayload();
-
-      if (!payload.slug) {
-        throw new Error(
-          "Slug wajib diisi."
-        );
+      if (!container) {
+        return;
       }
 
 
-      const isNew =
-        !state.currentSlug;
+      container.innerHTML =
+        "";
 
 
-      const url =
-        isNew
-          ? "/api/weddings"
-          : `/api/weddings/${encodeURIComponent(
-              state.currentSlug
-            )}`;
+      const notice =
+        document.createElement(
+          "div"
+        );
+
+      notice.className =
+        "notice " +
+        type;
 
 
-      const method =
-        isNew
-          ? "POST"
-          : "PUT";
-
-
-      const data =
-        await api(
-          url,
-          {
-            method,
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-            body:
-              JSON.stringify(
-                payload
-              )
-          }
+      notice.textContent =
+        String(
+          message || ""
         );
 
 
-      state.currentWedding =
-        data.wedding;
-
-      state.currentSlug =
-        data.wedding.slug;
-
-
-      await refreshSelector();
-
-      selector.value =
-        data.wedding.slug;
-
-
-      fillWedding(
-        data.wedding
-      );
-
-
-      showAlert(
-        "Wedding berhasil disimpan.",
-        "success"
-      );
-
-    } catch (error) {
-
-      showAlert(
-        error.message
+      container.appendChild(
+        notice
       );
 
     }
 
-  }
 
+    /* =========================================================
+       CONFIRM PUBLISH
+    ========================================================= */
 
-  async function refreshSelector() {
-
-    try {
-
-      const data =
-        await api(
-          "/api/weddings"
-        );
-
-      selector.innerHTML =
-        '<option value="">+ Buat Wedding Baru</option>';
-
-      data.weddings.forEach(
-        wedding => {
-
-          const option =
-            document.createElement(
-              "option"
-            );
-
-          option.value =
-            wedding.slug;
-
-          option.textContent =
-            `${wedding.slug} — ${wedding.status}`;
-
-          selector.appendChild(
-            option
-          );
-
-        }
-      );
-
-
-      document
-        .getElementById(
-          "totalWedding"
-        )
-        .textContent =
-        data.weddings.length;
-
-
-      document
-        .getElementById(
-          "publishedWedding"
-        )
-        .textContent =
-        data.weddings.filter(
-          item =>
-            item.status ===
-            "published"
-        ).length;
-
-
-      document
-        .getElementById(
-          "draftWedding"
-        )
-        .textContent =
-        data.weddings.filter(
-          item =>
-            item.status ===
-            "draft"
-        ).length;
-
-
-      document
-        .getElementById(
-          "totalRSVP"
-        )
-        .textContent =
-        data.weddings.reduce(
-          (
-            total,
-            item
-          ) =>
-            total +
-            (
-              item.rsvpCount ||
-              0
-            ),
-          0
-        );
-
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-    }
-
-  }
-
-
-  async function uploadSingle(
-    inputId,
-    type
-  ) {
-
-    if (!state.currentSlug) {
-
-      showAlert(
-        "Simpan wedding terlebih dahulu sebelum upload media."
-      );
-
-      return;
-
-    }
-
-
-    const input =
-      document.getElementById(
-        inputId
-      );
-
-    if (
-      !input.files ||
-      !input.files[0]
+    function confirmPublish(
+      slug
     ) {
 
-      showAlert(
-        "Pilih file terlebih dahulu."
+      return window.confirm(
+        "Publish wedding \"" +
+        slug +
+        "\"?"
       );
-
-      return;
 
     }
 
 
-    const file =
-      input.files[0];
+    /* =========================================================
+       CONFIRM UNPUBLISH
+    ========================================================= */
+
+    function confirmUnpublish(
+      slug
+    ) {
+
+      return window.confirm(
+        "Unpublish wedding \"" +
+        slug +
+        "\"?"
+      );
+
+    }
 
 
-    const formData =
-      new FormData();
+    /* =========================================================
+       CONFIRM DELETE
+    ========================================================= */
 
-    formData.append(
-      "file",
-      file
-    );
+    function confirmDelete(
+      slug
+    ) {
+
+      return window.confirm(
+        "Yakin ingin menghapus wedding \"" +
+        slug +
+        "\"?\n\n" +
+        "Data wedding akan dihapus dari Redis.\n" +
+        "Data RSVP terkait juga sebaiknya " +
+        "ditangani oleh server."
+      );
+
+    }
 
 
-    try {
+    /* =========================================================
+       RSVP
+    ========================================================= */
 
-      const data =
-        await api(
-          `/api/weddings/${encodeURIComponent(
-            state.currentSlug
-          )}/assets`,
-          {
-            method: "POST",
-            body:
-              formData
-          }
+    async function viewRSVP(
+      slug
+    ) {
+
+      const modal =
+        document.getElementById(
+          "rsvpModal"
+        );
+
+      const content =
+        document.getElementById(
+          "rsvpContent"
         );
 
 
-      const asset =
-        data.asset;
-
-
-      const wedding =
-        state.currentWedding;
-
-
-      if (type === "cover") {
-
-        wedding.cover = {
-          assetId:
-            asset.assetId,
-          filename:
-            asset.filename,
-          mime:
-            asset.mime,
-          url:
-            asset.url
-        };
-
+      if (!modal || !content) {
+        return;
       }
 
 
-      if (type === "groom") {
-
-        wedding.groom =
-          wedding.groom ||
-          {};
-
-        wedding.groom.photo = {
-          assetId:
-            asset.assetId,
-          filename:
-            asset.filename,
-          mime:
-            asset.mime,
-          url:
-            asset.url
-        };
-
-      }
+      modal.hidden =
+        false;
 
 
-      if (type === "bride") {
+      content.innerHTML =
+        "<p>Memuat data RSVP...</p>";
 
-        wedding.bride =
-          wedding.bride ||
-          {};
-
-        wedding.bride.photo = {
-          assetId:
-            asset.assetId,
-          filename:
-            asset.filename,
-          mime:
-            asset.mime,
-          url:
-            asset.url
-        };
-
-      }
-
-
-      if (type === "music") {
-
-        wedding.music =
-          wedding.music ||
-          {};
-
-        wedding.music.assetId =
-          asset.assetId;
-
-        wedding.music.title =
-          asset.filename;
-
-        wedding.music.url =
-          asset.url;
-
-      }
-
-
-      await saveWedding();
-
-      input.value = "";
-
-      showAlert(
-        `${asset.filename} berhasil diupload.`,
-        "success"
-      );
-
-    } catch (error) {
-
-      showAlert(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  async function uploadGallery() {
-
-    if (!state.currentSlug) {
-
-      showAlert(
-        "Simpan wedding terlebih dahulu."
-      );
-
-      return;
-
-    }
-
-
-    const input =
-      document.getElementById(
-        "galleryUpload"
-      );
-
-
-    if (
-      !input.files ||
-      !input.files.length
-    ) {
-
-      showAlert(
-        "Pilih foto gallery."
-      );
-
-      return;
-
-    }
-
-
-    const files =
-      Array.from(
-        input.files
-      );
-
-
-    for (
-      const file of files
-    ) {
 
       try {
 
-        const formData =
-          new FormData();
-
-        formData.append(
-          "file",
-          file
-        );
-
-
-        const data =
-          await api(
-            `/api/weddings/${encodeURIComponent(
-              state.currentSlug
-            )}/assets`,
+        const response =
+          await fetch(
+            "/admin/wedding/" +
+            encodeURIComponent(
+              slug
+            ) +
+            "/rsvp",
             {
-              method: "POST",
-              body:
-                formData
+              method: "GET",
+              headers: {
+                "Accept":
+                  "application/json"
+              },
+              credentials:
+                "same-origin"
             }
           );
 
 
-        const asset =
-          data.asset;
+        const contentType =
+          response.headers.get(
+            "content-type"
+          ) || "";
 
 
-        state.currentWedding.gallery =
-          state.currentWedding.gallery ||
-          [];
+        /*
+         * BUG PREVENTION:
+         *
+         * Jangan langsung response.json().
+         *
+         * Jika server mengembalikan
+         * HTML login/error page,
+         * response.json() akan menghasilkan:
+         *
+         * Unexpected token '<'
+         */
+
+        if (
+          !contentType.includes(
+            "application/json"
+          )
+        ) {
+
+          if (
+            response.status === 401 ||
+            response.status === 403
+          ) {
+
+            throw new Error(
+              "Sesi Admin sudah tidak valid. Silakan login kembali."
+            );
+
+          }
+
+          throw new Error(
+            "Server mengembalikan response bukan JSON."
+          );
+
+        }
 
 
-        state.currentWedding.gallery.push({
-          assetId:
-            asset.assetId,
-          filename:
-            asset.filename,
-          mime:
-            asset.mime,
-          url:
-            asset.url,
-          caption:
-            asset.filename
-        });
+        const result =
+          await response.json();
 
 
-        renderMedia(
-          state.currentWedding
-        );
+        if (
+          !response.ok ||
+          !result.success
+        ) {
+
+          throw new Error(
+            result.message ||
+            "Gagal mengambil data RSVP."
+          );
+
+        }
+
+
+        const safeRsvps =
+          Array.isArray(
+            result.rsvps
+          )
+            ? result.rsvps
+            : [];
+
+
+        if (!safeRsvps.length) {
+
+          content.innerHTML = `
+            <div class="notice">
+              Belum ada RSVP.
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        const total =
+          Number(
+            result.total ??
+            safeRsvps.length
+          ) || 0;
+
+
+        const hadir =
+          safeRsvps.filter(
+            item =>
+              item &&
+              item.attendance === "hadir"
+          ).length;
+
+
+        const tidakHadir =
+          safeRsvps.filter(
+            item =>
+              item &&
+              item.attendance === "tidak_hadir"
+          ).length;
+
+
+        const masihMenentukan =
+          safeRsvps.filter(
+            item =>
+              item &&
+              item.attendance ===
+                "masih_menentukan"
+          ).length;
+
+
+        const rows =
+          safeRsvps
+            .map(
+              function (item) {
+
+                return `
+
+                  <tr>
+
+                    <td>
+                      ${escapeHtml(
+                        item.name
+                      )}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(
+                        formatAttendance(
+                          item.attendance
+                        )
+                      )}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(
+                        item.guestCount
+                      )}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(
+                        item.message ||
+                        "-"
+                      )}
+                    </td>
+
+                    <td>
+                      ${escapeHtml(
+                        item.createdAt ||
+                        "-"
+                      )}
+                    </td>
+
+                  </tr>
+
+                `;
+
+              }
+            )
+            .join("");
+
+
+        content.innerHTML = `
+
+          <div class="rsvp-summary">
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Total
+              </small>
+
+              <strong>
+                ${total}
+              </strong>
+
+            </div>
+
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Hadir
+              </small>
+
+              <strong>
+                ${hadir}
+              </strong>
+
+            </div>
+
+
+            <div class="rsvp-summary-card">
+
+              <small>
+                Tidak Hadir
+              </small>
+
+              <strong>
+                ${tidakHadir}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="notice">
+
+            Masih menentukan:
+            <strong>
+              ${masihMenentukan}
+            </strong>
+
+          </div>
+
+
+          <br>
+
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Nama
+                  </th>
+
+                  <th>
+                    Kehadiran
+                  </th>
+
+                  <th>
+                    Tamu
+                  </th>
+
+                  <th>
+                    Pesan
+                  </th>
+
+                  <th>
+                    Waktu
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+                ${rows}
+              </tbody>
+
+            </table>
+
+          </div>
+
+        `;
 
 
       } catch (error) {
 
-        showAlert(
-          `${file.name}: ${error.message}`
+        console.error(
+          "RSVP error:",
+          error
         );
+
+
+        content.innerHTML = `
+
+          <div class="notice error">
+
+            ${escapeHtml(
+              error.message ||
+              "Terjadi kesalahan."
+            )}
+
+          </div>
+
+        `;
 
       }
 
     }
 
 
-    await saveWedding();
+    /* =========================================================
+       ATTENDANCE FORMAT
+    ========================================================= */
 
-    input.value = "";
-
-    showAlert(
-      "Gallery berhasil diupload.",
-      "success"
-    );
-
-  }
-
-
-  function renderMedia(
-    wedding
-  ) {
-
-    const container =
-      document.getElementById(
-        "mediaGrid"
-      );
-
-
-    const items = [];
-
-
-    if (
-      wedding.cover &&
-      wedding.cover.assetId
+    function formatAttendance(
+      value
     ) {
 
-      items.push({
-        ...wedding.cover,
-        label:
-          "Cover"
-      });
+      switch (value) {
+
+        case "hadir":
+          return "Hadir";
+
+        case "tidak_hadir":
+          return "Tidak Hadir";
+
+        case "masih_menentukan":
+          return "Masih Menentukan";
+
+        default:
+          return value || "-";
+
+      }
 
     }
 
 
-    if (
-      wedding.groom &&
-      wedding.groom.photo &&
-      wedding.groom.photo.assetId
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+    function escapeHtml(
+      value
     ) {
 
-      items.push({
-        ...wedding.groom.photo,
-        label:
-          "Mempelai Pria"
-      });
-
-    }
-
-
-    if (
-      wedding.bride &&
-      wedding.bride.photo &&
-      wedding.bride.photo.assetId
-    ) {
-
-      items.push({
-        ...wedding.bride.photo,
-        label:
-          "Mempelai Wanita"
-      });
-
-    }
-
-
-    if (
-      wedding.music &&
-      wedding.music.assetId
-    ) {
-
-      items.push({
-        assetId:
-          wedding.music.assetId,
-        filename:
-          wedding.music.title,
-        mime:
-          "audio/mpeg",
-        url:
-          wedding.music.url,
-        label:
-          "Music"
-      });
-
-    }
-
-
-    if (
-      Array.isArray(
-        wedding.gallery
+      return String(
+        value ?? ""
       )
-    ) {
 
-      wedding.gallery.forEach(
-        item => {
+        .replace(
+          /&/g,
+          "&amp;"
+        )
 
-          items.push({
-            ...item,
-            label:
-              "Gallery"
-          });
+        .replace(
+          /</g,
+          "&lt;"
+        )
 
-        }
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* =========================================================
+       CLOSE RSVP
+    ========================================================= */
+
+    function closeRsvpModal() {
+
+      const modal =
+        document.getElementById(
+          "rsvpModal"
+        );
+
+
+      if (!modal) {
+        return;
+      }
+
+
+      modal.hidden =
+        true;
+
+    }
+
+
+    /* =========================================================
+       BACKDROP CLICK
+    ========================================================= */
+
+    const rsvpModal =
+      document.getElementById(
+        "rsvpModal"
       );
 
-    }
 
+    if (rsvpModal) {
 
-    if (!items.length) {
+      rsvpModal.addEventListener(
+        "click",
+        function (event) {
 
-      container.innerHTML =
-        '<div class="empty">Belum ada media.</div>';
+          if (
+            event.target ===
+            rsvpModal
+          ) {
 
-      return;
-
-    }
-
-
-    container.innerHTML =
-      items
-        .map(
-          item => {
-
-            const isAudio =
-              item.mime &&
-              item.mime.startsWith(
-                "audio/"
-              );
-
-
-            return `
-              <article class="media-card">
-
-                <div class="media-preview">
-
-                  ${
-                    isAudio
-                      ? `
-                        <audio
-                          controls
-                          style="width:90%;"
-                          src="${escapeHTML(
-                            item.url || ""
-                          )}"
-                        ></audio>
-                      `
-                      : `
-                        <img
-                          src="${escapeHTML(
-                            item.url || ""
-                          )}"
-                          alt="${escapeHTML(
-                            item.label || ""
-                          )}"
-                        >
-                      `
-                  }
-
-                </div>
-
-
-                <div class="media-info">
-
-                  <strong>
-                    ${escapeHTML(
-                      item.label || ""
-                    )}
-                  </strong>
-
-                  <small>
-                    ${escapeHTML(
-                      item.filename || ""
-                    )}
-                  </small>
-
-
-                  <div class="media-actions">
-
-                    <button
-                      class="button danger"
-                      type="button"
-                      onclick="deleteMedia('${escapeHTML(
-                        item.assetId
-                      )}')"
-                    >
-                      Hapus
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </article>
-            `;
+            closeRsvpModal();
 
           }
-        )
-        .join("");
 
-  }
-
-
-  function escapeHTML(
-    value
-  ) {
-
-    return String(
-      value || ""
-    )
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      )
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-      .replace(
-        /'/g,
-        "&#039;"
-      );
-
-  }
-
-
-  async function deleteMedia(
-    assetId
-  ) {
-
-    if (
-      !confirm(
-        "Hapus media ini?"
-      )
-    ) {
-      return;
-    }
-
-
-    try {
-
-      await api(
-        `/api/assets/${encodeURIComponent(
-          assetId
-        )}`,
-        {
-          method:
-            "DELETE"
         }
       );
 
-
-      const wedding =
-        state.currentWedding;
-
-
-      if (
-        wedding.cover &&
-        wedding.cover.assetId ===
-          assetId
-      ) {
-
-        wedding.cover =
-          null;
-
-      }
-
-
-      if (
-        wedding.groom &&
-        wedding.groom.photo &&
-        wedding.groom.photo.assetId ===
-          assetId
-      ) {
-
-        wedding.groom.photo =
-          null;
-
-      }
-
-
-      if (
-        wedding.bride &&
-        wedding.bride.photo &&
-        wedding.bride.photo.assetId ===
-          assetId
-      ) {
-
-        wedding.bride.photo =
-          null;
-
-      }
-
-
-      if (
-        wedding.music &&
-        wedding.music.assetId ===
-          assetId
-      ) {
-
-        wedding.music.assetId =
-          null;
-
-        wedding.music.url =
-          null;
-
-      }
-
-
-      wedding.gallery =
-        (
-          wedding.gallery ||
-          []
-        ).filter(
-          item =>
-            item.assetId !==
-            assetId
-        );
-
-
-      await saveWedding();
-
-      renderMedia(
-        wedding
-      );
-
-      showAlert(
-        "Media berhasil dihapus.",
-        "success"
-      );
-
-    } catch (error) {
-
-      showAlert(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  function renderRSVP(
-    rsvps
-  ) {
-
-    const container =
-      document.getElementById(
-        "rsvpContainer"
-      );
-
-
-    if (
-      !rsvps ||
-      !rsvps.length
-    ) {
-
-      container.innerHTML =
-        '<div class="empty">Belum ada RSVP.</div>';
-
-      return;
-
     }
 
 
-    container.innerHTML = `
-
-      <div style="overflow:auto;">
-
-        <table class="rsvp-table">
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Nama
-              </th>
-
-              <th>
-                Kehadiran
-              </th>
-
-              <th>
-                Jumlah Tamu
-              </th>
-
-              <th>
-                Pesan
-              </th>
-
-              <th>
-                Waktu
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${rsvps.map(
-              item => `
-
-                <tr>
-
-                  <td>
-                    ${escapeHTML(
-                      item.name
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHTML(
-                      item.attendance
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHTML(
-                      item.guestCount
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHTML(
-                      item.message
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHTML(
-                      item.createdAt
-                    )}
-                  </td>
-
-                </tr>
-
-              `
-            ).join("")}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-  }
-
-
-  async function deleteCurrentWedding() {
-
-    if (
-      !state.currentSlug
-    ) {
-
-      showAlert(
-        "Belum ada wedding yang dipilih."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !confirm(
-        `Hapus wedding "${state.currentSlug}" beserta RSVP dan media?`
-      )
-    ) {
-
-      return;
-
-    }
-
-
-    try {
-
-      await api(
-        `/api/weddings/${encodeURIComponent(
-          state.currentSlug
-        )}`,
-        {
-          method:
-            "DELETE"
-        }
-      );
-
-
-      newWedding();
-
-      await refreshSelector();
-
-      showAlert(
-        "Wedding berhasil dihapus.",
-        "success"
-      );
-
-    } catch (error) {
-
-      showAlert(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  function previewWedding() {
-
-    if (
-      !state.currentSlug
-    ) {
-
-      showAlert(
-        "Simpan wedding terlebih dahulu."
-      );
-
-      return;
-
-    }
-
-
-    window.open(
-      `/${encodeURIComponent(
-        state.currentSlug
-      )}`,
-      "_blank"
-    );
-
-  }
-
-
-  selector.addEventListener(
-    "change",
-    () => {
-
-      if (
-        selector.value
-      ) {
-
-        loadWedding(
-          selector.value
-        );
-
-      } else {
-
-        newWedding();
-
-      }
-
-    }
-  );
-
-
-  document
-    .getElementById(
-      "loadWeddingButton"
-    )
-    .addEventListener(
-      "click",
-      () => {
+    /* =========================================================
+       ESC KEY
+    ========================================================= */
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
 
         if (
-          selector.value
+          event.key === "Escape"
         ) {
 
-          loadWedding(
-            selector.value
-          );
-
-        } else {
-
-          newWedding();
+          closeRsvpModal();
 
         }
 
@@ -3433,25 +2810,11 @@
     );
 
 
-  /*
-   * Initial state:
-   * jika wedding pertama tersedia,
-   * otomatis load wedding tersebut.
-   */
+  </script>
 
-  <% if (weddings.length) { %>
 
-    loadWedding(
-      "<%= weddings[0].slug %>"
-    );
-
-  <% } else { %>
-
-    newWedding();
-
-  <% } %>
-
-</script>
+</div>
 
 </body>
+
 </html>
