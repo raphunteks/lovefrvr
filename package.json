@@ -1,7 +1,7 @@
 {
   "name": "loveforever",
   "version": "1.0.0",
-  "description": "LOVEFOREVER.VERCEL.APP - Wedding Invitation Website",
+  "description": "LOVEFOREVER Wedding Invitation Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,11 +12,9 @@
   },
   "dependencies": {
     "@upstash/redis": "^1.35.3",
-    "bcryptjs": "^3.0.2",
-    "cookie-session": "^2.1.1",
-    "dotenv": "^17.2.1",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "express-rate-limit": "^8.0.1"
+    "multer": "^2.0.2"
   }
 }
