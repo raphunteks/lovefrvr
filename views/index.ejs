@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
 
   <meta charset="UTF-8">
@@ -16,7 +15,7 @@
 
   <meta
     name="description"
-    content="LOVEFOREVER — Wedding Invitation"
+    content="Wedding invitation by LOVEFOREVER."
   >
 
   <link
@@ -24,199 +23,277 @@
     href="/css/style.css"
   >
 
-</head>
+  <style>
 
+    .lf-home {
+      min-height: 100vh;
+      padding: 30px 18px;
+    }
+
+    .lf-container {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+    }
+
+    .lf-hero {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .lf-logo {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      margin-bottom: 25px;
+    }
+
+    .lf-eyebrow {
+      letter-spacing: 4px;
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity: .7;
+    }
+
+    .lf-title {
+      font-size: clamp(42px, 8vw, 90px);
+      line-height: 1;
+      margin: 10px 0 25px;
+    }
+
+    .lf-subtitle {
+      max-width: 650px;
+      margin: auto;
+      line-height: 1.8;
+      opacity: .75;
+    }
+
+    .lf-section-title {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .lf-weddings {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(250px, 1fr)
+        );
+      gap: 25px;
+      padding-bottom: 80px;
+    }
+
+    .lf-card {
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .lf-card-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .lf-card-placeholder {
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.05);
+      font-size: 40px;
+    }
+
+    .lf-card-body {
+      padding: 24px;
+    }
+
+    .lf-card-body h3 {
+      margin: 0 0 10px;
+    }
+
+    .lf-card-body p {
+      opacity: .7;
+      line-height: 1.6;
+    }
+
+    .lf-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid currentColor;
+    }
+
+    .lf-empty {
+      text-align: center;
+      padding: 70px 20px;
+      opacity: .7;
+    }
+
+    .lf-footer {
+      text-align: center;
+      padding: 50px 20px;
+      opacity: .6;
+      font-size: 13px;
+    }
+
+  </style>
+
+</head>
 
 <body>
 
+  <main class="lf-home">
 
-  <header class="site-header">
+    <div class="lf-container">
 
-    <a
-      href="/"
-      class="brand"
-    >
-      LOVEFOREVER
-    </a>
+      <section class="lf-hero">
 
+        <div>
 
-    <a
-      href="/admin/login"
-      class="header-admin-link"
-    >
-      Admin
-    </a>
+          <img
+            src="/img/weddinglogo.png"
+            alt="LOVEFOREVER"
+            class="lf-logo"
+          >
 
-  </header>
+          <p class="lf-eyebrow">
+            LOVEFOREVER
+          </p>
 
+          <h1 class="lf-title">
+            Forever<br>
+            Starts Here
+          </h1>
 
-  <main>
-
-
-    <!-- ==================================================
-         HERO
-    =================================================== -->
-
-    <section class="hero">
-
-      <div class="hero-content">
-
-        <p class="eyebrow">
-          WEDDING INVITATION
-        </p>
-
-
-        <h1>
-          LOVEFOREVER
-        </h1>
-
-
-        <p class="hero-description">
-
-          Sebuah tempat untuk menyimpan
-          cerita cinta, hari bahagia,
-          dan undangan pernikahan.
-
-        </p>
-
-      </div>
-
-    </section>
-
-
-    <!-- ==================================================
-         INVITATION LIST
-    =================================================== -->
-
-    <section class="invitation-list">
-
-
-      <div class="section-heading">
-
-        <p class="eyebrow">
-          OUR INVITATIONS
-        </p>
-
-
-        <h2>
-          Wedding Invitation
-        </h2>
-
-      </div>
-
-
-      <% if (
-        !weddings ||
-        weddings.length === 0
-      ) { %>
-
-
-        <div class="empty-state">
-
-          <p>
-            Belum ada wedding invitation
-            yang dipublikasikan.
+          <p class="lf-subtitle">
+            Platform undangan pernikahan digital
+            yang sederhana, elegan, dan personal.
           </p>
 
         </div>
 
-
-      <% } else { %>
-
-
-        <div class="wedding-grid">
+      </section>
 
 
-          <% weddings.forEach(
-            function(wedding)
-          { %>
+      <section>
 
+        <div class="lf-section-title">
 
-            <article
-              class="wedding-card"
-            >
+          <p class="lf-eyebrow">
+            Wedding Invitation
+          </p>
 
-
-              <div
-                class="wedding-card-content"
-              >
-
-
-                <p class="card-label">
-                  WEDDING INVITATION
-                </p>
-
-
-                <h3>
-
-                  <%= wedding.groom.name || "Groom" %>
-
-                  &
-
-                  <%= wedding.bride.name || "Bride" %>
-
-                </h3>
-
-
-                <% if (
-                  wedding.date
-                ) { %>
-
-
-                  <p class="card-date">
-
-                    <%= wedding.date %>
-
-                  </p>
-
-
-                <% } %>
-
-
-                <a
-                  href="/<%= encodeURIComponent(wedding.slug) %>"
-                  class="button"
-                >
-                  Buka Undangan
-                </a>
-
-
-              </div>
-
-
-            </article>
-
-
-          <% }); %>
-
+          <h2>
+            Undangan Pernikahan
+          </h2>
 
         </div>
 
 
-      <% } %>
+        <% if (weddings && weddings.length) { %>
+
+          <div class="lf-weddings">
+
+            <% weddings.forEach(function(wedding) { %>
+
+              <article class="lf-card">
+
+                <% if (
+                  wedding.coverImage &&
+                  wedding.coverImage.data
+                ) { %>
+
+                  <img
+                    src="<%= wedding.coverImage.data %>"
+                    alt="Wedding <%= wedding.bride.name %> & <%= wedding.groom.name %>"
+                    class="lf-card-image"
+                    loading="lazy"
+                  >
+
+                <% } else { %>
+
+                  <div class="lf-card-placeholder">
+                    ♥
+                  </div>
+
+                <% } %>
 
 
-    </section>
+                <div class="lf-card-body">
 
+                  <p class="lf-eyebrow">
+                    The Wedding Of
+                  </p>
+
+                  <h3>
+                    <%= wedding.bride.name %>
+                    &
+                    <%= wedding.groom.name %>
+                  </h3>
+
+                  <% if (wedding.date) { %>
+
+                    <p>
+                      <%= wedding.date %>
+                    </p>
+
+                  <% } %>
+
+                  <a
+                    class="lf-button"
+                    href="/<%= encodeURIComponent(wedding.slug) %>"
+                  >
+                    Buka Undangan
+                  </a>
+
+                </div>
+
+              </article>
+
+            <% }); %>
+
+          </div>
+
+        <% } else { %>
+
+          <div class="lf-empty">
+
+            <h3>
+              Belum ada undangan.
+            </h3>
+
+            <p>
+              Wedding invitation yang telah
+              dipublish akan tampil di sini.
+            </p>
+
+          </div>
+
+        <% } %>
+
+      </section>
+
+
+      <footer class="lf-footer">
+
+        © <%= new Date().getFullYear() %>
+        LOVEFOREVER
+
+      </footer>
+
+    </div>
 
   </main>
 
-
-  <footer class="site-footer">
-
-    <p>
-
-      ©
-
-      <%= new Date().getFullYear() %>
-
-      LOVEFOREVER
-
-    </p>
-
-  </footer>
-
-
 </body>
-
 </html>
