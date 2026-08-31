@@ -13,10 +13,9 @@ const SESSION_SECRET = process.env.SESSION_SECRET || "";
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || "";
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || "";
 
-const MAX_BODY_SIZE = "50mb";
-const MAX_IMAGE_BYTES = 50 * 1024 * 1024; // 50MB (Bebas untuk semua gambar)
-const MAX_AUDIO_BYTES = 15 * 1024 * 1024; // Diperbesar jadi 15MB
-const MAX_GALLERY_IMAGES = 25; // Diperbesar jadi 25 foto
+const MAX_BODY_SIZE = "50mb"; 
+const MAX_MEDIA_BYTES = 50 * 1024 * 1024; // 50MB Limit Global Media (Gambar & Audio)
+const MAX_GALLERY_IMAGES = 25;
 const MAX_WEDDING_TEXT = 5000;
 const MAX_RSVP = 5000;
 const RESERVED_SLUGS = ["admin", "login", "health", "api", "media", "favicon.ico", "robots.txt", "sitemap.xml"];
@@ -180,8 +179,11 @@ async function saveMedia(slug, { data, mime, name, caption, kind, role }) {
   const isAudio = validAudioMime(mime);
   
   if (!isImage && !isAudio) throw new Error("Format media tidak didukung.");
-  if (isAudio && bytes > MAX_AUDIO_BYTES) throw new Error(`Ukuran audio maksimal ${MAX_AUDIO_BYTES / (1024 * 1024)} MB.`);
-  if (isImage && bytes > MAX_IMAGE_BYTES) throw new Error(`Ukuran gambar maksimal ${MAX_IMAGE_BYTES / (1024 * 1024)} MB.`);
+  
+  // SEMUA MEDIA LIMITNYA 50 MB
+  if (bytes > MAX_MEDIA_BYTES) {
+    throw new Error(`Ukuran file maksimal ${MAX_MEDIA_BYTES / (1024 * 1024)} MB.`);
+  }
 
   const mediaId = createId("media");
   const record = {
@@ -657,7 +659,7 @@ app.post("/admin/wedding/:slug/media", requireAdmin, async function(req, res) {
 
     const { data, mime, name, caption, kind, role } = req.body;
     
-    // Save Media
+    // Save Media (Maks 50MB semua)
     const media = await saveMedia(slug, { data, mime, name, caption, kind, role });
     
     const ref = { 
