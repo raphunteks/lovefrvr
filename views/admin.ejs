@@ -14,6 +14,7 @@
     Admin Dashboard — LOVEFOREVER
   </title>
 
+
   <link
     rel="stylesheet"
     href="/css/style.css"
@@ -24,14 +25,16 @@
 
 <body>
 
+
   <main class="admin-container">
 
 
-    <!-- =====================================================
+    <!-- ==================================================
          HEADER
-    ====================================================== -->
+    =================================================== -->
 
     <header class="admin-header">
+
 
       <div>
 
@@ -39,12 +42,14 @@
           LOVEFOREVER
         </p>
 
+
         <h1>
           Admin Dashboard
         </h1>
 
+
         <p>
-          Kelola seluruh wedding invitation
+          Kelola wedding invitation
           dari satu dashboard.
         </p>
 
@@ -54,10 +59,13 @@
       <div>
 
         <span>
+
           Login sebagai:
+
           <strong>
             <%= admin.username %>
           </strong>
+
         </span>
 
 
@@ -73,6 +81,7 @@
             value="<%= csrfToken %>"
           >
 
+
           <button
             type="submit"
             class="button"
@@ -80,21 +89,29 @@
             Logout
           </button>
 
+
         </form>
 
+
       </div>
+
 
     </header>
 
 
-    <!-- =====================================================
+    <!-- ==================================================
          ALERT
-    ====================================================== -->
+    =================================================== -->
 
     <% if (message) { %>
 
-      <div class="alert alert-success">
+      <div
+        class="alert alert-success"
+        role="alert"
+      >
+
         <%= message %>
+
       </div>
 
     <% } %>
@@ -102,18 +119,25 @@
 
     <% if (error) { %>
 
-      <div class="alert alert-error">
+      <div
+        class="alert alert-error"
+        role="alert"
+      >
+
         <%= error %>
+
       </div>
 
     <% } %>
 
 
-    <!-- =====================================================
-         DASHBOARD SUMMARY
-    ====================================================== -->
+    <!-- ==================================================
+         STATISTICS
+    =================================================== -->
 
-    <section class="dashboard-stats">
+    <section
+      class="dashboard-stats"
+    >
 
 
       <div class="stat-card">
@@ -171,11 +195,12 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- ==================================================
          CREATE WEDDING
-    ====================================================== -->
+    =================================================== -->
 
     <section class="admin-card">
+
 
       <div class="card-header">
 
@@ -184,6 +209,7 @@
           <p class="eyebrow">
             NEW INVITATION
           </p>
+
 
           <h2>
             Buat Wedding Baru
@@ -200,6 +226,7 @@
         class="form"
       >
 
+
         <input
           type="hidden"
           name="_csrf"
@@ -211,9 +238,11 @@
 
         <div class="form-group">
 
+
           <label for="create-slug">
             Slug
           </label>
+
 
           <input
             id="create-slug"
@@ -226,32 +255,41 @@
             required
           >
 
+
           <small>
-            Slug menentukan URL invitation.
+            Slug ditentukan sendiri oleh Admin.
           </small>
+
 
           <div
             id="create-url"
             class="url-preview"
           >
-            https://loveforever.vercel.app/
+            <%= baseUrl %>/
           </div>
+
 
         </div>
 
 
         <!-- BRIDE -->
 
+        <h3>
+          Mempelai Wanita
+        </h3>
+
+
         <div class="form-group">
 
           <label>
-            Nama Mempelai Wanita
+            Nama
           </label>
 
           <input
             name="brideName"
             type="text"
             placeholder="Aulia"
+            required
           >
 
         </div>
@@ -260,13 +298,12 @@
         <div class="form-group">
 
           <label>
-            Nama Lengkap Mempelai Wanita
+            Nama Lengkap
           </label>
 
           <input
             name="brideFullName"
             type="text"
-            placeholder="Aulia Putri..."
           >
 
         </div>
@@ -275,7 +312,7 @@
         <div class="form-group">
 
           <label>
-            Nama Ayah Mempelai Wanita
+            Nama Ayah
           </label>
 
           <input
@@ -289,7 +326,7 @@
         <div class="form-group">
 
           <label>
-            Nama Ibu Mempelai Wanita
+            Nama Ibu
           </label>
 
           <input
@@ -300,18 +337,39 @@
         </div>
 
 
+        <div class="form-group">
+
+          <label>
+            URL Foto
+          </label>
+
+          <input
+            name="bridePhoto"
+            type="url"
+            placeholder="https://..."
+          >
+
+        </div>
+
+
         <!-- GROOM -->
+
+        <h3>
+          Mempelai Pria
+        </h3>
+
 
         <div class="form-group">
 
           <label>
-            Nama Mempelai Pria
+            Nama
           </label>
 
           <input
             name="groomName"
             type="text"
             placeholder="Rizky"
+            required
           >
 
         </div>
@@ -320,13 +378,12 @@
         <div class="form-group">
 
           <label>
-            Nama Lengkap Mempelai Pria
+            Nama Lengkap
           </label>
 
           <input
             name="groomFullName"
             type="text"
-            placeholder="Rizky Ahmad..."
           >
 
         </div>
@@ -335,7 +392,7 @@
         <div class="form-group">
 
           <label>
-            Nama Ayah Mempelai Pria
+            Nama Ayah
           </label>
 
           <input
@@ -349,7 +406,7 @@
         <div class="form-group">
 
           <label>
-            Nama Ibu Mempelai Pria
+            Nama Ibu
           </label>
 
           <input
@@ -360,140 +417,38 @@
         </div>
 
 
-        <!-- QUOTE -->
-
         <div class="form-group">
 
           <label>
-            Quote Pernikahan
-          </label>
-
-          <textarea
-            name="quote"
-            rows="3"
-            placeholder="Quote / ayat / kalimat pembuka..."
-          ></textarea>
-
-        </div>
-
-
-        <!-- DATE -->
-
-        <div class="form-group">
-
-          <label>
-            Tanggal Pernikahan
+            URL Foto
           </label>
 
           <input
-            name="weddingDate"
-            type="date"
-          >
-
-        </div>
-
-
-        <!-- TIME -->
-
-        <div class="form-group">
-
-          <label>
-            Waktu Acara
-          </label>
-
-          <input
-            name="weddingTime"
-            type="text"
-            placeholder="10.00 WITA - selesai"
-          >
-
-        </div>
-
-
-        <!-- VENUE -->
-
-        <div class="form-group">
-
-          <label>
-            Venue
-          </label>
-
-          <input
-            name="venue"
-            type="text"
-            placeholder="Gedung / Hotel / Rumah"
-          >
-
-        </div>
-
-
-        <!-- ADDRESS -->
-
-        <div class="form-group">
-
-          <label>
-            Alamat
-          </label>
-
-          <textarea
-            name="address"
-            rows="3"
-          ></textarea>
-
-        </div>
-
-
-        <!-- MAP -->
-
-        <div class="form-group">
-
-          <label>
-            Google Maps URL
-          </label>
-
-          <input
-            name="mapsUrl"
+            name="groomPhoto"
             type="url"
-            placeholder="https://maps.google.com/..."
+            placeholder="https://..."
           >
 
         </div>
 
 
-        <!-- STORY -->
-
-        <div class="form-group">
-
-          <label>
-            Story / Cerita Singkat
-          </label>
-
-          <textarea
-            name="story"
-            rows="5"
-            placeholder="Cerita perjalanan pasangan..."
-          ></textarea>
-
-        </div>
-
-
-        <!-- GIFT -->
+        <!-- BASIC INFORMATION -->
 
         <h3>
-          Wedding Gift
+          Informasi Pernikahan
         </h3>
 
 
         <div class="form-group">
 
           <label>
-            Nama Bank
+            Tanggal
           </label>
 
           <input
-            name="bankName"
+            name="date"
             type="text"
-            placeholder="BCA"
+            placeholder="Sabtu, 20 Juni 2026"
           >
 
         </div>
@@ -502,13 +457,14 @@
         <div class="form-group">
 
           <label>
-            Nomor Rekening
+            Deskripsi
           </label>
 
-          <input
-            name="accountNumber"
-            type="text"
-          >
+          <textarea
+            name="description"
+            rows="5"
+            placeholder="Deskripsi singkat..."
+          ></textarea>
 
         </div>
 
@@ -516,13 +472,14 @@
         <div class="form-group">
 
           <label>
-            Atas Nama
+            Quote
           </label>
 
-          <input
-            name="accountName"
-            type="text"
-          >
+          <textarea
+            name="quote"
+            rows="3"
+            placeholder="Quote pernikahan..."
+          ></textarea>
 
         </div>
 
@@ -539,8 +496,8 @@
           <label>
 
             <input
-              name="musicEnabled"
               type="checkbox"
+              name="musicEnabled"
             >
 
             Aktifkan musik
@@ -559,7 +516,7 @@
           <input
             name="musicUrl"
             type="url"
-            placeholder="URL file audio"
+            placeholder="https://..."
           >
 
         </div>
@@ -572,6 +529,7 @@
           <label>
             Status
           </label>
+
 
           <select
             name="status"
@@ -587,6 +545,7 @@
 
           </select>
 
+
         </div>
 
 
@@ -597,16 +556,19 @@
           + Buat Wedding Invitation
         </button>
 
+
       </form>
+
 
     </section>
 
 
-    <!-- =====================================================
+    <!-- ==================================================
          WEDDING LIST
-    ====================================================== -->
+    =================================================== -->
 
     <section class="admin-card">
+
 
       <div class="card-header">
 
@@ -615,6 +577,7 @@
           <p class="eyebrow">
             INVITATIONS
           </p>
+
 
           <h2>
             Daftar Wedding
@@ -625,7 +588,11 @@
       </div>
 
 
-      <% if (!weddings.length) { %>
+      <% if (
+        !weddings ||
+        weddings.length === 0
+      ) { %>
+
 
         <div class="empty-state">
 
@@ -635,10 +602,13 @@
 
         </div>
 
+
       <% } %>
 
 
-      <% weddings.forEach(function(wedding) { %>
+      <% weddings.forEach(
+        function(wedding)
+      { %>
 
 
         <article
@@ -646,24 +616,25 @@
         >
 
 
-          <!-- INFO -->
-
           <div>
+
 
             <span
               class="status status-<%= wedding.status %>"
             >
+
               <%= wedding.status %>
+
             </span>
 
 
             <h3>
 
-              <%= wedding.bride.name || "Bride" %>
+              <%= wedding.groom.name || "Groom" %>
 
               &
 
-              <%= wedding.groom.name || "Groom" %>
+              <%= wedding.bride.name || "Bride" %>
 
             </h3>
 
@@ -679,14 +650,22 @@
             </p>
 
 
+            <!-- DYNAMIC URL -->
+
             <p>
 
+              Link Invitation:
+
+              <br>
+
               <a
-                href="/<%= encodeURIComponent(wedding.slug) %>"
+                href="<%= wedding.invitationUrl %>"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Lihat Invitation →
+
+                <%= wedding.invitationUrl %>
+
               </a>
 
             </p>
@@ -694,12 +673,12 @@
 
             <p>
 
-              Personalized link:
+              Contoh personalized link:
 
               <br>
 
               <code>
-                https://loveforever.vercel.app/<%= wedding.slug %>?to=Nama%20Tamu
+                <%= wedding.invitationUrl %>?to=Nama%20Tamu
               </code>
 
             </p>
@@ -707,8 +686,6 @@
 
           </div>
 
-
-          <!-- ACTION -->
 
           <div class="admin-actions">
 
@@ -726,18 +703,23 @@
                 value="<%= csrfToken %>"
               >
 
+
               <input
                 type="hidden"
                 name="slug"
                 value="<%= wedding.slug %>"
               >
 
+
               <button
                 type="submit"
                 class="button"
               >
 
-                <% if (wedding.status === "published") { %>
+                <% if (
+                  wedding.status ===
+                  "published"
+                ) { %>
 
                   Unpublish
 
@@ -748,6 +730,7 @@
                 <% } %>
 
               </button>
+
 
             </form>
 
@@ -788,11 +771,13 @@
                 value="<%= csrfToken %>"
               >
 
+
               <input
                 type="hidden"
                 name="slug"
                 value="<%= wedding.slug %>"
               >
+
 
               <button
                 type="submit"
@@ -801,6 +786,7 @@
                 Hapus
               </button>
 
+
             </form>
 
 
@@ -808,7 +794,7 @@
 
 
           <!-- =================================================
-               EDIT FORM
+               EDIT
           ================================================== -->
 
           <div
@@ -816,6 +802,7 @@
             class="edit-panel"
             hidden
           >
+
 
             <h3>
               Edit Wedding
@@ -827,6 +814,7 @@
               action="/admin/wedding/update"
               class="form"
             >
+
 
               <input
                 type="hidden"
@@ -854,19 +842,13 @@
                   disabled
                 >
 
-                <small>
-                  Slug tidak dapat diubah dari form edit.
-                  Jika perlu mengganti slug, buat invitation
-                  baru.
-                </small>
-
               </div>
 
 
               <div class="form-group">
 
                 <label>
-                  Nama Mempelai Wanita
+                  Bride
                 </label>
 
                 <input
@@ -880,7 +862,7 @@
               <div class="form-group">
 
                 <label>
-                  Nama Lengkap Mempelai Wanita
+                  Bride Full Name
                 </label>
 
                 <input
@@ -894,7 +876,7 @@
               <div class="form-group">
 
                 <label>
-                  Ayah Mempelai Wanita
+                  Bride Father
                 </label>
 
                 <input
@@ -908,7 +890,7 @@
               <div class="form-group">
 
                 <label>
-                  Ibu Mempelai Wanita
+                  Bride Mother
                 </label>
 
                 <input
@@ -922,7 +904,22 @@
               <div class="form-group">
 
                 <label>
-                  Nama Mempelai Pria
+                  Bride Photo
+                </label>
+
+                <input
+                  name="bridePhoto"
+                  type="url"
+                  value="<%= wedding.bride.photo || '' %>"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Groom
                 </label>
 
                 <input
@@ -936,7 +933,7 @@
               <div class="form-group">
 
                 <label>
-                  Nama Lengkap Mempelai Pria
+                  Groom Full Name
                 </label>
 
                 <input
@@ -950,7 +947,7 @@
               <div class="form-group">
 
                 <label>
-                  Ayah Mempelai Pria
+                  Groom Father
                 </label>
 
                 <input
@@ -964,13 +961,56 @@
               <div class="form-group">
 
                 <label>
-                  Ibu Mempelai Pria
+                  Groom Mother
                 </label>
 
                 <input
                   name="groomMother"
                   value="<%= wedding.groom.mother || '' %>"
                 >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Groom Photo
+                </label>
+
+                <input
+                  name="groomPhoto"
+                  type="url"
+                  value="<%= wedding.groom.photo || '' %>"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Tanggal
+                </label>
+
+                <input
+                  name="date"
+                  value="<%= wedding.date || '' %>"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Deskripsi
+                </label>
+
+                <textarea
+                  name="description"
+                  rows="4"
+                ><%= wedding.description || '' %></textarea>
 
               </div>
 
@@ -992,138 +1032,10 @@
               <div class="form-group">
 
                 <label>
-                  Tanggal Pernikahan
-                </label>
-
-                <input
-                  name="weddingDate"
-                  type="date"
-                  value="<%= wedding.weddingDate || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Waktu
-                </label>
-
-                <input
-                  name="weddingTime"
-                  value="<%= wedding.weddingTime || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Venue
-                </label>
-
-                <input
-                  name="venue"
-                  value="<%= wedding.venue || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Alamat
-                </label>
-
-                <textarea
-                  name="address"
-                  rows="3"
-                ><%= wedding.address || '' %></textarea>
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Google Maps URL
-                </label>
-
-                <input
-                  name="mapsUrl"
-                  type="url"
-                  value="<%= wedding.mapsUrl || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Story
-                </label>
-
-                <textarea
-                  name="story"
-                  rows="5"
-                ><%= wedding.story || '' %></textarea>
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Nama Bank
-                </label>
-
-                <input
-                  name="bankName"
-                  value="<%= wedding.gift.bankName || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Nomor Rekening
-                </label>
-
-                <input
-                  name="accountNumber"
-                  value="<%= wedding.gift.accountNumber || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
-                  Atas Nama
-                </label>
-
-                <input
-                  name="accountName"
-                  value="<%= wedding.gift.accountName || '' %>"
-                >
-
-              </div>
-
-
-              <div class="form-group">
-
-                <label>
 
                   <input
-                    name="musicEnabled"
                     type="checkbox"
+                    name="musicEnabled"
 
                     <% if (
                       wedding.music &&
@@ -1152,7 +1064,7 @@
                 <input
                   name="musicUrl"
                   type="url"
-                  value="<%= wedding.music.url || '' %>"
+                  value="<%= wedding.music ? wedding.music.url || '' : '' %>"
                 >
 
               </div>
@@ -1177,6 +1089,7 @@
                     Draft
                   </option>
 
+
                   <option
                     value="published"
                     <%= wedding.status === "published"
@@ -1198,7 +1111,9 @@
                 Simpan Perubahan
               </button>
 
+
             </form>
+
 
           </div>
 
@@ -1215,9 +1130,9 @@
   </main>
 
 
-  <!-- =======================================================
+  <!-- =====================================================
        RSVP MODAL
-  ======================================================== -->
+  ====================================================== -->
 
   <div
     id="rsvp-modal"
@@ -1225,7 +1140,11 @@
     hidden
   >
 
-    <div class="modal-content">
+
+    <div
+      class="modal-content"
+    >
+
 
       <button
         type="button"
@@ -1247,7 +1166,9 @@
         Memuat data...
       </div>
 
+
     </div>
+
 
   </div>
 
@@ -1255,10 +1176,10 @@
   <script>
 
     /*
-     * =======================================================
-     * SLUG PREVIEW
-     * =======================================================
-     */
+    |--------------------------------------------------------------------------
+    | DYNAMIC DOMAIN PREVIEW
+    |--------------------------------------------------------------------------
+    */
 
     const createSlug =
       document.getElementById(
@@ -1299,8 +1220,9 @@
           this.value =
             value;
 
+
           createUrl.textContent =
-            "https://loveforever.vercel.app/" +
+            "<%= baseUrl %>/" +
             value;
 
         }
@@ -1310,10 +1232,10 @@
 
 
     /*
-     * =======================================================
-     * EDIT
-     * =======================================================
-     */
+    |--------------------------------------------------------------------------
+    | EDIT
+    |--------------------------------------------------------------------------
+    */
 
     function toggleEdit(
       slug
@@ -1331,11 +1253,15 @@
       panel.hidden =
         !panel.hidden;
 
+
       if (!panel.hidden) {
 
         panel.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior:
+            "smooth",
+
+          block:
+            "start",
         });
 
       }
@@ -1344,10 +1270,10 @@
 
 
     /*
-     * =======================================================
-     * DELETE CONFIRM
-     * =======================================================
-     */
+    |--------------------------------------------------------------------------
+    | DELETE
+    |--------------------------------------------------------------------------
+    */
 
     function confirmDelete(
       slug
@@ -1357,18 +1283,17 @@
         "Yakin ingin menghapus wedding \"" +
         slug +
         "\"?\n\n" +
-        "Semua data invitation dan RSVP " +
-        "yang terkait akan dihapus."
+        "Data invitation dan RSVP terkait akan dihapus."
       );
 
     }
 
 
     /*
-     * =======================================================
-     * RSVP
-     * =======================================================
-     */
+    |--------------------------------------------------------------------------
+    | RSVP
+    |--------------------------------------------------------------------------
+    */
 
     async function viewRSVP(
       slug
@@ -1388,7 +1313,8 @@
       modal.hidden =
         false;
 
-      content.innerHTML =
+
+      content.textContent =
         "Memuat data RSVP...";
 
 
@@ -1397,10 +1323,10 @@
         const response =
           await fetch(
             "/admin/wedding/" +
-            encodeURIComponent(
-              slug
-            ) +
-            "/rsvp"
+              encodeURIComponent(
+                slug
+              ) +
+              "/rsvp"
           );
 
 
@@ -1412,8 +1338,9 @@
           !data.success
         ) {
 
-          content.innerHTML =
-            "<p>Gagal mengambil data RSVP.</p>";
+          content.textContent =
+            data.message ||
+            "Gagal mengambil RSVP.";
 
           return;
 
@@ -1424,129 +1351,122 @@
           !data.rsvps.length
         ) {
 
-          content.innerHTML =
-            "<p>Belum ada RSVP.</p>";
+          content.textContent =
+            "Belum ada RSVP.";
 
           return;
 
         }
 
 
-        let html = "";
-
-        html +=
-          "<p><strong>Total RSVP:</strong> " +
-          data.total +
-          "</p>";
+        content.innerHTML =
+          "";
 
 
-        html +=
-          "<div class='rsvp-list'>";
+        const title =
+          document.createElement(
+            "p"
+          );
+
+        title.textContent =
+          "Total RSVP: " +
+          data.total;
+
+
+        content.appendChild(
+          title
+        );
 
 
         data.rsvps.forEach(
-          function (rsvp) {
+          function(rsvp) {
 
-            html +=
-              "<article class='rsvp-item'>";
+            const article =
+              document.createElement(
+                "article"
+              );
 
-
-            html +=
-              "<h3>" +
-              escapeHtml(
-                rsvp.name
-              ) +
-              "</h3>";
+            article.className =
+              "rsvp-item";
 
 
-            html +=
-              "<p><strong>Kehadiran:</strong> " +
-              escapeHtml(
-                rsvp.attendance
-              ) +
-              "</p>";
+            const name =
+              document.createElement(
+                "h3"
+              );
+
+            name.textContent =
+              rsvp.name;
 
 
-            html +=
-              "<p><strong>Jumlah Tamu:</strong> " +
-              escapeHtml(
-                rsvp.guestCount
-              ) +
-              "</p>";
+            const attendance =
+              document.createElement(
+                "p"
+              );
+
+            attendance.textContent =
+              "Kehadiran: " +
+              rsvp.attendance;
 
 
-            html +=
-              "<p><strong>Pesan:</strong> " +
-              escapeHtml(
+            const guestCount =
+              document.createElement(
+                "p"
+              );
+
+            guestCount.textContent =
+              "Jumlah Tamu: " +
+              rsvp.guestCount;
+
+
+            const message =
+              document.createElement(
+                "p"
+              );
+
+            message.textContent =
+              "Pesan: " +
+              (
                 rsvp.message ||
                 "-"
-              ) +
-              "</p>";
+              );
 
 
-            html +=
-              "</article>";
+            article.appendChild(
+              name
+            );
+
+            article.appendChild(
+              attendance
+            );
+
+            article.appendChild(
+              guestCount
+            );
+
+            article.appendChild(
+              message
+            );
+
+
+            content.appendChild(
+              article
+            );
 
           }
         );
 
 
-        html +=
-          "</div>";
-
-
-        content.innerHTML =
-          html;
-
-
-      } catch (
-        error
-      ) {
+      } catch (error) {
 
         console.error(
           error
         );
 
-        content.innerHTML =
-          "<p>Terjadi kesalahan saat mengambil RSVP.</p>";
+        content.textContent =
+          "Terjadi kesalahan saat mengambil RSVP.";
 
       }
-
-    }
-
-
-    /*
-     * Escape text sebelum
-     * dimasukkan ke innerHTML.
-     */
-
-    function escapeHtml(
-      value
-    ) {
-
-      return String(
-        value ?? ""
-      )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
 
     }
 
@@ -1562,7 +1482,6 @@
         true;
 
     }
-
 
   </script>
 
