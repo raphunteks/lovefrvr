@@ -165,7 +165,8 @@ function normalizeMediaRef(value) {
       mime: safeString(value.mime, 100),
       name: safeString(value.name, 200),
       caption: safeString(value.caption, 200),
-      size: Number(value.size || 0)
+      size: Number(value.size || 0),
+      url: `/media/${value.slug || 'slug'}/${value.mediaId}` // URL fallback for media delivery
     };
   }
   return null;
@@ -209,17 +210,24 @@ async function getMedia(slug, mediaId) {
 function buildWeddingFromPayload(payload, existing = null) {
   const wedding = existing || createDefaultWedding();
   wedding.status = payload.status === "published" ? "published" : "draft";
+  
+  // Media ref with direct URL injection for wedding.ejs mapping
+  const injectUrl = (ref) => {
+    if (ref && ref.mediaId) ref.url = `/media/${payload.slug || existing.slug}/${ref.mediaId}`;
+    return ref;
+  };
+
   wedding.groom = {
     name: safeString(payload.groomName, 100),
     fullName: safeString(payload.groomFullName, 200),
-    photo: normalizeMediaRef(payload.groomPhoto)
+    photo: injectUrl(normalizeMediaRef(payload.groomPhoto))
   };
   wedding.bride = {
     name: safeString(payload.brideName, 100),
     fullName: safeString(payload.brideFullName, 200),
-    photo: normalizeMediaRef(payload.bridePhoto)
+    photo: injectUrl(normalizeMediaRef(payload.bridePhoto))
   };
-  wedding.coverImage = normalizeMediaRef(payload.coverImage);
+  wedding.coverImage = injectUrl(normalizeMediaRef(payload.coverImage));
   wedding.opening = {
     enabled: payload.openingEnabled !== false,
     title: safeString(payload.openingTitle, 200) || "The Wedding Of",
@@ -247,9 +255,9 @@ function buildWeddingFromPayload(payload, existing = null) {
     date: safeString(item.date, 100),
     title: safeString(item.title, 200),
     description: safeString(item.description, 1500),
-    photo: normalizeMediaRef(item.photo)
+    photo: injectUrl(normalizeMediaRef(item.photo))
   }));
-  wedding.gallery = asArray(payload.gallery).slice(0, MAX_GALLERY_IMAGES).map(normalizeMediaRef).filter(Boolean);
+  wedding.gallery = asArray(payload.gallery).slice(0, MAX_GALLERY_IMAGES).map(normalizeMediaRef).filter(Boolean).map(injectUrl);
   wedding.gift = asArray(payload.gift).slice(0, 10).map(item => ({
     id: safeString(item.id, 100) || createId("gift"),
     type: safeString(item.type, 50) || "Bank",
@@ -404,19 +412,13 @@ app.post("/admin/login", async function(req, res) {
     const ip = getClientIp(req);
     const allowed = await checkRateLimit(`rate:login:${ip}`, 5, 15 * 60);
     if (!allowed) {
-      return res.status(429).render("login", {
-        error: "Terlalu banyak percobaan login. Silakan coba lagi nanti.",
-        csrfToken: ""
-      });
+      return res.status(429).render("login", { error: "Terlalu banyak percobaan login. Silakan coba lagi nanti.", csrfToken: "" });
     }
     const username = safeString(req.body.username, 100);
     const password = String(req.body.password || "");
 
     if (!ADMIN_USERNAME || !ADMIN_PASSWORD || !SESSION_SECRET) {
-      return res.status(500).render("login", {
-        error: "ADMIN_USERNAME, ADMIN_PASSWORD atau SESSION_SECRET belum dikonfigurasi.",
-        csrfToken: ""
-      });
+      return res.status(500).render("login", { error: "ADMIN_USERNAME, ADMIN_PASSWORD atau SESSION_SECRET belum dikonfigurasi.", csrfToken: "" });
     }
 
     const usernameBuffer = Buffer.from(username);
@@ -433,11 +435,7 @@ app.post("/admin/login", async function(req, res) {
 
     const session = createAdminSession();
     const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-    res.setHeader("Set-Cookie", [
-      `lf_admin=${encodeURIComponent(session.token)}`,
-      "HttpOnly", "Path=/", "SameSite=Lax", "Max-Age=28800", secure
-    ].filter(Boolean).join("; "));
-
+    res.setHeader("Set-Cookie", [`lf_admin=${encodeURIComponent(session.token)}`, "HttpOnly", "Path=/", "SameSite=Lax", "Max-Age=28800", secure].filter(Boolean).join("; "));
     return res.redirect("/admin");
   } catch (error) {
     console.error("Login error:", error);
@@ -482,9 +480,7 @@ app.post("/admin/wedding/new", requireAdmin, async function(req, res) {
     if (!verifyCsrf(req)) return res.status(403).json({ success: false, message: "CSRF token tidak valid." });
     const payload = req.body || {};
     const slug = normalizeSlug(payload.slug);
-    if (!isValidSlug(slug)) {
-      return res.status(400).json({ success: false, message: "Slug tidak valid. Gunakan 3-100 karakter huruf kecil, angka dan tanda -." });
-    }
+    if (!isValidSlug(slug)) return res.status(400).json({ success: false, message: "Slug tidak valid. Gunakan 3-100 karakter huruf kecil, angka dan tanda -." });
     const existing = await getWedding(slug);
     if (existing) return res.status(409).json({ success: false, message: "Slug sudah digunakan." });
 
@@ -654,7 +650,14 @@ app.post("/admin/wedding/:slug/media", requireAdmin, async function(req, res) {
 
     const { data, mime, name, caption, kind, role } = req.body;
     const media = await saveMedia(slug, { data, mime, name, caption, kind });
-    const ref = { mediaId: media.id, mime: media.mime, name: media.name, caption: media.caption, size: media.size };
+    const ref = { 
+      mediaId: media.id, 
+      mime: media.mime, 
+      name: media.name, 
+      caption: media.caption, 
+      size: media.size,
+      url: `/media/${encodeURIComponent(slug)}/${encodeURIComponent(media.id)}`
+    };
 
     if (role === "cover") {
       const old = wedding.coverImage;
@@ -780,6 +783,10 @@ app.get("/admin/wedding/:slug/rsvp", requireAdmin, async function(req, res) {
   }
 });
 
+app.get("/api/weddings/:slug/rsvp", async function(req, res) {
+  return res.status(405).json({ success: false, message: "Method Not Allowed. Use POST."});
+});
+
 app.get("/:slug", async function(req, res, next) {
   const slug = normalizeSlug(req.params.slug);
   if (RESERVED_SLUGS.includes(slug)) return next();
@@ -796,7 +803,7 @@ app.get("/:slug", async function(req, res, next) {
   }
 });
 
-app.post("/:slug/rsvp", async function(req, res) {
+app.post("/api/weddings/:slug/rsvp", async function(req, res) {
   try {
     const slug = normalizeSlug(req.params.slug);
     const wedding = await getWedding(slug);
