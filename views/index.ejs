@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -8,7 +10,9 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>LOVEFOREVER — Wedding Invitation</title>
+  <title>
+    LOVEFOREVER — Wedding Invitation
+  </title>
 
   <meta
     name="description"
@@ -19,9 +23,12 @@
     rel="stylesheet"
     href="/css/style.css"
   >
+
 </head>
 
+
 <body>
+
 
   <header class="site-header">
 
@@ -31,6 +38,7 @@
     >
       LOVEFOREVER
     </a>
+
 
     <a
       href="/admin/login"
@@ -44,6 +52,11 @@
 
   <main>
 
+
+    <!-- ==================================================
+         HERO
+    =================================================== -->
+
     <section class="hero">
 
       <div class="hero-content">
@@ -52,14 +65,18 @@
           WEDDING INVITATION
         </p>
 
+
         <h1>
           LOVEFOREVER
         </h1>
 
+
         <p class="hero-description">
+
           Sebuah tempat untuk menyimpan
           cerita cinta, hari bahagia,
           dan undangan pernikahan.
+
         </p>
 
       </div>
@@ -67,13 +84,19 @@
     </section>
 
 
+    <!-- ==================================================
+         INVITATION LIST
+    =================================================== -->
+
     <section class="invitation-list">
+
 
       <div class="section-heading">
 
         <p class="eyebrow">
           OUR INVITATIONS
         </p>
+
 
         <h2>
           Wedding Invitation
@@ -82,7 +105,11 @@
       </div>
 
 
-      <% if (!weddings || weddings.length === 0) { %>
+      <% if (
+        !weddings ||
+        weddings.length === 0
+      ) { %>
+
 
         <div class="empty-state">
 
@@ -93,51 +120,84 @@
 
         </div>
 
+
+      <% } else { %>
+
+
+        <div class="wedding-grid">
+
+
+          <% weddings.forEach(
+            function(wedding)
+          { %>
+
+
+            <article
+              class="wedding-card"
+            >
+
+
+              <div
+                class="wedding-card-content"
+              >
+
+
+                <p class="card-label">
+                  WEDDING INVITATION
+                </p>
+
+
+                <h3>
+
+                  <%= wedding.groom.name || "Groom" %>
+
+                  &
+
+                  <%= wedding.bride.name || "Bride" %>
+
+                </h3>
+
+
+                <% if (
+                  wedding.date
+                ) { %>
+
+
+                  <p class="card-date">
+
+                    <%= wedding.date %>
+
+                  </p>
+
+
+                <% } %>
+
+
+                <a
+                  href="/<%= encodeURIComponent(wedding.slug) %>"
+                  class="button"
+                >
+                  Buka Undangan
+                </a>
+
+
+              </div>
+
+
+            </article>
+
+
+          <% }); %>
+
+
+        </div>
+
+
       <% } %>
 
 
-      <div class="wedding-grid">
-
-        <% weddings.forEach(function(wedding) { %>
-
-          <article class="wedding-card">
-
-            <div class="wedding-card-content">
-
-              <p class="card-label">
-                WEDDING INVITATION
-              </p>
-
-              <h3>
-                <%= wedding.groom.name %>
-                &
-                <%= wedding.bride.name %>
-              </h3>
-
-              <% if (wedding.date) { %>
-
-                <p class="card-date">
-                  <%= wedding.date %>
-                </p>
-
-              <% } %>
-
-              <a
-                href="/<%= encodeURIComponent(wedding.slug) %>"
-                class="button"
-              >
-                Buka Undangan
-              </a>
-
-            </div>
-
-          </article>
-
-        <% }); %>
-
-      </div>
-
     </section>
+
 
   </main>
 
@@ -145,11 +205,18 @@
   <footer class="site-footer">
 
     <p>
-      © <%= new Date().getFullYear() %>
+
+      ©
+
+      <%= new Date().getFullYear() %>
+
       LOVEFOREVER
+
     </p>
 
   </footer>
 
+
 </body>
+
 </html>
