@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 
   <meta charset="UTF-8">
@@ -9,222 +10,191 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <meta
+    name="theme-color"
+    content="#f7f2ec"
+  >
+
   <title>
     Admin Dashboard — LOVEFOREVER
   </title>
 
-  <link
-    rel="stylesheet"
-    href="/css/style.css"
-  >
-
   <style>
+
+    :root {
+      --bg: #f5f1ed;
+      --surface: #ffffff;
+      --surface-soft: #faf8f6;
+      --text: #2d2926;
+      --muted: #77706b;
+      --border: #e6dfd9;
+      --accent: #8b7565;
+      --danger: #a94b4b;
+      --success: #47745b;
+      --shadow:
+        0 20px 60px rgba(45, 41, 38, .08);
+      --radius: 22px;
+    }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      background: #f7f5f2;
-      color: #2b2927;
+      background: var(--bg);
+      color: var(--text);
       font-family:
-        Arial,
-        Helvetica,
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
         sans-serif;
     }
 
-    .admin-layout {
-      min-height: 100vh;
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
     }
 
     .admin-header {
       position: sticky;
       top: 0;
       z-index: 100;
-      padding: 15px 20px;
+      height: 76px;
       background: rgba(255,255,255,.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #e5e0db;
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
+      padding: 0 28px;
     }
 
-    .admin-brand {
-      font-weight: 700;
-      letter-spacing: 2px;
+    .brand {
+      font-size: 22px;
+      letter-spacing: .18em;
+      font-weight: 800;
     }
 
     .admin-main {
-      width: min(1250px, 100%);
-      margin: auto;
-      padding: 30px 18px 80px;
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 100px;
     }
 
     .dashboard-title {
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     .dashboard-title h1 {
-      margin-bottom: 8px;
+      margin: 0 0 10px;
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: -.04em;
     }
 
     .dashboard-title p {
-      opacity: .65;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+      margin: 0;
     }
 
     .summary-grid {
       display: grid;
       grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(160px, 1fr)
-        );
-      gap: 15px;
-      margin-bottom: 30px;
+        repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .summary-card {
-      background: white;
-      border: 1px solid #e6e1dc;
-      border-radius: 16px;
-      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
     }
 
     .summary-card small {
-      opacity: .6;
+      display: block;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
 
     .summary-card strong {
-      display: block;
-      font-size: 30px;
-      margin-top: 8px;
+      font-size: 40px;
+      letter-spacing: -.04em;
     }
 
     .panel {
-      background: white;
-      border: 1px solid #e6e1dc;
-      border-radius: 18px;
-      margin-bottom: 25px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
       overflow: hidden;
+      margin-bottom: 24px;
     }
 
     .panel-header {
-      padding: 20px;
-      border-bottom: 1px solid #eee8e3;
+      padding: 28px;
+      border-bottom: 1px solid var(--border);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .panel-header h2,
+    .panel-header h3 {
+      margin: 0 0 6px;
+    }
+
+    .muted {
+      color: var(--muted);
     }
 
     .panel-body {
-      padding: 20px;
+      padding: 28px;
     }
 
-    .wedding-card {
-      border: 1px solid #e8e3de;
-      border-radius: 15px;
-      padding: 18px;
-      margin-bottom: 15px;
+    .section-title {
+      margin:
+        36px 0 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .wedding-card:last-child {
-      margin-bottom: 0;
-    }
-
-    .wedding-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .wedding-card h3 {
-      margin: 0 0 5px;
-    }
-
-    .wedding-meta {
-      opacity: .65;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .status {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .status-published {
-      background: #e5f5e8;
-      color: #256c35;
-    }
-
-    .status-draft {
-      background: #f3eee8;
-      color: #765e49;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    button,
-    .button-link {
-      border: 0;
-      border-radius: 9px;
-      padding: 10px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    button {
-      background: #292624;
-      color: white;
-    }
-
-    button.secondary,
-    .button-link.secondary {
-      background: #eee9e4;
-      color: #292624;
-    }
-
-    button.danger {
-      background: #b13c3c;
-      color: white;
-    }
-
-    button.success {
-      background: #357345;
-      color: white;
+    .section-title:first-child {
+      margin-top: 0;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns:
-        repeat(
-          2,
-          minmax(0, 1fr)
-        );
+        repeat(2, minmax(0, 1fr));
       gap: 18px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .form-group.full {
@@ -233,183 +203,447 @@
 
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 7px;
       font-size: 14px;
+      font-weight: 750;
+      margin-bottom: 8px;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      border: 1px solid #d8d1ca;
-      border-radius: 9px;
-      padding: 11px 12px;
-      background: white;
-      color: #222;
-      font: inherit;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      padding: 13px 15px;
+      outline: none;
+      transition:
+        border .2s,
+        box-shadow .2s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 4px
+        rgba(139,117,101,.10);
     }
 
     textarea {
-      min-height: 110px;
       resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
     }
 
-    .image-upload {
-      border: 1px dashed #cfc5bc;
-      border-radius: 12px;
-      padding: 15px;
-      background: #fbfaf8;
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .image-preview {
-      margin-top: 10px;
-      display: none;
+    button,
+    .button {
+      border: 0;
+      border-radius: 13px;
+      padding: 12px 17px;
+      background: var(--text);
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition:
+        transform .2s,
+        opacity .2s;
     }
 
-    .image-preview img {
-      max-width: 180px;
-      max-height: 150px;
-      border-radius: 10px;
-      object-fit: cover;
+    button:hover,
+    .button:hover {
+      transform: translateY(-1px);
     }
 
-    .repeatable {
-      border: 1px solid #e4ddd7;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 12px;
-      background: #fcfbfa;
+    button.secondary,
+    .button.secondary {
+      background: #eee9e4;
+      color: var(--text);
     }
 
-    .repeatable-header {
+    button.danger {
+      background: var(--danger);
+    }
+
+    button.success {
+      background: var(--success);
+    }
+
+    button.small,
+    .button.small {
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    .notice {
+      padding: 15px 17px;
+      background: #f8f1df;
+      border: 1px solid #eadcba;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    .notice.success {
+      background: #edf7f0;
+      border-color: #cce5d3;
+    }
+
+    .notice.error {
+      background: #fbeeee;
+      border-color: #edcccc;
+    }
+
+    .wedding-card {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 18px;
+      background: var(--surface-soft);
+    }
+
+    .wedding-card-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      align-items: flex-start;
+      gap: 20px;
     }
 
-    .gallery-grid {
+    .wedding-card h3 {
+      margin: 0 0 7px;
+      font-size: 24px;
+    }
+
+    .slug {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .status {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+
+    .status.published {
+      background: #e8f5eb;
+      color: #3e7050;
+    }
+
+    .status.draft {
+      background: #eeeae6;
+      color: #766d66;
+    }
+
+    .stats-row {
       display: grid;
       grid-template-columns:
-        repeat(
-          auto-fill,
-          minmax(150px, 1fr)
-        );
+        repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .mini-stat {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .mini-stat small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .mini-stat strong {
+      font-size: 22px;
+    }
+
+    .edit-panel {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .media-box {
+      border: 1px dashed #cfc4bb;
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .media-preview {
+      width: 100%;
+      max-height: 230px;
+      object-fit: cover;
+      border-radius: 15px;
+      background: #eee;
+      margin: 10px 0;
+    }
+
+    .media-preview.square {
+      aspect-ratio: 1;
+      max-width: 230px;
+    }
+
+    .gallery-preview {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(130px, 1fr));
       gap: 12px;
     }
 
     .gallery-item {
-      border: 1px solid #e3ddd7;
-      border-radius: 10px;
-      padding: 8px;
-      background: white;
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #eee;
+      aspect-ratio: 1;
     }
 
     .gallery-item img {
       width: 100%;
-      aspect-ratio: 1;
+      height: 100%;
       object-fit: cover;
-      border-radius: 8px;
     }
 
-    .notice {
-      padding: 12px 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      background: #f2eee9;
-      line-height: 1.6;
-      font-size: 14px;
+    .gallery-item button {
+      position: absolute;
+      right: 7px;
+      top: 7px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,.72);
     }
 
-    .notice.warning {
-      background: #fff2d8;
+    .dynamic-list {
+      display: grid;
+      gap: 15px;
     }
 
-    .notice.success {
-      background: #e6f5e9;
+    .dynamic-item {
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 17px;
+      background: #fff;
     }
 
-    .hidden {
-      display: none !important;
+    .dynamic-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .empty {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
     }
 
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 500;
+      z-index: 1000;
+      background: rgba(20,17,15,.55);
+      backdrop-filter: blur(10px);
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
+      padding: 24px;
+      overflow: auto;
     }
 
     .modal.open {
-      display: flex;
+      display: block;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 18px;
+    .modal-card {
       width: min(1100px, 100%);
-      max-height: 90vh;
-      overflow: auto;
-      padding: 25px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,.25);
     }
 
     .modal-header {
+      padding: 22px;
+      border-bottom: 1px solid var(--border);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
+      justify-content: space-between;
     }
 
-    .rsvp-table-wrapper {
+    .modal-body {
+      padding: 22px;
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      background: #eee9e4;
+      color: var(--text);
+    }
+
+    .rsvp-table-wrap {
       overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 800px;
     }
 
     th,
     td {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
+      padding: 13px;
+      border-bottom: 1px solid var(--border);
       text-align: left;
       vertical-align: top;
-      white-space: nowrap;
     }
 
     th {
-      background: #f7f5f2;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
     }
 
-    .muted {
-      opacity: .6;
+    .url-preview {
+      margin-top: 8px;
+      padding: 12px;
+      background: #f4f1ee;
+      border-radius: 10px;
+      font-family: monospace;
+      word-break: break-all;
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 7px;
+      border-radius: 999px;
+      background: #eee;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+      transition: width .2s;
+    }
+
+    .sticky-save {
+      position: sticky;
+      bottom: 18px;
+      z-index: 50;
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      pointer-events: none;
+    }
+
+    .sticky-save button {
+      pointer-events: auto;
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.18);
+    }
+
+    @media (max-width: 1000px) {
+
+      .summary-grid {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .stats-row {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
     }
 
     @media (max-width: 700px) {
 
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .form-group.full {
-        grid-column: auto;
-      }
-
       .admin-header {
-        align-items: flex-start;
+        padding: 0 15px;
+        height: 66px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .admin-main {
+        width: min(
+          100% - 20px,
+          1500px
+        );
+        padding-top: 25px;
+      }
+
+      .summary-grid,
+      .form-grid,
+      .stats-row {
+        grid-template-columns:
+          1fr;
+      }
+
+      .panel-header,
+      .panel-body {
+        padding: 19px;
+      }
+
+      .wedding-card {
+        padding: 17px;
+      }
+
+      .wedding-card-top {
         flex-direction: column;
       }
 
-      .panel-header {
-        align-items: flex-start;
-        flex-direction: column;
+      .button-row {
+        display: grid;
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .button-row button,
+      .button-row .button {
+        width: 100%;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-card {
+        margin: 10px auto;
+        border-radius: 18px;
       }
 
     }
@@ -418,834 +652,1840 @@
 
 </head>
 
+
 <body>
 
-<div class="admin-layout">
 
+<header class="admin-header">
 
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
+  <div class="brand">
+    LOVEFOREVER
+  </div>
 
-  <header class="admin-header">
+  <form
+    method="POST"
+    action="/admin/logout"
+  >
 
-    <div class="admin-brand">
-      LOVEFOREVER
-    </div>
-
-    <form
-      method="POST"
-      action="/admin/logout"
+    <input
+      type="hidden"
+      name="_csrf"
+      value="<%= csrfToken %>"
     >
 
-      <input
-        type="hidden"
-        name="_csrf"
-        value="<%= csrfToken %>"
-      >
+    <button
+      type="submit"
+      class="secondary"
+    >
+      Logout
+    </button>
 
-      <button
-        type="submit"
-        class="secondary"
-      >
-        Logout
-      </button>
+  </form>
 
-    </form>
+</header>
 
-  </header>
+
+<main class="admin-main">
+
+
+  <section class="dashboard-title">
+
+    <h1>
+      Admin Dashboard
+    </h1>
+
+    <p>
+      Kelola wedding invitation,
+      konten, media, event, RSVP,
+      gallery dan musik dari satu tempat.
+    </p>
+
+  </section>
+
+
+  <div id="globalMessage"></div>
 
 
   <!-- =====================================================
-       MAIN
+       SUMMARY
   ====================================================== -->
 
-  <main class="admin-main">
+  <section class="summary-grid">
 
+    <div class="summary-card">
 
-    <div class="dashboard-title">
+      <small>
+        Total Wedding
+      </small>
 
-      <h1>
-        Admin Dashboard
-      </h1>
-
-      <p>
-        Kelola wedding invitation,
-        gallery, event, RSVP dan konten
-        dari satu dashboard.
-      </p>
+      <strong>
+        <%= weddings.length %>
+      </strong>
 
     </div>
 
 
-    <div id="globalMessage"></div>
+    <div class="summary-card">
+
+      <small>
+        Published
+      </small>
+
+      <strong>
+        <%= weddings.filter(
+          function(w) {
+            return w.status === "published";
+          }
+        ).length %>
+      </strong>
+
+    </div>
 
 
-    <!-- ===================================================
-         SUMMARY
-    ==================================================== -->
+    <div class="summary-card">
 
-    <section class="summary-grid">
+      <small>
+        Draft
+      </small>
 
-      <div class="summary-card">
+      <strong>
+        <%= weddings.filter(
+          function(w) {
+            return w.status !== "published";
+          }
+        ).length %>
+      </strong>
 
-        <small>
-          Total Wedding
-        </small>
-
-        <strong>
-          <%= weddings.length %>
-        </strong>
-
-      </div>
+    </div>
 
 
-      <div class="summary-card">
+    <div class="summary-card">
 
-        <small>
-          Published
-        </small>
+      <small>
+        Total RSVP
+      </small>
 
-        <strong>
+      <strong>
+        <%= weddings.reduce(
+          function(sum, w) {
+            return sum +
+              Number(
+                w.stats?.total || 0
+              );
+          },
+          0
+        ) %>
+      </strong>
 
-          <%= weddings.filter(
-            w =>
-              w.status ===
-              "published"
-          ).length %>
+    </div>
 
-        </strong>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <small>
-          Draft
-        </small>
-
-        <strong>
-
-          <%= weddings.filter(
-            w =>
-              w.status !==
-              "published"
-          ).length %>
-
-        </strong>
-
-      </div>
+  </section>
 
 
-      <div class="summary-card">
+  <!-- =====================================================
+       CREATE
+  ====================================================== -->
 
-        <small>
-          Total RSVP
-        </small>
+  <section class="panel">
 
-        <strong>
+    <div class="panel-header">
 
-          <%= weddings.reduce(
-            (sum, w) =>
-              sum +
-              (w.stats?.total || 0),
-            0
-          ) %>
+      <div>
 
-        </strong>
+        <h2>
+          Buat Wedding Baru
+        </h2>
 
-      </div>
-
-    </section>
-
-
-    <!-- ===================================================
-         CREATE WEDDING
-    ==================================================== -->
-
-    <section class="panel">
-
-      <div class="panel-header">
-
-        <div>
-
-          <strong>
-            Buat Wedding Baru
-          </strong>
-
-          <div class="muted">
-            Slug ditentukan manual oleh Admin.
-          </div>
-
+        <div class="muted">
+          Slug ditentukan manual oleh Admin.
         </div>
 
       </div>
 
-
-      <div class="panel-body">
-
-        <form
-          id="createWeddingForm"
-        >
-
-          <input
-            type="hidden"
-            id="csrfToken"
-            value="<%= csrfToken %>"
-          >
+    </div>
 
 
-          <!-- BASIC -->
+    <div class="panel-body">
 
+
+      <form id="createWeddingForm">
+
+
+        <div class="section-title">
           <h3>
             Informasi Dasar
           </h3>
+        </div>
 
-          <div class="form-grid">
 
-            <div class="form-group">
+        <div class="form-grid">
 
-              <label>
-                Slug
-              </label>
-
-              <input
-                id="slug"
-                name="slug"
-                required
-                placeholder="contoh-aulia-rizky"
-                pattern="[a-zA-Z0-9-]+"
-              >
-
-              <small class="muted">
-                URL:
-                /slug-yang-anda-tentukan
-              </small>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>
-                Status
-              </label>
-
-              <select id="status">
-
-                <option value="draft">
-                  Draft
-                </option>
-
-                <option value="published">
-                  Published
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>
-                Tanggal Pernikahan
-              </label>
-
-              <input
-                type="datetime-local"
-                id="date"
-              >
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>
-                Timezone
-              </label>
-
-              <select id="timezone">
-
-                <option value="Asia/Makassar">
-                  Asia/Makassar — WITA
-                </option>
-
-                <option value="Asia/Jakarta">
-                  Asia/Jakarta — WIB
-                </option>
-
-                <option value="Asia/Jayapura">
-                  Asia/Jayapura — WIT
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="form-group full">
-
-              <label>
-                Quote
-              </label>
-
-              <textarea
-                id="quote"
-                placeholder="Tuliskan quote pernikahan..."
-              ></textarea>
-
-            </div>
-
-
-            <div class="form-group full">
-
-              <label>
-                Deskripsi
-              </label>
-
-              <textarea
-                id="description"
-                placeholder="Deskripsi singkat undangan..."
-              ></textarea>
-
-            </div>
-
-          </div>
-
-
-          <!-- COUPLE -->
-
-          <h3>
-            Mempelai Pria
-          </h3>
-
-          <div class="form-grid">
-
-            <div class="form-group">
-
-              <label>
-                Nama
-              </label>
-
-              <input
-                id="groomName"
-                placeholder="Rizky"
-              >
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>
-                Nama Lengkap
-              </label>
-
-              <input
-                id="groomFullName"
-                placeholder="Rizky ..."
-              >
-
-            </div>
-
-
-            <div class="form-group full">
-
-              <label>
-                Foto Mempelai Pria
-              </label>
-
-              <div class="image-upload">
-
-                <input
-                  type="file"
-                  id="groomPhotoFile"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                >
-
-                <div
-                  id="groomPhotoPreview"
-                  class="image-preview"
-                ></div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <h3>
-            Mempelai Wanita
-          </h3>
-
-          <div class="form-grid">
-
-            <div class="form-group">
-
-              <label>
-                Nama
-              </label>
-
-              <input
-                id="brideName"
-                placeholder="Aulia"
-              >
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>
-                Nama Lengkap
-              </label>
-
-              <input
-                id="brideFullName"
-                placeholder="Aulia ..."
-              >
-
-            </div>
-
-
-            <div class="form-group full">
-
-              <label>
-                Foto Mempelai Wanita
-              </label>
-
-              <div class="image-upload">
-
-                <input
-                  type="file"
-                  id="bridePhotoFile"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                >
-
-                <div
-                  id="bridePhotoPreview"
-                  class="image-preview"
-                ></div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- COVER -->
-
-          <h3>
-            Cover Invitation
-          </h3>
 
           <div class="form-group">
 
             <label>
-              Cover Image
+              Slug
             </label>
 
-            <div class="image-upload">
+            <input
+              id="createSlug"
+              required
+              minlength="3"
+              maxlength="100"
+              pattern="[a-zA-Z0-9-]+"
+              placeholder="contoh-aulia-rizky"
+            >
 
-              <input
-                type="file"
-                id="coverImageFile"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-              >
-
-              <div
-                id="coverImagePreview"
-                class="image-preview"
-              ></div>
-
+            <div
+              id="createUrl"
+              class="url-preview"
+            >
+              https://loveforever.vercel.app/
             </div>
 
           </div>
 
 
-          <!-- EVENTS -->
+          <div class="form-group">
+
+            <label>
+              Status
+            </label>
+
+            <select id="createStatus">
+
+              <option value="draft">
+                Draft
+              </option>
+
+              <option value="published">
+                Published
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Mempelai Pria
+            </label>
+
+            <input
+              id="createGroomName"
+              placeholder="Rizky"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Lengkap Pria
+            </label>
+
+            <input
+              id="createGroomFullName"
+              placeholder="Rizky ..."
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Mempelai Wanita
+            </label>
+
+            <input
+              id="createBrideName"
+              placeholder="Aulia"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Nama Lengkap Wanita
+            </label>
+
+            <input
+              id="createBrideFullName"
+              placeholder="Aulia ..."
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Tanggal Pernikahan
+            </label>
+
+            <input
+              id="createDate"
+              type="datetime-local"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Timezone
+            </label>
+
+            <select id="createTimezone">
+
+              <option value="Asia/Jakarta">
+                Asia/Jakarta — WIB
+              </option>
+
+              <option value="Asia/Makassar">
+                Asia/Makassar — WITA
+              </option>
+
+              <option value="Asia/Jayapura">
+                Asia/Jayapura — WIT
+              </option>
+
+            </select>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="section-title">
 
           <h3>
-            Event / Acara
+            Opening
           </h3>
 
-          <div id="eventsContainer"></div>
-
-          <button
-            type="button"
-            class="secondary"
-            id="addEventBtn"
-          >
-            + Tambah Event
-          </button>
+        </div>
 
 
-          <!-- STORY -->
+        <div class="form-grid">
 
-          <h3 style="margin-top:30px">
-            Story / Timeline
+
+          <div class="form-group">
+
+            <label>
+              Judul Opening
+            </label>
+
+            <input
+              id="createOpeningTitle"
+              value="The Wedding Of"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Subtitle
+            </label>
+
+            <input
+              id="createOpeningSubtitle"
+              value="Dengan penuh kebahagiaan"
+            >
+
+          </div>
+
+
+          <div class="form-group full">
+
+            <label>
+              Deskripsi Opening
+            </label>
+
+            <textarea
+              id="createOpeningDescription"
+            >Kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada hari bahagia kami.</textarea>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="section-title">
+
+          <h3>
+            Quote & Deskripsi
           </h3>
 
-          <div id="storyContainer"></div>
-
-          <button
-            type="button"
-            class="secondary"
-            id="addStoryBtn"
-          >
-            + Tambah Story
-          </button>
+        </div>
 
 
-          <!-- GALLERY -->
+        <div class="form-group">
 
-          <h3 style="margin-top:30px">
+          <label>
+            Quote
+          </label>
+
+          <textarea
+            id="createQuote"
+            placeholder="Dan di antara tanda-tanda kekuasaan-Nya..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Deskripsi
+          </label>
+
+          <textarea
+            id="createDescription"
+            placeholder="Cerita singkat tentang pernikahan..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="section-title">
+
+          <h3>
+            Pengaturan
+          </h3>
+
+        </div>
+
+
+        <div class="button-row">
+
+          <label>
+            <input
+              id="createShowCountdown"
+              type="checkbox"
+              checked
+              style="width:auto"
+            >
+            Countdown
+          </label>
+
+          <label>
+            <input
+              id="createShowStory"
+              type="checkbox"
+              checked
+              style="width:auto"
+            >
+            Story
+          </label>
+
+          <label>
+            <input
+              id="createShowGallery"
+              type="checkbox"
+              checked
+              style="width:auto"
+            >
             Gallery
-          </h3>
+          </label>
 
-          <div class="notice warning">
-
-            <strong>Upload Base64:</strong>
-
-            Foto diproses di browser,
-            dikompresi, kemudian dikirim
-            ke server dan disimpan di
-            Upstash Redis.
-
-            Maksimal sekitar
-            <strong>1 MB per gambar</strong>
-            setelah kompresi.
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Upload Gallery
-            </label>
-
+          <label>
             <input
-              type="file"
-              id="galleryFiles"
-              multiple
-              accept="image/jpeg,image/png,image/webp,image/gif"
+              id="createShowGift"
+              type="checkbox"
+              checked
+              style="width:auto"
             >
+            Gift
+          </label>
 
-          </div>
+          <label>
+            <input
+              id="createShowRsvp"
+              type="checkbox"
+              checked
+              style="width:auto"
+            >
+            RSVP
+          </label>
+
+          <label>
+            <input
+              id="createBottomNavigation"
+              type="checkbox"
+              checked
+              style="width:auto"
+            >
+            Bottom Navigation
+          </label>
+
+        </div>
 
 
-          <div
-            id="galleryPreview"
-            class="gallery-grid"
-          ></div>
-
-
-          <!-- GIFT -->
-
-          <h3 style="margin-top:30px">
-            Wedding Gift
-          </h3>
-
-          <div id="giftContainer"></div>
+        <div class="sticky-save">
 
           <button
-            type="button"
-            class="secondary"
-            id="addGiftBtn"
+            type="submit"
           >
-            + Tambah Rekening
+            + Buat Wedding
           </button>
 
-
-          <!-- MUSIC -->
-
-          <h3 style="margin-top:30px">
-            Music
-          </h3>
-
-          <div class="form-group">
-
-            <label>
-              URL Music
-            </label>
-
-            <input
-              id="musicUrl"
-              type="url"
-              placeholder="https://..."
-            >
-
-            <small class="muted">
-              Untuk MVP music menggunakan URL.
-            </small>
-
-          </div>
+        </div>
 
 
-          <!-- SUBMIT -->
+      </form>
 
-          <div
-            class="actions"
-            style="margin-top:30px"
-          >
+    </div>
 
-            <button
-              type="submit"
-            >
-              Simpan Wedding
-            </button>
-
-            <button
-              type="reset"
-              class="secondary"
-              id="resetFormBtn"
-            >
-              Reset
-            </button>
-
-          </div>
-
-        </form>
-
-      </div>
-
-    </section>
+  </section>
 
 
-    <!-- ===================================================
-         WEDDING LIST
-    ==================================================== -->
+  <!-- =====================================================
+       WEDDING LIST
+  ====================================================== -->
 
-    <section class="panel">
+  <section class="panel">
 
-      <div class="panel-header">
+    <div class="panel-header">
 
-        <div>
+      <div>
 
-          <strong>
-            Wedding Invitation
-          </strong>
+        <h2>
+          Daftar Wedding
+        </h2>
 
-          <div class="muted">
-            Daftar seluruh wedding.
-          </div>
-
+        <div class="muted">
+          Semua wedding yang tersimpan di Upstash Redis.
         </div>
 
       </div>
 
+    </div>
 
-      <div class="panel-body">
 
-        <% if (!weddings.length) { %>
+    <div class="panel-body">
 
-          <div class="notice">
-            Belum ada wedding.
+
+      <% if (!weddings.length) { %>
+
+        <div class="empty">
+          Belum ada wedding invitation.
+        </div>
+
+      <% } %>
+
+
+      <% weddings.forEach(
+        function(wedding)
+      { %>
+
+
+        <article
+          class="wedding-card"
+          id="wedding-card-<%= wedding.slug %>"
+        >
+
+
+          <div class="wedding-card-top">
+
+
+            <div>
+
+              <h3>
+
+                <%= wedding.groom?.name || "" %>
+
+                &
+
+                <%= wedding.bride?.name || "" %>
+
+              </h3>
+
+              <div class="slug">
+                /<%= wedding.slug %>
+              </div>
+
+            </div>
+
+
+            <span
+              class="status <%= wedding.status === 'published' ? 'published' : 'draft' %>"
+            >
+
+              <%= wedding.status === "published"
+                ? "PUBLISHED"
+                : "DRAFT" %>
+
+            </span>
+
+
           </div>
 
-        <% } %>
+
+          <div class="stats-row">
 
 
-        <% weddings.forEach(function(wedding) { %>
+            <div class="mini-stat">
 
-          <article
-            class="wedding-card"
-            data-slug="<%= wedding.slug %>"
+              <small>
+                RSVP
+              </small>
+
+              <strong>
+                <%= wedding.stats?.total || 0 %>
+              </strong>
+
+            </div>
+
+
+            <div class="mini-stat">
+
+              <small>
+                Hadir
+              </small>
+
+              <strong>
+                <%= wedding.stats?.hadir || 0 %>
+              </strong>
+
+            </div>
+
+
+            <div class="mini-stat">
+
+              <small>
+                Tamu
+              </small>
+
+              <strong>
+                <%= wedding.stats?.guestCount || 0 %>
+              </strong>
+
+            </div>
+
+
+            <div class="mini-stat">
+
+              <small>
+                Gallery
+              </small>
+
+              <strong>
+                <%= wedding.gallery?.length || 0 %>
+              </strong>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="button-row" style="margin-top:18px">
+
+
+            <button
+              type="button"
+              class="secondary"
+              onclick="openEdit('<%= wedding.slug %>')"
+            >
+              Edit
+            </button>
+
+
+            <a
+              class="button secondary"
+              href="/<%= encodeURIComponent(wedding.slug) %>"
+              target="_blank"
+              rel="noopener"
+            >
+              Buka
+            </a>
+
+
+            <button
+              type="button"
+              onclick="showRSVP('<%= wedding.slug %>')"
+            >
+              RSVP
+            </button>
+
+
+            <% if (wedding.status === "published") { %>
+
+              <button
+                type="button"
+                class="secondary"
+                onclick="changeStatus(
+                  '<%= wedding.slug %>',
+                  'unpublish'
+                )"
+              >
+                Unpublish
+              </button>
+
+            <% } else { %>
+
+              <button
+                type="button"
+                class="success"
+                onclick="changeStatus(
+                  '<%= wedding.slug %>',
+                  'publish'
+                )"
+              >
+                Publish
+              </button>
+
+            <% } %>
+
+
+            <button
+              type="button"
+              class="danger"
+              onclick="deleteWedding(
+                '<%= wedding.slug %>'
+              )"
+            >
+              Hapus
+            </button>
+
+
+          </div>
+
+
+          <!-- =================================================
+               EDIT PANEL
+          ================================================== -->
+
+          <div
+            class="edit-panel"
+            id="edit-<%= wedding.slug %>"
+            hidden
           >
 
-            <div class="wedding-card-header">
+            <form
+              class="editWeddingForm"
+              data-slug="<%= wedding.slug %>"
+            >
 
-              <div>
-
+              <div class="section-title">
                 <h3>
-
-                  <%= wedding.bride?.name || "Bride" %>
-
-                  &
-
-                  <%= wedding.groom?.name || "Groom" %>
-
+                  Edit Informasi Wedding
                 </h3>
+              </div>
 
-                <div class="wedding-meta">
 
-                  Slug:
-                  <strong>
-                    <%= wedding.slug %>
-                  </strong>
+              <div class="form-grid">
 
-                  <br>
 
-                  URL:
-                  <a
-                    href="/<%= wedding.slug %>"
-                    target="_blank"
+                <div class="form-group">
+
+                  <label>
+                    Slug
+                  </label>
+
+                  <input
+                    name="slug"
+                    value="<%= wedding.slug %>"
+                    required
+                    minlength="3"
+                    maxlength="100"
                   >
-                    /<%= wedding.slug %>
-                  </a>
-
-                  <br>
-
-                  Gallery:
-                  <%= wedding.gallery?.length || 0 %>
-                  gambar
-
-                  <br>
-
-                  RSVP:
-                  <%= wedding.stats?.total || 0 %>
 
                 </div>
 
+
+                <div class="form-group">
+
+                  <label>
+                    Status
+                  </label>
+
+                  <select name="status">
+
+                    <option
+                      value="draft"
+                      <%= wedding.status !== "published"
+                        ? "selected"
+                        : "" %>
+                    >
+                      Draft
+                    </option>
+
+                    <option
+                      value="published"
+                      <%= wedding.status === "published"
+                        ? "selected"
+                        : "" %>
+                    >
+                      Published
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Mempelai Pria
+                  </label>
+
+                  <input
+                    name="groomName"
+                    value="<%= wedding.groom?.name || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Nama Lengkap Pria
+                  </label>
+
+                  <input
+                    name="groomFullName"
+                    value="<%= wedding.groom?.fullName || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Mempelai Wanita
+                  </label>
+
+                  <input
+                    name="brideName"
+                    value="<%= wedding.bride?.name || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Nama Lengkap Wanita
+                  </label>
+
+                  <input
+                    name="brideFullName"
+                    value="<%= wedding.bride?.fullName || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Tanggal Pernikahan
+                  </label>
+
+                  <input
+                    name="date"
+                    type="datetime-local"
+                    value="<%= wedding.date || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Timezone
+                  </label>
+
+                  <select name="timezone">
+
+                    <option
+                      value="Asia/Jakarta"
+                      <%= wedding.timezone === "Asia/Jakarta"
+                        ? "selected"
+                        : "" %>
+                    >
+                      Asia/Jakarta — WIB
+                    </option>
+
+                    <option
+                      value="Asia/Makassar"
+                      <%= wedding.timezone === "Asia/Makassar"
+                        ? "selected"
+                        : "" %>
+                    >
+                      Asia/Makassar — WITA
+                    </option>
+
+                    <option
+                      value="Asia/Jayapura"
+                      <%= wedding.timezone === "Asia/Jayapura"
+                        ? "selected"
+                        : "" %>
+                    >
+                      Asia/Jayapura — WIT
+                    </option>
+
+                  </select>
+
+                </div>
+
+
               </div>
 
 
-              <div>
+              <div class="section-title">
+
+                <h3>
+                  Opening
+                </h3>
+
+              </div>
+
+
+              <div class="form-grid">
+
+
+                <div class="form-group">
+
+                  <label>
+                    Judul
+                  </label>
+
+                  <input
+                    name="openingTitle"
+                    value="<%= wedding.opening?.title || "The Wedding Of" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label>
+                    Subtitle
+                  </label>
+
+                  <input
+                    name="openingSubtitle"
+                    value="<%= wedding.opening?.subtitle || "" %>"
+                  >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                  <label>
+                    Deskripsi
+                  </label>
+
+                  <textarea
+                    name="openingDescription"
+                  ><%= wedding.opening?.description || "" %></textarea>
+
+                </div>
+
+
+              </div>
+
+
+              <div class="section-title">
+
+                <h3>
+                  Quote & Deskripsi
+                </h3>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Quote
+                </label>
+
+                <textarea
+                  name="quote"
+                ><%= wedding.quote || "" %></textarea>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Deskripsi Wedding
+                </label>
+
+                <textarea
+                  name="description"
+                ><%= wedding.description || "" %></textarea>
+
+              </div>
+
+
+              <!-- =================================================
+                   COVER
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Cover Image
+                </h3>
+
+              </div>
+
+
+              <div class="media-box">
 
                 <% if (
-                  wedding.status ===
-                  "published"
+                  wedding.coverImage?.mediaId
                 ) { %>
 
-                  <span
-                    class="status status-published"
+                  <img
+                    class="media-preview"
+                    src="/media/<%= encodeURIComponent(wedding.slug) %>/<%= encodeURIComponent(wedding.coverImage.mediaId) %>"
+                    alt="Cover"
                   >
-                    PUBLISHED
-                  </span>
-
-                <% } else { %>
-
-                  <span
-                    class="status status-draft"
-                  >
-                    DRAFT
-                  </span>
 
                 <% } %>
 
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  data-media-role="cover"
+                  data-media-slug="<%= wedding.slug %>"
+                >
+
+                <small class="muted">
+                  Maksimal 1 MB. JPG, PNG, WEBP atau GIF.
+                </small>
+
               </div>
 
-            </div>
+
+              <!-- =================================================
+                   GROOM
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Foto Mempelai Pria
+                </h3>
+
+              </div>
 
 
-            <div class="actions">
+              <div class="media-box">
+
+                <% if (
+                  wedding.groom?.photo?.mediaId
+                ) { %>
+
+                  <img
+                    class="media-preview square"
+                    src="/media/<%= encodeURIComponent(wedding.slug) %>/<%= encodeURIComponent(wedding.groom.photo.mediaId) %>"
+                    alt="Groom"
+                  >
+
+                <% } %>
+
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  data-media-role="groom"
+                  data-media-slug="<%= wedding.slug %>"
+                >
+
+              </div>
+
+
+              <!-- =================================================
+                   BRIDE
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Foto Mempelai Wanita
+                </h3>
+
+              </div>
+
+
+              <div class="media-box">
+
+                <% if (
+                  wedding.bride?.photo?.mediaId
+                ) { %>
+
+                  <img
+                    class="media-preview square"
+                    src="/media/<%= encodeURIComponent(wedding.slug) %>/<%= encodeURIComponent(wedding.bride.photo.mediaId) %>"
+                    alt="Bride"
+                  >
+
+                <% } %>
+
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  data-media-role="bride"
+                  data-media-slug="<%= wedding.slug %>"
+                >
+
+              </div>
+
+
+              <!-- =================================================
+                   GALLERY
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Gallery
+                </h3>
+
+              </div>
+
+
+              <div class="media-box">
+
+
+                <div
+                  class="gallery-preview"
+                  id="gallery-<%= wedding.slug %>"
+                >
+
+
+                  <% (wedding.gallery || []).forEach(
+                    function(image)
+                  { %>
+
+
+                    <% if (image?.mediaId) { %>
+
+                      <div
+                        class="gallery-item"
+                        data-gallery-media="<%= image.mediaId %>"
+                      >
+
+                        <img
+                          src="/media/<%= encodeURIComponent(wedding.slug) %>/<%= encodeURIComponent(image.mediaId) %>"
+                          alt="<%= image.caption || "Gallery" %>"
+                          loading="lazy"
+                        >
+
+                        <button
+                          type="button"
+                          onclick="deleteMedia(
+                            '<%= wedding.slug %>',
+                            '<%= image.mediaId %>'
+                          )"
+                        >
+                          ×
+                        </button>
+
+                      </div>
+
+                    <% } %>
+
+
+                  <% }); %>
+
+
+                </div>
+
+
+                <br>
+
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  multiple
+                  data-media-role="gallery"
+                  data-media-slug="<%= wedding.slug %>"
+                >
+
+                <small class="muted">
+                  Maksimal 15 gambar per wedding.
+                </small>
+
+              </div>
+
+
+              <!-- =================================================
+                   MUSIC
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Music MP3
+                </h3>
+
+              </div>
+
+
+              <div class="media-box">
+
+
+                <% if (
+                  wedding.music?.mediaId
+                ) { %>
+
+                  <audio
+                    controls
+                    preload="none"
+                    style="width:100%;margin:10px 0"
+                    src="/media/<%= encodeURIComponent(wedding.slug) %>/<%= encodeURIComponent(wedding.music.mediaId) %>"
+                  ></audio>
+
+                  <p class="muted">
+                    <%= wedding.music.name || "Wedding Music" %>
+                  </p>
+
+                <% } %>
+
+
+                <input
+                  type="file"
+                  accept="audio/mpeg,audio/mp3"
+                  data-media-role="music"
+                  data-media-slug="<%= wedding.slug %>"
+                >
+
+                <small class="muted">
+                  MP3 maksimal 8 MB.
+                  File akan disimpan sebagai Base64 di Upstash Redis.
+                </small>
+
+              </div>
+
+
+              <!-- =================================================
+                   EVENTS
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Detail Acara
+                </h3>
+
+              </div>
+
+
+              <div
+                class="dynamic-list events-list"
+                data-slug="<%= wedding.slug %>"
+              >
+
+
+                <% (wedding.events || []).forEach(
+                  function(event, index)
+                { %>
+
+
+                  <div class="dynamic-item event-item">
+
+
+                    <div class="dynamic-item-header">
+
+                      <strong>
+                        Acara #<%= index + 1 %>
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="danger small"
+                        onclick="this.closest('.event-item').remove()"
+                      >
+                        Hapus
+                      </button>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Type
+                        </label>
+
+                        <input
+                          data-field="type"
+                          value="<%= event.type || "" %>"
+                          placeholder="Akad / Resepsi"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Judul
+                        </label>
+
+                        <input
+                          data-field="title"
+                          value="<%= event.title || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Tanggal
+                        </label>
+
+                        <input
+                          data-field="date"
+                          value="<%= event.date || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Jam Mulai
+                        </label>
+
+                        <input
+                          data-field="startTime"
+                          value="<%= event.startTime || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Jam Selesai
+                        </label>
+
+                        <input
+                          data-field="endTime"
+                          value="<%= event.endTime || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Venue
+                        </label>
+
+                        <input
+                          data-field="venue"
+                          value="<%= event.venue || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label>
+                          Alamat
+                        </label>
+
+                        <textarea
+                          data-field="address"
+                        ><%= event.address || "" %></textarea>
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label>
+                          Google Maps URL
+                        </label>
+
+                        <input
+                          data-field="mapsUrl"
+                          value="<%= event.mapsUrl || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label>
+                          Deskripsi
+                        </label>
+
+                        <textarea
+                          data-field="description"
+                        ><%= event.description || "" %></textarea>
+
+                      </div>
+
+
+                    </div>
+
+                  </div>
+
+
+                <% }); %>
+
+
+              </div>
+
 
               <button
                 type="button"
                 class="secondary"
-                onclick="editWedding('<%= wedding.slug %>')"
+                onclick="addEvent(
+                  '<%= wedding.slug %>'
+                )"
               >
-                Edit
+                + Tambah Acara
               </button>
 
 
-              <a
-                href="/<%= wedding.slug %>"
-                target="_blank"
-                class="button-link secondary"
+              <!-- =================================================
+                   STORY
+              ================================================== -->
+
+              <div class="section-title">
+
+                <h3>
+                  Story / Timeline
+                </h3>
+
+              </div>
+
+
+              <div
+                class="dynamic-list story-list"
+                data-slug="<%= wedding.slug %>"
               >
-                Preview
-              </a>
+
+
+                <% (wedding.story || []).forEach(
+                  function(item, index)
+                { %>
+
+
+                  <div class="dynamic-item story-item">
+
+
+                    <div class="dynamic-item-header">
+
+                      <strong>
+                        Story #<%= index + 1 %>
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="danger small"
+                        onclick="this.closest('.story-item').remove()"
+                      >
+                        Hapus
+                      </button>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Tanggal / Tahun
+                        </label>
+
+                        <input
+                          data-field="date"
+                          value="<%= item.date || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Judul
+                        </label>
+
+                        <input
+                          data-field="title"
+                          value="<%= item.title || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label>
+                          Cerita
+                        </label>
+
+                        <textarea
+                          data-field="description"
+                        ><%= item.description || "" %></textarea>
+
+                      </div>
+
+
+                    </div>
+
+                  </div>
+
+
+                <% }); %>
+
+
+              </div>
 
 
               <button
                 type="button"
                 class="secondary"
-                onclick="showRsvp('<%= wedding.slug %>')"
+                onclick="addStory(
+                  '<%= wedding.slug %>'
+                )"
               >
-                RSVP
+                + Tambah Story
               </button>
 
 
-              <% if (
-                wedding.status ===
-                "published"
-              ) { %>
+              <!-- =================================================
+                   GIFT
+              ================================================== -->
 
-                <button
-                  type="button"
-                  onclick="changePublish('<%= wedding.slug %>', 'unpublish')"
-                >
-                  Unpublish
-                </button>
+              <div class="section-title">
 
-              <% } else { %>
+                <h3>
+                  Wedding Gift
+                </h3>
 
-                <button
-                  type="button"
-                  class="success"
-                  onclick="changePublish('<%= wedding.slug %>', 'publish')"
-                >
-                  Publish
-                </button>
+              </div>
 
-              <% } %>
+
+              <div
+                class="dynamic-list gift-list"
+                data-slug="<%= wedding.slug %>"
+              >
+
+
+                <% (wedding.gift || []).forEach(
+                  function(gift, index)
+                { %>
+
+
+                  <div class="dynamic-item gift-item">
+
+
+                    <div class="dynamic-item-header">
+
+                      <strong>
+                        Gift #<%= index + 1 %>
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="danger small"
+                        onclick="this.closest('.gift-item').remove()"
+                      >
+                        Hapus
+                      </button>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Type
+                        </label>
+
+                        <input
+                          data-field="type"
+                          value="<%= gift.type || "Bank" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Bank
+                        </label>
+
+                        <input
+                          data-field="bank"
+                          value="<%= gift.bank || "" %>"
+                          placeholder="BCA"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Nomor Rekening
+                        </label>
+
+                        <input
+                          data-field="accountNumber"
+                          value="<%= gift.accountNumber || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group">
+
+                        <label>
+                          Atas Nama
+                        </label>
+
+                        <input
+                          data-field="accountName"
+                          value="<%= gift.accountName || "" %>"
+                        >
+
+                      </div>
+
+
+                      <div class="form-group full">
+
+                        <label>
+                          Deskripsi
+                        </label>
+
+                        <textarea
+                          data-field="description"
+                        ><%= gift.description || "" %></textarea>
+
+                      </div>
+
+
+                    </div>
+
+                  </div>
+
+
+                <% }); %>
+
+
+              </div>
 
 
               <button
                 type="button"
-                class="danger"
-                onclick="deleteWedding('<%= wedding.slug %>')"
+                class="secondary"
+                onclick="addGift(
+                  '<%= wedding.slug %>'
+                )"
               >
-                Delete
+                + Tambah Rekening
               </button>
 
-            </div>
 
-          </article>
+              <!-- =================================================
+                   SETTINGS
+              ================================================== -->
 
-        <% }); %>
+              <div class="section-title">
 
-      </div>
+                <h3>
+                  Pengaturan Tampilan
+                </h3>
 
-    </section>
-
-
-  </main>
-
-</div>
+              </div>
 
 
-<!-- =======================================================
-     EDIT MODAL
-======================================================== -->
+              <div class="form-grid">
 
-<div
-  id="editModal"
-  class="modal"
->
 
-  <div class="modal-content">
+                <label>
 
-    <div class="modal-header">
+                  <input
+                    type="checkbox"
+                    name="showCountdown"
+                    style="width:auto"
+                    <%= wedding.settings?.showCountdown !== false
+                      ? "checked"
+                      : "" %>
+                  >
 
-      <h2>
-        Edit Wedding
-      </h2>
+                  Countdown
 
-      <button
-        type="button"
-        class="secondary"
-        onclick="closeEditModal()"
-      >
-        Tutup
-      </button>
+                </label>
+
+
+                <label>
+
+                  <input
+                    type="checkbox"
+                    name="showStory"
+                    style="width:auto"
+                    <%= wedding.settings?.showStory !== false
+                      ? "checked"
+                      : "" %>
+                  >
+
+                  Story
+
+                </label>
+
+
+                <label>
+
+                  <input
+                    type="checkbox"
+                    name="showGallery"
+                    style="width:auto"
+                    <%= wedding.settings?.showGallery !== false
+                      ? "checked"
+                      : "" %>
+                  >
+
+                  Gallery
+
+                </label>
+
+
+                <label>
+
+                  <input
+                    type="checkbox"
+                    name="showGift"
+                    style="width:auto"
+                    <%= wedding.settings?.showGift !== false
+                      ? "checked"
+                      : "" %>
+                  >
+
+                  Wedding Gift
+
+                </label>
+
+
+                <label>
+
+                  <input
+                    type="checkbox"
+                    name="showRsvp"
+                    style="width:auto"
+                    <%= wedding.settings?.showRsvp !== false
+                      ? "checked"
+                      : "" %>
+                  >
+
+                  RSVP
+
+                </label>
+
+
+                <label>
+
+                  <input
+                    type="checkbox"
+                    name="bottomNavigation"
+                    style="width:auto"
+                    <%= wedding.settings?.bottomNavigation !== false
+                      ? "checked"
+                      : "" %>
+                  >
+
+                  Bottom Navigation
+
+                </label>
+
+
+              </div>
+
+
+              <div
+                class="button-row"
+                style="margin-top:30px"
+              >
+
+                <button
+                  type="submit"
+                >
+                  Simpan Semua Perubahan
+                </button>
+
+                <button
+                  type="button"
+                  class="secondary"
+                  onclick="closeEdit(
+                    '<%= wedding.slug %>'
+                  )"
+                >
+                  Tutup
+                </button>
+
+              </div>
+
+
+            </form>
+
+          </div>
+
+
+        </article>
+
+
+      <% }); %>
+
 
     </div>
 
-    <div
-      id="editContent"
-    ></div>
+  </section>
 
-  </div>
 
-</div>
+</main>
 
 
 <!-- =======================================================
@@ -1257,27 +2497,30 @@
   class="modal"
 >
 
-  <div class="modal-content">
+  <div class="modal-card">
 
     <div class="modal-header">
 
       <h2>
-        RSVP
+        Data RSVP
       </h2>
 
       <button
         type="button"
-        class="secondary"
-        onclick="closeRsvpModal()"
+        class="modal-close"
+        onclick="closeModal('rsvpModal')"
       >
-        Tutup
+        ×
       </button>
 
     </div>
 
     <div
       id="rsvpContent"
-    ></div>
+      class="modal-body"
+    >
+      Memuat...
+    </div>
 
   </div>
 
@@ -1286,28 +2529,15 @@
 
 <script>
 
-/* =========================================================
-   GLOBAL
-========================================================= */
-
 const CSRF_TOKEN =
-  document.getElementById(
-    "csrfToken"
-  ).value;
+  <%- JSON.stringify(csrfToken) %>;
 
-const MAX_IMAGE_BYTES =
-  1024 * 1024;
-
-const MAX_GALLERY =
-  15;
-
-let galleryImages = [];
-
-let editSlug = null;
+const BASE_URL =
+  window.location.origin;
 
 
 /* =========================================================
-   MESSAGE
+   GLOBAL MESSAGE
 ========================================================= */
 
 function showMessage(
@@ -1315,25 +2545,1771 @@ function showMessage(
   type = "success"
 ) {
 
-  const box =
+  const target =
     document.getElementById(
       "globalMessage"
     );
 
-  box.innerHTML = `
-    <div class="notice ${type}">
-      ${escapeHtml(message)}
-    </div>
-  `;
+  target.innerHTML = "";
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.className =
+    "notice " +
+    (
+      type === "error"
+        ? "error"
+        : "success"
+    );
+
+  div.textContent =
+    message;
+
+  target.appendChild(
+    div
+  );
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
 
-  setTimeout(() => {
-    box.innerHTML = "";
-  }, 5000);
+  setTimeout(
+    function() {
+
+      div.remove();
+
+    },
+    5000
+  );
+
+}
+
+
+/* =========================================================
+   API JSON HELPER
+========================================================= */
+
+async function requestJSON(
+  url,
+  options = {}
+) {
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "X-CSRF-Token":
+            CSRF_TOKEN,
+
+          ...(options.headers || {})
+
+        }
+
+      }
+    );
+
+  const text =
+    await response.text();
+
+  let data;
+
+  try {
+
+    data =
+      JSON.parse(
+        text
+      );
+
+  } catch {
+
+    /*
+       Ini sengaja ditangani agar
+       error:
+
+       Unexpected token '<'
+       
+       tidak muncul lagi.
+    */
+
+    throw new Error(
+      "Server mengembalikan HTML, bukan JSON. Periksa error server/Vercel."
+    );
+
+  }
+
+  if (
+    !response.ok ||
+    !data.success
+  ) {
+
+    throw new Error(
+      data.message ||
+      "Request gagal."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+/* =========================================================
+   SLUG PREVIEW
+========================================================= */
+
+const createSlug =
+  document.getElementById(
+    "createSlug"
+  );
+
+const createUrl =
+  document.getElementById(
+    "createUrl"
+  );
+
+
+if (
+  createSlug &&
+  createUrl
+) {
+
+  createSlug.addEventListener(
+    "input",
+    function() {
+
+      const value =
+        this.value
+          .toLowerCase()
+          .replace(
+            /\s+/g,
+            "-"
+          )
+          .replace(
+            /[^a-z0-9-]/g,
+            ""
+          )
+          .replace(
+            /-+/g,
+            "-"
+          )
+          .replace(
+            /^-|-$/g,
+            ""
+          );
+
+      this.value =
+        value;
+
+      createUrl.textContent =
+        BASE_URL +
+        "/" +
+        value;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   COLLECT CREATE FORM
+========================================================= */
+
+function collectCreateForm() {
+
+  return {
+
+    slug:
+      document.getElementById(
+        "createSlug"
+      ).value,
+
+    status:
+      document.getElementById(
+        "createStatus"
+      ).value,
+
+    groomName:
+      document.getElementById(
+        "createGroomName"
+      ).value,
+
+    groomFullName:
+      document.getElementById(
+        "createGroomFullName"
+      ).value,
+
+    brideName:
+      document.getElementById(
+        "createBrideName"
+      ).value,
+
+    brideFullName:
+      document.getElementById(
+        "createBrideFullName"
+      ).value,
+
+    date:
+      document.getElementById(
+        "createDate"
+      ).value,
+
+    timezone:
+      document.getElementById(
+        "createTimezone"
+      ).value,
+
+    openingTitle:
+      document.getElementById(
+        "createOpeningTitle"
+      ).value,
+
+    openingSubtitle:
+      document.getElementById(
+        "createOpeningSubtitle"
+      ).value,
+
+    openingDescription:
+      document.getElementById(
+        "createOpeningDescription"
+      ).value,
+
+    quote:
+      document.getElementById(
+        "createQuote"
+      ).value,
+
+    description:
+      document.getElementById(
+        "createDescription"
+      ).value,
+
+    openingEnabled:
+      true,
+
+    showCountdown:
+      document.getElementById(
+        "createShowCountdown"
+      ).checked,
+
+    showStory:
+      document.getElementById(
+        "createShowStory"
+      ).checked,
+
+    showGallery:
+      document.getElementById(
+        "createShowGallery"
+      ).checked,
+
+    showGift:
+      document.getElementById(
+        "createShowGift"
+      ).checked,
+
+    showRsvp:
+      document.getElementById(
+        "createShowRsvp"
+      ).checked,
+
+    bottomNavigation:
+      document.getElementById(
+        "createBottomNavigation"
+      ).checked,
+
+    events: [],
+
+    story: [],
+
+    gallery: [],
+
+    gift: [],
+
+    musicEnabled:
+      false,
+
+    musicUrl:
+      "",
+
+    musicMediaId:
+      ""
+
+  };
+
+}
+
+
+/* =========================================================
+   CREATE
+========================================================= */
+
+document
+  .getElementById(
+    "createWeddingForm"
+  )
+  .addEventListener(
+    "submit",
+    async function(
+      event
+    ) {
+
+      event.preventDefault();
+
+      const payload =
+        collectCreateForm();
+
+      if (
+        !payload.slug.trim()
+      ) {
+
+        showMessage(
+          "Slug wajib diisi.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      try {
+
+        const result =
+          await requestJSON(
+            "/admin/wedding/new",
+            {
+
+              method:
+                "POST",
+
+              body:
+                JSON.stringify(
+                  payload
+                )
+
+            }
+          );
+
+        showMessage(
+          result.message
+        );
+
+        setTimeout(
+          function() {
+
+            location.reload();
+
+          },
+          700
+        );
+
+      } catch (
+        error
+      ) {
+
+        showMessage(
+          error.message,
+          "error"
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   OPEN EDIT
+========================================================= */
+
+function openEdit(
+  slug
+) {
+
+  const panel =
+    document.getElementById(
+      "edit-" +
+      slug
+    );
+
+  if (!panel) {
+
+    return;
+
+  }
+
+  panel.hidden =
+    false;
+
+  panel.scrollIntoView({
+    behavior:
+      "smooth",
+
+    block:
+      "start"
+
+  });
+
+}
+
+
+function closeEdit(
+  slug
+) {
+
+  const panel =
+    document.getElementById(
+      "edit-" +
+      slug
+    );
+
+  if (panel) {
+
+    panel.hidden =
+      true;
+
+  }
+
+}
+
+
+/* =========================================================
+   CHANGE STATUS
+========================================================= */
+
+async function changeStatus(
+  slug,
+  action
+) {
+
+  try {
+
+    const result =
+      await requestJSON(
+        "/admin/wedding/" +
+        encodeURIComponent(
+          slug
+        ) +
+        "/" +
+        action,
+        {
+          method:
+            "POST"
+        }
+      );
+
+    showMessage(
+      result.message
+    );
+
+    setTimeout(
+      function() {
+
+        location.reload();
+
+      },
+      700
+    );
+
+  } catch (
+    error
+  ) {
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteWedding(
+  slug
+) {
+
+  const first =
+    confirm(
+      "Hapus wedding \"" +
+      slug +
+      "\"?\n\nSemua data invitation dan RSVP akan dihapus."
+    );
+
+  if (!first) {
+
+    return;
+
+  }
+
+  const second =
+    confirm(
+      "Konfirmasi sekali lagi. Data tidak dapat dikembalikan."
+    );
+
+  if (!second) {
+
+    return;
+
+  }
+
+  try {
+
+    const result =
+      await requestJSON(
+        "/admin/wedding/" +
+        encodeURIComponent(
+          slug
+        ) +
+        "/delete",
+        {
+          method:
+            "POST"
+        }
+      );
+
+    showMessage(
+      result.message
+    );
+
+    setTimeout(
+      function() {
+
+        location.reload();
+
+      },
+      700
+    );
+
+  } catch (
+    error
+  ) {
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   MEDIA FILE -> DATA URL
+========================================================= */
+
+function readFileAsDataURL(
+  file
+) {
+
+  return new Promise(
+    function(
+      resolve,
+      reject
+    ) {
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        function() {
+
+          resolve(
+            reader.result
+          );
+
+        };
+
+      reader.onerror =
+        function() {
+
+          reject(
+            new Error(
+              "Gagal membaca file."
+            )
+          );
+
+        };
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   MEDIA UPLOAD
+========================================================= */
+
+async function uploadMedia(
+  slug,
+  file,
+  role
+) {
+
+  if (!file) {
+
+    return;
+
+  }
+
+  const isAudio =
+    role ===
+    "music";
+
+  const max =
+    isAudio
+      ? 8 * 1024 * 1024
+      : 1 * 1024 * 1024;
+
+  if (
+    file.size >
+    max
+  ) {
+
+    throw new Error(
+      isAudio
+        ? "MP3 maksimal 8 MB."
+        : "Gambar maksimal 1 MB."
+    );
+
+  }
+
+  const allowedImages = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif"
+  ];
+
+  if (
+    !isAudio &&
+    !allowedImages.includes(
+      file.type
+    )
+  ) {
+
+    throw new Error(
+      "Format gambar tidak didukung."
+    );
+
+  }
+
+  if (
+    isAudio &&
+    ![
+      "audio/mpeg",
+      "audio/mp3"
+    ].includes(
+      file.type
+    )
+  ) {
+
+    throw new Error(
+      "File harus MP3."
+    );
+
+  }
+
+  const data =
+    await readFileAsDataURL(
+      file
+    );
+
+  const result =
+    await requestJSON(
+      "/admin/wedding/" +
+      encodeURIComponent(
+        slug
+      ) +
+      "/media",
+      {
+
+        method:
+          "POST",
+
+        body:
+          JSON.stringify({
+
+            data,
+
+            mime:
+              file.type,
+
+            name:
+              file.name,
+
+            caption:
+              "",
+
+            kind:
+              isAudio
+                ? "audio"
+                : "image",
+
+            role
+
+          })
+
+      }
+    );
+
+  return result;
+
+}
+
+
+/* =========================================================
+   MEDIA INPUT HANDLER
+========================================================= */
+
+document
+  .querySelectorAll(
+    "input[type=file][data-media-role]"
+  )
+  .forEach(
+    function(input) {
+
+      input.addEventListener(
+        "change",
+        async function() {
+
+          const files =
+            Array.from(
+              this.files ||
+                []
+            );
+
+          if (
+            !files.length
+          ) {
+
+            return;
+
+          }
+
+          const role =
+            this.dataset
+              .mediaRole;
+
+          const slug =
+            this.dataset
+              .mediaSlug;
+
+          try {
+
+            if (
+              role ===
+              "gallery"
+            ) {
+
+              for (
+                const file of
+                files
+              ) {
+
+                await uploadMedia(
+                  slug,
+                  file,
+                  role
+                );
+
+              }
+
+            } else {
+
+              await uploadMedia(
+                slug,
+                files[0],
+                role
+              );
+
+            }
+
+            showMessage(
+              "Media berhasil diupload ke Upstash Redis."
+            );
+
+            setTimeout(
+              function() {
+
+                location.reload();
+
+              },
+              600
+            );
+
+          } catch (
+            error
+          ) {
+
+            showMessage(
+              error.message,
+              "error"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   DELETE MEDIA
+========================================================= */
+
+async function deleteMedia(
+  slug,
+  mediaId
+) {
+
+  if (
+    !confirm(
+      "Hapus media ini?"
+    )
+  ) {
+
+    return;
+
+  }
+
+  try {
+
+    const result =
+      await requestJSON(
+        "/admin/wedding/" +
+        encodeURIComponent(
+          slug
+        ) +
+        "/media/" +
+        encodeURIComponent(
+          mediaId
+        ),
+        {
+
+          method:
+            "DELETE"
+
+        }
+      );
+
+    showMessage(
+      result.message
+    );
+
+    setTimeout(
+      function() {
+
+        location.reload();
+
+      },
+      500
+    );
+
+  } catch (
+    error
+  ) {
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   COLLECT DYNAMIC LIST
+========================================================= */
+
+function collectDynamicList(
+  container,
+  className
+) {
+
+  const result = [];
+
+  container
+    .querySelectorAll(
+      "." +
+      className
+    )
+    .forEach(
+      function(item) {
+
+        const object = {};
+
+        item
+          .querySelectorAll(
+            "[data-field]"
+          )
+          .forEach(
+            function(field) {
+
+              object[
+                field.dataset.field
+              ] =
+                field.value;
+
+            }
+          );
+
+        result.push(
+          object
+        );
+
+      }
+    );
+
+  return result;
+
+}
+
+
+/* =========================================================
+   ADD EVENT
+========================================================= */
+
+function addEvent(
+  slug
+) {
+
+  const container =
+    document.querySelector(
+      "#edit-" +
+      CSS.escape(
+        slug
+      ) +
+      " .events-list"
+    );
+
+  if (!container) {
+
+    return;
+
+  }
+
+  const item =
+    document.createElement(
+      "div"
+    );
+
+  item.className =
+    "dynamic-item event-item";
+
+  item.innerHTML = `
+
+    <div class="dynamic-item-header">
+
+      <strong>
+        Acara Baru
+      </strong>
+
+      <button
+        type="button"
+        class="danger small"
+        onclick="this.closest('.event-item').remove()"
+      >
+        Hapus
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Type</label>
+        <input data-field="type">
+      </div>
+
+      <div class="form-group">
+        <label>Judul</label>
+        <input data-field="title">
+      </div>
+
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input data-field="date">
+      </div>
+
+      <div class="form-group">
+        <label>Jam Mulai</label>
+        <input data-field="startTime">
+      </div>
+
+      <div class="form-group">
+        <label>Jam Selesai</label>
+        <input data-field="endTime">
+      </div>
+
+      <div class="form-group">
+        <label>Venue</label>
+        <input data-field="venue">
+      </div>
+
+      <div class="form-group full">
+        <label>Alamat</label>
+        <textarea data-field="address"></textarea>
+      </div>
+
+      <div class="form-group full">
+        <label>Google Maps URL</label>
+        <input data-field="mapsUrl">
+      </div>
+
+      <div class="form-group full">
+        <label>Deskripsi</label>
+        <textarea data-field="description"></textarea>
+      </div>
+
+    </div>
+
+  `;
+
+  container.appendChild(
+    item
+  );
+
+}
+
+
+/* =========================================================
+   ADD STORY
+========================================================= */
+
+function addStory(
+  slug
+) {
+
+  const container =
+    document.querySelector(
+      "#edit-" +
+      CSS.escape(
+        slug
+      ) +
+      " .story-list"
+    );
+
+  if (!container) {
+
+    return;
+
+  }
+
+  const item =
+    document.createElement(
+      "div"
+    );
+
+  item.className =
+    "dynamic-item story-item";
+
+  item.innerHTML = `
+
+    <div class="dynamic-item-header">
+
+      <strong>
+        Story Baru
+      </strong>
+
+      <button
+        type="button"
+        class="danger small"
+        onclick="this.closest('.story-item').remove()"
+      >
+        Hapus
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label>
+          Tanggal / Tahun
+        </label>
+
+        <input data-field="date">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Judul
+        </label>
+
+        <input data-field="title">
+
+      </div>
+
+      <div class="form-group full">
+
+        <label>
+          Cerita
+        </label>
+
+        <textarea data-field="description"></textarea>
+
+      </div>
+
+    </div>
+
+  `;
+
+  container.appendChild(
+    item
+  );
+
+}
+
+
+/* =========================================================
+   ADD GIFT
+========================================================= */
+
+function addGift(
+  slug
+) {
+
+  const container =
+    document.querySelector(
+      "#edit-" +
+      CSS.escape(
+        slug
+      ) +
+      " .gift-list"
+    );
+
+  if (!container) {
+
+    return;
+
+  }
+
+  const item =
+    document.createElement(
+      "div"
+    );
+
+  item.className =
+    "dynamic-item gift-item";
+
+  item.innerHTML = `
+
+    <div class="dynamic-item-header">
+
+      <strong>
+        Rekening Baru
+      </strong>
+
+      <button
+        type="button"
+        class="danger small"
+        onclick="this.closest('.gift-item').remove()"
+      >
+        Hapus
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label>
+          Type
+        </label>
+
+        <input
+          data-field="type"
+          value="Bank"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Bank
+        </label>
+
+        <input data-field="bank">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Nomor Rekening
+        </label>
+
+        <input data-field="accountNumber">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          Atas Nama
+        </label>
+
+        <input data-field="accountName">
+
+      </div>
+
+      <div class="form-group full">
+
+        <label>
+          Deskripsi
+        </label>
+
+        <textarea data-field="description"></textarea>
+
+      </div>
+
+    </div>
+
+  `;
+
+  container.appendChild(
+    item
+  );
+
+}
+
+
+/* =========================================================
+   EDIT FORM SUBMIT
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".editWeddingForm"
+  )
+  .forEach(
+    function(form) {
+
+      form.addEventListener(
+        "submit",
+        async function(
+          event
+        ) {
+
+          event.preventDefault();
+
+          const oldSlug =
+            form.dataset.slug;
+
+          const formData =
+            new FormData(
+              form
+            );
+
+          const payload = {
+
+            slug:
+              formData.get(
+                "slug"
+              ),
+
+            status:
+              formData.get(
+                "status"
+              ),
+
+            groomName:
+              formData.get(
+                "groomName"
+              ),
+
+            groomFullName:
+              formData.get(
+                "groomFullName"
+              ),
+
+            brideName:
+              formData.get(
+                "brideName"
+              ),
+
+            brideFullName:
+              formData.get(
+                "brideFullName"
+              ),
+
+            date:
+              formData.get(
+                "date"
+              ),
+
+            timezone:
+              formData.get(
+                "timezone"
+              ),
+
+            openingTitle:
+              formData.get(
+                "openingTitle"
+              ),
+
+            openingSubtitle:
+              formData.get(
+                "openingSubtitle"
+              ),
+
+            openingDescription:
+              formData.get(
+                "openingDescription"
+              ),
+
+            quote:
+              formData.get(
+                "quote"
+              ),
+
+            description:
+              formData.get(
+                "description"
+              ),
+
+            showCountdown:
+              form.querySelector(
+                '[name="showCountdown"]'
+              ).checked,
+
+            showStory:
+              form.querySelector(
+                '[name="showStory"]'
+              ).checked,
+
+            showGallery:
+              form.querySelector(
+                '[name="showGallery"]'
+              ).checked,
+
+            showGift:
+              form.querySelector(
+                '[name="showGift"]'
+              ).checked,
+
+            showRsvp:
+              form.querySelector(
+                '[name="showRsvp"]'
+              ).checked,
+
+            bottomNavigation:
+              form.querySelector(
+                '[name="bottomNavigation"]'
+              ).checked,
+
+            /*
+               Media tidak diubah
+               melalui form text.
+               Media sudah langsung
+               masuk Redis melalui
+               endpoint upload.
+            */
+
+            events:
+              collectDynamicList(
+                form.querySelector(
+                  ".events-list"
+                ),
+                "event-item"
+              ),
+
+            story:
+              collectDynamicList(
+                form.querySelector(
+                  ".story-list"
+                ),
+                "story-item"
+              ),
+
+            gift:
+              collectDynamicList(
+                form.querySelector(
+                  ".gift-list"
+                ),
+                "gift-item"
+              )
+
+          };
+
+
+          /*
+             Ambil wedding data saat ini
+             supaya media references
+             tidak hilang ketika update text.
+          */
+
+          try {
+
+            const current =
+              await requestJSON(
+                "/admin/wedding/" +
+                encodeURIComponent(
+                  oldSlug
+                ) +
+                "/data",
+                {
+                  method:
+                    "GET"
+                }
+              );
+
+            payload.gallery =
+              current.wedding.gallery ||
+              [];
+
+            payload.coverImage =
+              current.wedding.coverImage ||
+              null;
+
+            payload.groomPhoto =
+              current.wedding.groom?.photo ||
+              null;
+
+            payload.bridePhoto =
+              current.wedding.bride?.photo ||
+              null;
+
+            payload.musicEnabled =
+              current.wedding.music?.enabled ||
+              false;
+
+            payload.musicUrl =
+              current.wedding.music?.url ||
+              "";
+
+            payload.musicMediaId =
+              current.wedding.music?.mediaId ||
+              "";
+
+            payload.musicName =
+              current.wedding.music?.name ||
+              "";
+
+            /*
+               Story photo dipertahankan.
+            */
+
+            const oldStory =
+              current.wedding.story ||
+              [];
+
+            payload.story =
+              payload.story.map(
+                function(item, index) {
+
+                  return {
+
+                    ...item,
+
+                    photo:
+                      oldStory[index]?.photo ||
+                      null
+
+                  };
+
+                }
+              );
+
+
+            const result =
+              await requestJSON(
+                "/admin/wedding/" +
+                encodeURIComponent(
+                  oldSlug
+                ) +
+                "/edit",
+                {
+
+                  method:
+                    "POST",
+
+                  body:
+                    JSON.stringify(
+                      payload
+                    )
+
+                }
+              );
+
+
+            showMessage(
+              result.message
+            );
+
+            setTimeout(
+              function() {
+
+                location.reload();
+
+              },
+              700
+            );
+
+
+          } catch (
+            error
+          ) {
+
+            showMessage(
+              error.message,
+              "error"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   RSVP
+========================================================= */
+
+async function showRSVP(
+  slug
+) {
+
+  const modal =
+    document.getElementById(
+      "rsvpModal"
+    );
+
+  const content =
+    document.getElementById(
+      "rsvpContent"
+    );
+
+  modal.classList.add(
+    "open"
+  );
+
+  content.innerHTML =
+    "<p>Memuat RSVP...</p>";
+
+  try {
+
+    const result =
+      await requestJSON(
+        "/admin/wedding/" +
+        encodeURIComponent(
+          slug
+        ) +
+        "/rsvp",
+        {
+          method:
+            "GET"
+        }
+      );
+
+    if (
+      !result.rsvps.length
+    ) {
+
+      content.innerHTML = `
+        <div class="empty">
+          Belum ada RSVP.
+        </div>
+      `;
+
+      return;
+
+    }
+
+    const stats =
+      result.stats;
+
+    let html = `
+
+      <div class="stats-row">
+
+        <div class="mini-stat">
+          <small>Total</small>
+          <strong>${stats.total}</strong>
+        </div>
+
+        <div class="mini-stat">
+          <small>Hadir</small>
+          <strong>${stats.hadir}</strong>
+        </div>
+
+        <div class="mini-stat">
+          <small>Tidak Hadir</small>
+          <strong>${stats.tidakHadir}</strong>
+        </div>
+
+        <div class="mini-stat">
+          <small>Jumlah Tamu</small>
+          <strong>${stats.guestCount}</strong>
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="rsvp-table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Nama</th>
+              <th>Kehadiran</th>
+              <th>Tamu</th>
+              <th>Pesan</th>
+              <th>Waktu</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+    `;
+
+
+    result.rsvps.forEach(
+      function(item) {
+
+        html += `
+
+          <tr>
+
+            <td>
+              ${escapeHtml(
+                item.name
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                attendanceLabel(
+                  item.attendance
+                )
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.guestCount
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.message ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                item.createdAt
+              )}
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    );
+
+
+    html += `
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+    content.innerHTML =
+      html;
+
+  } catch (
+    error
+  ) {
+
+    content.innerHTML = `
+      <div class="notice error">
+        ${escapeHtml(
+          error.message
+        )}
+      </div>
+    `;
+
+  }
+
+}
+
+
+function attendanceLabel(
+  value
+) {
+
+  if (
+    value ===
+    "hadir"
+  ) {
+
+    return "Hadir";
+
+  }
+
+  if (
+    value ===
+    "tidak_hadir"
+  ) {
+
+    return "Tidak Hadir";
+
+  }
+
+  if (
+    value ===
+    "masih_menentukan"
+  ) {
+
+    return "Masih Menentukan";
+
+  }
+
+  return value || "-";
 
 }
 
@@ -1346,7 +4322,10 @@ function escapeHtml(
   value
 ) {
 
-  return String(value ?? "")
+  return String(
+    value ??
+      ""
+  )
     .replace(
       /&/g,
       "&amp;"
@@ -1372,2965 +4351,85 @@ function escapeHtml(
 
 
 /* =========================================================
-   IMAGE PROCESSING
+   MODAL
 ========================================================= */
 
-function readAndCompressImage(
-  file
-) {
-
-  return new Promise(
-    (resolve, reject) => {
-
-      if (!file) {
-        resolve(null);
-        return;
-      }
-
-      if (
-        !file.type.startsWith(
-          "image/"
-        )
-      ) {
-        reject(
-          new Error(
-            "File harus berupa gambar."
-          )
-        );
-
-        return;
-      }
-
-      const reader =
-        new FileReader();
-
-      reader.onload = event => {
-
-        const image =
-          new Image();
-
-        image.onload = () => {
-
-          let width =
-            image.naturalWidth;
-
-          let height =
-            image.naturalHeight;
-
-          const MAX_DIMENSION =
-            1800;
-
-          if (
-            width >
-              MAX_DIMENSION ||
-            height >
-              MAX_DIMENSION
-          ) {
-
-            const ratio =
-              Math.min(
-                MAX_DIMENSION /
-                  width,
-
-                MAX_DIMENSION /
-                  height
-              );
-
-            width =
-              Math.round(
-                width * ratio
-              );
-
-            height =
-              Math.round(
-                height * ratio
-              );
-
-          }
-
-          const canvas =
-            document.createElement(
-              "canvas"
-            );
-
-          canvas.width =
-            width;
-
-          canvas.height =
-            height;
-
-          const ctx =
-            canvas.getContext(
-              "2d"
-            );
-
-          ctx.drawImage(
-            image,
-            0,
-            0,
-            width,
-            height
-          );
-
-          let quality =
-            0.82;
-
-          let dataUrl =
-            canvas.toDataURL(
-              "image/jpeg",
-              quality
-            );
-
-          while (
-            dataUrl.length >
-              MAX_IMAGE_BYTES *
-              1.37 &&
-            quality >
-              0.35
-          ) {
-
-            quality -=
-              0.08;
-
-            dataUrl =
-              canvas.toDataURL(
-                "image/jpeg",
-                quality
-              );
-
-          }
-
-          const base64Part =
-            dataUrl.split(
-              ","
-            )[1];
-
-          const estimatedBytes =
-            Math.floor(
-              base64Part.length *
-              0.75
-            );
-
-          if (
-            estimatedBytes >
-            MAX_IMAGE_BYTES
-          ) {
-
-            reject(
-              new Error(
-                "Gambar terlalu besar setelah kompresi. Pilih gambar yang lebih kecil."
-              )
-            );
-
-            return;
-
-          }
-
-          resolve({
-            data:
-              dataUrl,
-
-            mime:
-              "image/jpeg",
-
-            caption:
-              ""
-          });
-
-        };
-
-        image.onerror = () => {
-
-          reject(
-            new Error(
-              "Gagal membaca gambar."
-            )
-          );
-
-        };
-
-        image.src =
-          event.target.result;
-
-      };
-
-      reader.onerror = () => {
-
-        reject(
-          new Error(
-            "Gagal membaca file."
-          )
-        );
-
-      };
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SINGLE IMAGE PREVIEW
-========================================================= */
-
-function setupSingleImage(
-  inputId,
-  previewId,
-  setter
-) {
-
-  const input =
-    document.getElementById(
-      inputId
-    );
-
-  const preview =
-    document.getElementById(
-      previewId
-    );
-
-  input.addEventListener(
-    "change",
-    async () => {
-
-      const file =
-        input.files[0];
-
-      if (!file) {
-        return;
-      }
-
-      try {
-
-        const image =
-          await readAndCompressImage(
-            file
-          );
-
-        setter(image);
-
-        preview.style.display =
-          "block";
-
-        preview.innerHTML = `
-          <img
-            src="${image.data}"
-            alt="Preview"
-          >
-        `;
-
-      } catch (error) {
-
-        input.value = "";
-
-        setter(null);
-
-        showMessage(
-          error.message,
-          "warning"
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-let groomPhoto = null;
-
-let bridePhoto = null;
-
-let coverImage = null;
-
-
-setupSingleImage(
-  "groomPhotoFile",
-  "groomPhotoPreview",
-  image => {
-    groomPhoto = image;
-  }
-);
-
-
-setupSingleImage(
-  "bridePhotoFile",
-  "bridePhotoPreview",
-  image => {
-    bridePhoto = image;
-  }
-);
-
-
-setupSingleImage(
-  "coverImageFile",
-  "coverImagePreview",
-  image => {
-    coverImage = image;
-  }
-);
-
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-const eventsContainer =
-  document.getElementById(
-    "eventsContainer"
-  );
-
-
-function addEvent(
-  data = {}
-) {
-
-  const id =
-    "event-" +
-    Date.now() +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2);
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.dataset.id =
-    id;
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Event
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Type
-        </label>
-
-        <input
-          class="event-type"
-          value="${escapeHtml(data.type || "")}"
-          placeholder="akad / resepsi"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Title
-        </label>
-
-        <input
-          class="event-title"
-          value="${escapeHtml(data.title || "")}"
-          placeholder="Akad Nikah"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Date
-        </label>
-
-        <input
-          class="event-date"
-          value="${escapeHtml(data.date || "")}"
-          type="date"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Start Time
-        </label>
-
-        <input
-          class="event-start"
-          value="${escapeHtml(data.startTime || "")}"
-          type="time"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          End Time
-        </label>
-
-        <input
-          class="event-end"
-          value="${escapeHtml(data.endTime || "")}"
-          type="time"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Venue
-        </label>
-
-        <input
-          class="event-venue"
-          value="${escapeHtml(data.venue || "")}"
-          placeholder="Nama gedung"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Address
-        </label>
-
-        <input
-          class="event-address"
-          value="${escapeHtml(data.address || "")}"
-          placeholder="Alamat lengkap"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Google Maps URL
-        </label>
-
-        <input
-          class="event-maps"
-          value="${escapeHtml(data.mapsUrl || "")}"
-          type="url"
-          placeholder="https://maps.google.com/..."
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Description
-        </label>
-
-        <textarea
-          class="event-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  eventsContainer.appendChild(
-    element
-  );
-
-}
-
-
-document
-  .getElementById(
-    "addEventBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addEvent()
-  );
-
-
-/* =========================================================
-   STORY
-========================================================= */
-
-const storyContainer =
-  document.getElementById(
-    "storyContainer"
-  );
-
-
-function addStory(
-  data = {}
-) {
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Story
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Tanggal / Tahun
-        </label>
-
-        <input
-          class="story-date"
-          value="${escapeHtml(data.date || "")}"
-          placeholder="2020"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Judul
-        </label>
-
-        <input
-          class="story-title"
-          value="${escapeHtml(data.title || "")}"
-          placeholder="First Meeting"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Deskripsi
-        </label>
-
-        <textarea
-          class="story-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  storyContainer.appendChild(
-    element
-  );
-
-}
-
-
-document
-  .getElementById(
-    "addStoryBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addStory()
-  );
-
-
-/* =========================================================
-   GIFT
-========================================================= */
-
-const giftContainer =
-  document.getElementById(
-    "giftContainer"
-  );
-
-
-function addGift(
-  data = {}
-) {
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Wedding Gift
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-
-    <div class="form-grid">
-
-      <div class="form-group">
-
-        <label>
-          Type
-        </label>
-
-        <select class="gift-type">
-
-          <option value="bank">
-            Bank
-          </option>
-
-          <option value="ewallet">
-            E-Wallet
-          </option>
-
-          <option value="other">
-            Other
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Bank / Provider
-        </label>
-
-        <input
-          class="gift-bank"
-          value="${escapeHtml(data.bank || "")}"
-          placeholder="BCA"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Nama Pemilik
-        </label>
-
-        <input
-          class="gift-account-name"
-          value="${escapeHtml(data.accountName || "")}"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label>
-          Nomor Rekening
-        </label>
-
-        <input
-          class="gift-account-number"
-          value="${escapeHtml(data.accountNumber || "")}"
-        >
-
-      </div>
-
-
-      <div class="form-group full">
-
-        <label>
-          Description
-        </label>
-
-        <textarea
-          class="gift-description"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-    </div>
-
-  `;
-
-  const select =
-    element.querySelector(
-      ".gift-type"
-    );
-
-  if (data.type) {
-    select.value =
-      data.type;
-  }
-
-  giftContainer.appendChild(
-    element
-  );
-
-}
-
-
-document
-  .getElementById(
-    "addGiftBtn"
-  )
-  .addEventListener(
-    "click",
-    () => addGift()
-  );
-
-
-/* =========================================================
-   GALLERY
-========================================================= */
-
-const galleryInput =
-  document.getElementById(
-    "galleryFiles"
-  );
-
-const galleryPreview =
-  document.getElementById(
-    "galleryPreview"
-  );
-
-
-galleryInput.addEventListener(
-  "change",
-  async () => {
-
-    const files =
-      Array.from(
-        galleryInput.files
-      );
-
-    if (
-      galleryImages.length +
-        files.length >
-      MAX_GALLERY
-    ) {
-
-      showMessage(
-        `Maksimal ${MAX_GALLERY} gambar.`,
-        "warning"
-      );
-
-      return;
-
-    }
-
-    for (
-      const file of files
-    ) {
-
-      try {
-
-        const image =
-          await readAndCompressImage(
-            file
-          );
-
-        galleryImages.push(
-          image
-        );
-
-      } catch (error) {
-
-        showMessage(
-          error.message,
-          "warning"
-        );
-
-      }
-
-    }
-
-    renderGallery();
-
-    galleryInput.value = "";
-
-  }
-);
-
-
-function renderGallery() {
-
-  galleryPreview.innerHTML =
-    "";
-
-  galleryImages.forEach(
-    (image, index) => {
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-      item.className =
-        "gallery-item";
-
-      item.innerHTML = `
-
-        <img
-          src="${image.data}"
-          alt="Gallery ${index + 1}"
-        >
-
-        <input
-          type="text"
-          placeholder="Caption"
-          value="${escapeHtml(image.caption || "")}"
-          class="gallery-caption"
-          style="margin-top:8px"
-        >
-
-        <button
-          type="button"
-          class="danger"
-          style="margin-top:8px;width:100%"
-          onclick="removeGallery(${index})"
-        >
-          Hapus
-        </button>
-
-      `;
-
-      item
-        .querySelector(
-          ".gallery-caption"
-        )
-        .addEventListener(
-          "input",
-          event => {
-
-            galleryImages[
-              index
-            ].caption =
-              event.target.value;
-
-          }
-        );
-
-      galleryPreview.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-function removeGallery(
-  index
-) {
-
-  galleryImages.splice(
-    index,
-    1
-  );
-
-  renderGallery();
-
-}
-
-
-/* =========================================================
-   COLLECT FORM
-========================================================= */
-
-function collectEvents() {
-
-  return Array
-    .from(
-      eventsContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        type:
-          element.querySelector(
-            ".event-type"
-          ).value,
-
-        title:
-          element.querySelector(
-            ".event-title"
-          ).value,
-
-        date:
-          element.querySelector(
-            ".event-date"
-          ).value,
-
-        startTime:
-          element.querySelector(
-            ".event-start"
-          ).value,
-
-        endTime:
-          element.querySelector(
-            ".event-end"
-          ).value,
-
-        venue:
-          element.querySelector(
-            ".event-venue"
-          ).value,
-
-        address:
-          element.querySelector(
-            ".event-address"
-          ).value,
-
-        mapsUrl:
-          element.querySelector(
-            ".event-maps"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".event-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectStory() {
-
-  return Array
-    .from(
-      storyContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        date:
-          element.querySelector(
-            ".story-date"
-          ).value,
-
-        title:
-          element.querySelector(
-            ".story-title"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".story-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectGift() {
-
-  return Array
-    .from(
-      giftContainer.querySelectorAll(
-        ".repeatable"
-      )
-    )
-    .map(
-      element => ({
-        type:
-          element.querySelector(
-            ".gift-type"
-          ).value,
-
-        bank:
-          element.querySelector(
-            ".gift-bank"
-          ).value,
-
-        accountName:
-          element.querySelector(
-            ".gift-account-name"
-          ).value,
-
-        accountNumber:
-          element.querySelector(
-            ".gift-account-number"
-          ).value,
-
-        description:
-          element.querySelector(
-            ".gift-description"
-          ).value
-      })
-    );
-
-}
-
-
-function collectForm() {
-
-  return {
-
-    slug:
-      document.getElementById(
-        "slug"
-      ).value,
-
-    status:
-      document.getElementById(
-        "status"
-      ).value,
-
-    groomName:
-      document.getElementById(
-        "groomName"
-      ).value,
-
-    groomFullName:
-      document.getElementById(
-        "groomFullName"
-      ).value,
-
-    groomPhoto,
-
-    brideName:
-      document.getElementById(
-        "brideName"
-      ).value,
-
-    brideFullName:
-      document.getElementById(
-        "brideFullName"
-      ).value,
-
-    bridePhoto,
-
-    coverImage,
-
-    quote:
-      document.getElementById(
-        "quote"
-      ).value,
-
-    description:
-      document.getElementById(
-        "description"
-      ).value,
-
-    date:
-      document.getElementById(
-        "date"
-      ).value,
-
-    timezone:
-      document.getElementById(
-        "timezone"
-      ).value,
-
-    events:
-      collectEvents(),
-
-    story:
-      collectStory(),
-
-    gallery:
-      galleryImages,
-
-    gift:
-      collectGift(),
-
-    musicUrl:
-      document.getElementById(
-        "musicUrl"
-      ).value
-  };
-
-}
-
-
-/* =========================================================
-   CREATE
-========================================================= */
-
-document
-  .getElementById(
-    "createWeddingForm"
-  )
-  .addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-      const payload =
-        collectForm();
-
-      if (
-        !payload.slug.trim()
-      ) {
-
-        showMessage(
-          "Slug wajib diisi.",
-          "warning"
-        );
-
-        return;
-
-      }
-
-      try {
-
-        const response =
-          await fetch(
-            "/admin/wedding/new",
-            {
-              method:
-                "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json",
-
-                "X-CSRF-Token":
-                  CSRF_TOKEN
-              },
-
-              body:
-                JSON.stringify(
-                  payload
-                )
-            }
-          );
-
-        const result =
-          await response.json();
-
-        if (
-          !response.ok ||
-          !result.success
-        ) {
-
-          throw new Error(
-            result.message ||
-            "Gagal menyimpan."
-          );
-
-        }
-
-        showMessage(
-          result.message
-        );
-
-        setTimeout(
-          () => {
-            location.reload();
-          },
-          800
-        );
-
-      } catch (error) {
-
-        showMessage(
-          error.message,
-          "warning"
-        );
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   EDIT WEDDING
-========================================================= */
-
-async function editWedding(
-  slug
-) {
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/rsvp`
-      );
-
-    /*
-      Endpoint RSVP hanya digunakan
-      sebagai pengecekan bahwa wedding
-      ada.
-
-      Untuk menjaga struktur sederhana,
-      data wedding akan diambil dari
-      server melalui endpoint khusus
-      di bawah.
-    */
-
-    if (!response.ok) {
-      throw new Error(
-        "Wedding tidak ditemukan."
-      );
-    }
-
-    const data =
-      await fetchWeddingForEdit(
-        slug
-      );
-
-    openEditForm(
-      data
-    );
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   FETCH WEDDING FOR EDIT
-========================================================= */
-
-async function fetchWeddingForEdit(
-  slug
-) {
-
-  const response =
-    await fetch(
-      `/admin/wedding/${encodeURIComponent(slug)}/data`
-    );
-
-  const result =
-    await response.json();
-
-  if (
-    !response.ok ||
-    !result.success
-  ) {
-
-    throw new Error(
-      result.message ||
-      "Gagal mengambil data."
-    );
-
-  }
-
-  return result.wedding;
-
-}
-
-
-/* =========================================================
-   EDIT FORM
-========================================================= */
-
-function openEditForm(
-  wedding
-) {
-
-  editSlug =
-    wedding.slug;
-
-  const modal =
-    document.getElementById(
-      "editModal"
-    );
-
-  const content =
-    document.getElementById(
-      "editContent"
-    );
-
-  const gallery =
-    Array.isArray(
-      wedding.gallery
-    )
-      ? wedding.gallery
-      : [];
-
-  const events =
-    Array.isArray(
-      wedding.events
-    )
-      ? wedding.events
-      : [];
-
-  const story =
-    Array.isArray(
-      wedding.story
-    )
-      ? wedding.story
-      : [];
-
-  const gift =
-    Array.isArray(
-      wedding.gift
-    )
-      ? wedding.gift
-      : [];
-
-
-  content.innerHTML = `
-
-    <form id="editWeddingForm">
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label>
-            Slug
-          </label>
-
-          <input
-            id="editSlug"
-            value="${escapeHtml(wedding.slug || "")}"
-            required
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Status
-          </label>
-
-          <select id="editStatus">
-
-            <option value="draft">
-              Draft
-            </option>
-
-            <option value="published">
-              Published
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Bride
-          </label>
-
-          <input
-            id="editBrideName"
-            value="${escapeHtml(wedding.bride?.name || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Bride Full Name
-          </label>
-
-          <input
-            id="editBrideFullName"
-            value="${escapeHtml(wedding.bride?.fullName || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom
-          </label>
-
-          <input
-            id="editGroomName"
-            value="${escapeHtml(wedding.groom?.name || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom Full Name
-          </label>
-
-          <input
-            id="editGroomFullName"
-            value="${escapeHtml(wedding.groom?.fullName || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Quote
-          </label>
-
-          <textarea
-            id="editQuote"
-          >${escapeHtml(wedding.quote || "")}</textarea>
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Description
-          </label>
-
-          <textarea
-            id="editDescription"
-          >${escapeHtml(wedding.description || "")}</textarea>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Date
-          </label>
-
-          <input
-            id="editDate"
-            type="datetime-local"
-            value="${escapeHtml(wedding.date || "")}"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Timezone
-          </label>
-
-          <select id="editTimezone">
-
-            <option value="Asia/Makassar">
-              Asia/Makassar
-            </option>
-
-            <option value="Asia/Jakarta">
-              Asia/Jakarta
-            </option>
-
-            <option value="Asia/Jayapura">
-              Asia/Jayapura
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Music URL
-          </label>
-
-          <input
-            id="editMusicUrl"
-            value="${escapeHtml(wedding.music?.url || "")}"
-          >
-
-        </div>
-
-      </div>
-
-
-      <h3>
-        Upload Foto Baru
-      </h3>
-
-      <div class="notice">
-        Jika tidak upload foto baru,
-        foto lama tetap digunakan.
-      </div>
-
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label>
-            Bride Photo
-          </label>
-
-          <input
-            type="file"
-            id="editBridePhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label>
-            Groom Photo
-          </label>
-
-          <input
-            type="file"
-            id="editGroomPhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-
-        <div class="form-group full">
-
-          <label>
-            Cover Photo
-          </label>
-
-          <input
-            type="file"
-            id="editCoverPhoto"
-            accept="image/*"
-          >
-
-        </div>
-
-      </div>
-
-
-      <h3>
-        Event
-      </h3>
-
-      <div id="editEvents"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditEvent()"
-      >
-        + Event
-      </button>
-
-
-      <h3>
-        Story
-      </h3>
-
-      <div id="editStories"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditStory()"
-      >
-        + Story
-      </button>
-
-
-      <h3>
-        Gallery
-      </h3>
-
-      <div
-        id="editGallery"
-        class="gallery-grid"
-      ></div>
-
-      <div
-        style="margin-top:15px"
-      >
-
-        <input
-          type="file"
-          id="editGalleryFiles"
-          multiple
-          accept="image/*"
-        >
-
-      </div>
-
-
-      <h3>
-        Wedding Gift
-      </h3>
-
-      <div id="editGift"></div>
-
-      <button
-        type="button"
-        class="secondary"
-        onclick="addEditGift()"
-      >
-        + Rekening
-      </button>
-
-
-      <div
-        class="actions"
-        style="margin-top:30px"
-      >
-
-        <button
-          type="submit"
-        >
-          Simpan Perubahan
-        </button>
-
-        <button
-          type="button"
-          class="secondary"
-          onclick="closeEditModal()"
-        >
-          Batal
-        </button>
-
-      </div>
-
-    </form>
-
-  `;
-
-
-  document.getElementById(
-    "editStatus"
-  ).value =
-    wedding.status || "draft";
-
-
-  document.getElementById(
-    "editTimezone"
-  ).value =
-    wedding.timezone ||
-    "Asia/Makassar";
-
-
-  const editEvents =
-    document.getElementById(
-      "editEvents"
-    );
-
-  events.forEach(
-    item => {
-
-      addEditEvent(
-        item
-      );
-
-    }
-  );
-
-
-  const editStories =
-    document.getElementById(
-      "editStories"
-    );
-
-  story.forEach(
-    item => {
-
-      addEditStory(
-        item
-      );
-
-    }
-  );
-
-
-  const editGift =
-    document.getElementById(
-      "editGift"
-    );
-
-  gift.forEach(
-    item => {
-
-      addEditGift(
-        item
-      );
-
-    }
-  );
-
-
-  window.editGalleryImages =
-    gallery.map(
-      item => ({
-        data:
-          item.data,
-
-        mime:
-          item.mime,
-
-        caption:
-          item.caption || ""
-      })
-    );
-
-
-  renderEditGallery();
-
-
-  document
-    .getElementById(
-      "editGalleryFiles"
-    )
-    .addEventListener(
-      "change",
-      async event => {
-
-        const files =
-          Array.from(
-            event.target.files
-          );
-
-        for (
-          const file of files
-        ) {
-
-          try {
-
-            const image =
-              await readAndCompressImage(
-                file
-              );
-
-            if (
-              window
-                .editGalleryImages
-                .length <
-              MAX_GALLERY
-            ) {
-
-              window
-                .editGalleryImages
-                .push(
-                  image
-                );
-
-            }
-
-          } catch (error) {
-
-            showMessage(
-              error.message,
-              "warning"
-            );
-
-          }
-
-        }
-
-        renderEditGallery();
-
-        event.target.value =
-          "";
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "editWeddingForm"
-    )
-    .addEventListener(
-      "submit",
-      event => {
-
-        event.preventDefault();
-
-        submitEditWedding(
-          wedding
-        );
-
-      }
-    );
-
-
-  modal.classList.add(
-    "open"
-  );
-
-}
-
-
-function closeEditModal() {
-
-  document
-    .getElementById(
-      "editModal"
-    )
-    .classList.remove(
-      "open"
-    );
-
-  editSlug = null;
-
-}
-
-
-function addEditEvent(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editEvents"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Event
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <div class="form-grid">
-
-      <input
-        class="event-type"
-        placeholder="Type"
-        value="${escapeHtml(data.type || "")}"
-      >
-
-      <input
-        class="event-title"
-        placeholder="Title"
-        value="${escapeHtml(data.title || "")}"
-      >
-
-      <input
-        class="event-date"
-        type="date"
-        value="${escapeHtml(data.date || "")}"
-      >
-
-      <input
-        class="event-start"
-        type="time"
-        value="${escapeHtml(data.startTime || "")}"
-      >
-
-      <input
-        class="event-end"
-        type="time"
-        value="${escapeHtml(data.endTime || "")}"
-      >
-
-      <input
-        class="event-venue"
-        placeholder="Venue"
-        value="${escapeHtml(data.venue || "")}"
-      >
-
-      <input
-        class="event-address"
-        placeholder="Address"
-        value="${escapeHtml(data.address || "")}"
-      >
-
-      <input
-        class="event-maps"
-        placeholder="Google Maps URL"
-        value="${escapeHtml(data.mapsUrl || "")}"
-      >
-
-      <textarea
-        class="event-description"
-        placeholder="Description"
-      >${escapeHtml(data.description || "")}</textarea>
-
-    </div>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function addEditStory(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editStories"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Story
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <input
-      class="story-date"
-      placeholder="Date / Year"
-      value="${escapeHtml(data.date || "")}"
-    >
-
-    <input
-      class="story-title"
-      placeholder="Title"
-      value="${escapeHtml(data.title || "")}"
-      style="margin-top:8px"
-    >
-
-    <textarea
-      class="story-description"
-      placeholder="Description"
-      style="margin-top:8px"
-    >${escapeHtml(data.description || "")}</textarea>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function addEditGift(
-  data = {}
-) {
-
-  const container =
-    document.getElementById(
-      "editGift"
-    );
-
-  const element =
-    document.createElement(
-      "div"
-    );
-
-  element.className =
-    "repeatable";
-
-  element.innerHTML = `
-
-    <div class="repeatable-header">
-
-      <strong>
-        Gift
-      </strong>
-
-      <button
-        type="button"
-        class="danger"
-        onclick="this.closest('.repeatable').remove()"
-      >
-        Hapus
-      </button>
-
-    </div>
-
-    <input
-      class="gift-type"
-      placeholder="Type"
-      value="${escapeHtml(data.type || "bank")}"
-    >
-
-    <input
-      class="gift-bank"
-      placeholder="Bank / Provider"
-      value="${escapeHtml(data.bank || "")}"
-      style="margin-top:8px"
-    >
-
-    <input
-      class="gift-account-name"
-      placeholder="Account Name"
-      value="${escapeHtml(data.accountName || "")}"
-      style="margin-top:8px"
-    >
-
-    <input
-      class="gift-account-number"
-      placeholder="Account Number"
-      value="${escapeHtml(data.accountNumber || "")}"
-      style="margin-top:8px"
-    >
-
-    <textarea
-      class="gift-description"
-      placeholder="Description"
-      style="margin-top:8px"
-    >${escapeHtml(data.description || "")}</textarea>
-
-  `;
-
-  container.appendChild(
-    element
-  );
-
-}
-
-
-function renderEditGallery() {
-
-  const container =
-    document.getElementById(
-      "editGallery"
-    );
-
-  container.innerHTML =
-    "";
-
-  (
-    window.editGalleryImages ||
-    []
-  ).forEach(
-    (image, index) => {
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-      item.className =
-        "gallery-item";
-
-      item.innerHTML = `
-
-        <img
-          src="${image.data}"
-          alt="Gallery"
-        >
-
-        <input
-          class="edit-gallery-caption"
-          value="${escapeHtml(image.caption || "")}"
-          placeholder="Caption"
-          style="margin-top:8px"
-        >
-
-        <button
-          type="button"
-          class="danger"
-          style="width:100%;margin-top:8px"
-          onclick="removeEditGallery(${index})"
-        >
-          Hapus
-        </button>
-
-      `;
-
-      item
-        .querySelector(
-          ".edit-gallery-caption"
-        )
-        .addEventListener(
-          "input",
-          event => {
-
-            window
-              .editGalleryImages[
-                index
-              ]
-              .caption =
-              event.target.value;
-
-          }
-        );
-
-      container.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-function removeEditGallery(
-  index
-) {
-
-  window
-    .editGalleryImages
-    .splice(
-      index,
-      1
-    );
-
-  renderEditGallery();
-
-}
-
-
-/* =========================================================
-   SUBMIT EDIT
-========================================================= */
-
-async function submitEditWedding(
-  originalWedding
-) {
-
-  let bridePhoto =
-    originalWedding.bride?.photo ||
-    null;
-
-  let groomPhoto =
-    originalWedding.groom?.photo ||
-    null;
-
-  let coverImage =
-    originalWedding.coverImage ||
-    null;
-
-
-  try {
-
-    const brideFile =
-      document.getElementById(
-        "editBridePhoto"
-      ).files[0];
-
-    if (brideFile) {
-
-      bridePhoto =
-        await readAndCompressImage(
-          brideFile
-        );
-
-    }
-
-
-    const groomFile =
-      document.getElementById(
-        "editGroomPhoto"
-      ).files[0];
-
-    if (groomFile) {
-
-      groomPhoto =
-        await readAndCompressImage(
-          groomFile
-        );
-
-    }
-
-
-    const coverFile =
-      document.getElementById(
-        "editCoverPhoto"
-      ).files[0];
-
-    if (coverFile) {
-
-      coverImage =
-        await readAndCompressImage(
-          coverFile
-        );
-
-    }
-
-
-    const events =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editEvents .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            type:
-              element.querySelector(
-                ".event-type"
-              ).value,
-
-            title:
-              element.querySelector(
-                ".event-title"
-              ).value,
-
-            date:
-              element.querySelector(
-                ".event-date"
-              ).value,
-
-            startTime:
-              element.querySelector(
-                ".event-start"
-              ).value,
-
-            endTime:
-              element.querySelector(
-                ".event-end"
-              ).value,
-
-            venue:
-              element.querySelector(
-                ".event-venue"
-              ).value,
-
-            address:
-              element.querySelector(
-                ".event-address"
-              ).value,
-
-            mapsUrl:
-              element.querySelector(
-                ".event-maps"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".event-description"
-              ).value
-          })
-        );
-
-
-    const story =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editStories .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            date:
-              element.querySelector(
-                ".story-date"
-              ).value,
-
-            title:
-              element.querySelector(
-                ".story-title"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".story-description"
-              ).value
-          })
-        );
-
-
-    const gift =
-      Array
-        .from(
-          document.querySelectorAll(
-            "#editGift .repeatable"
-          )
-        )
-        .map(
-          element => ({
-            type:
-              element.querySelector(
-                ".gift-type"
-              ).value,
-
-            bank:
-              element.querySelector(
-                ".gift-bank"
-              ).value,
-
-            accountName:
-              element.querySelector(
-                ".gift-account-name"
-              ).value,
-
-            accountNumber:
-              element.querySelector(
-                ".gift-account-number"
-              ).value,
-
-            description:
-              element.querySelector(
-                ".gift-description"
-              ).value
-          })
-        );
-
-
-    const payload = {
-
-      slug:
-        document.getElementById(
-          "editSlug"
-        ).value,
-
-      status:
-        document.getElementById(
-          "editStatus"
-        ).value,
-
-      brideName:
-        document.getElementById(
-          "editBrideName"
-        ).value,
-
-      brideFullName:
-        document.getElementById(
-          "editBrideFullName"
-        ).value,
-
-      bridePhoto,
-
-      groomName:
-        document.getElementById(
-          "editGroomName"
-        ).value,
-
-      groomFullName:
-        document.getElementById(
-          "editGroomFullName"
-        ).value,
-
-      groomPhoto,
-
-      coverImage,
-
-      quote:
-        document.getElementById(
-          "editQuote"
-        ).value,
-
-      description:
-        document.getElementById(
-          "editDescription"
-        ).value,
-
-      date:
-        document.getElementById(
-          "editDate"
-        ).value,
-
-      timezone:
-        document.getElementById(
-          "editTimezone"
-        ).value,
-
-      events,
-
-      story,
-
-      gallery:
-        window.editGalleryImages,
-
-      gift,
-
-      musicUrl:
-        document.getElementById(
-          "editMusicUrl"
-        ).value
-    };
-
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(editSlug)}/edit`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          },
-
-          body:
-            JSON.stringify(
-              payload
-            )
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal update wedding."
-      );
-
-    }
-
-
-    showMessage(
-      result.message
-    );
-
-    closeEditModal();
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      800
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   PUBLISH / UNPUBLISH
-========================================================= */
-
-async function changePublish(
-  slug,
-  action
-) {
-
-  const confirmation =
-    action ===
-    "publish"
-      ? "Publish wedding ini?"
-      : "Unpublish wedding ini?";
-
-  if (
-    !confirm(
-      confirmation
-    )
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/${action}`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          }
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal mengubah status."
-      );
-
-    }
-
-
-    showMessage(
-      result.message
-    );
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      700
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-async function deleteWedding(
-  slug
-) {
-
-  if (
-    !confirm(
-      "PERINGATAN: Wedding, gallery Base64 dan RSVP akan dihapus. Lanjutkan?"
-    )
-  ) {
-    return;
-  }
-
-
-  if (
-    !confirm(
-      "Konfirmasi sekali lagi: hapus wedding ini?"
-    )
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/delete`,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "X-CSRF-Token":
-              CSRF_TOKEN
-          }
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal menghapus."
-      );
-
-    }
-
-
-    showMessage(
-      result.message
-    );
-
-
-    setTimeout(
-      () => {
-        location.reload();
-      },
-      700
-    );
-
-
-  } catch (error) {
-
-    showMessage(
-      error.message,
-      "warning"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   RSVP
-========================================================= */
-
-async function showRsvp(
-  slug
+function closeModal(
+  id
 ) {
 
   const modal =
     document.getElementById(
-      "rsvpModal"
+      id
     );
 
-  const content =
-    document.getElementById(
-      "rsvpContent"
+  if (modal) {
+
+    modal.classList.remove(
+      "open"
     );
-
-
-  modal.classList.add(
-    "open"
-  );
-
-
-  content.innerHTML =
-    "<p>Loading...</p>";
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/admin/wedding/${encodeURIComponent(slug)}/rsvp`
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.message ||
-        "Gagal mengambil RSVP."
-      );
-
-    }
-
-
-    if (
-      !result.rsvps.length
-    ) {
-
-      content.innerHTML = `
-        <div class="notice">
-          Belum ada RSVP.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    const rows =
-      result.rsvps
-        .map(
-          item => `
-            <tr>
-
-              <td>
-                ${escapeHtml(item.name)}
-              </td>
-
-              <td>
-                ${escapeHtml(item.attendance)}
-              </td>
-
-              <td>
-                ${escapeHtml(item.guestCount)}
-              </td>
-
-              <td style="white-space:normal">
-                ${escapeHtml(item.message || "-")}
-              </td>
-
-              <td>
-                ${escapeHtml(item.createdAt)}
-              </td>
-
-            </tr>
-          `
-        )
-        .join("");
-
-
-    content.innerHTML = `
-
-      <div class="summary-grid">
-
-        <div class="summary-card">
-
-          <small>
-            Total
-          </small>
-
-          <strong>
-            ${result.total}
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="rsvp-table-wrapper">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Nama
-              </th>
-
-              <th>
-                Kehadiran
-              </th>
-
-              <th>
-                Tamu
-              </th>
-
-              <th>
-                Pesan
-              </th>
-
-              <th>
-                Waktu
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-            ${rows}
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-
-  } catch (error) {
-
-    content.innerHTML = `
-      <div class="notice warning">
-        ${escapeHtml(
-          error.message
-        )}
-      </div>
-    `;
 
   }
 
 }
 
 
-function closeRsvpModal() {
-
-  document
-    .getElementById(
-      "rsvpModal"
-    )
-    .classList.remove(
-      "open"
-    );
-
-}
-
-
-/* =========================================================
-   INITIAL SAMPLE ROWS
-========================================================= */
-
-addEvent();
-
-addStory();
-
-addGift();
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
 document
-  .getElementById(
-    "resetFormBtn"
+  .querySelectorAll(
+    ".modal"
   )
-  .addEventListener(
-    "click",
-    () => {
+  .forEach(
+    function(modal) {
 
-      eventsContainer.innerHTML =
-        "";
+      modal.addEventListener(
+        "click",
+        function(event) {
 
-      storyContainer.innerHTML =
-        "";
+          if (
+            event.target ===
+            modal
+          ) {
 
-      giftContainer.innerHTML =
-        "";
+            modal.classList.remove(
+              "open"
+            );
 
-      galleryImages =
-        [];
+          }
 
-      renderGallery();
-
-      groomPhoto =
-        null;
-
-      bridePhoto =
-        null;
-
-      coverImage =
-        null;
-
-      addEvent();
-
-      addStory();
-
-      addGift();
+        }
+      );
 
     }
   );
+
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key ===
+      "Escape"
+    ) {
+
+      document
+        .querySelectorAll(
+          ".modal.open"
+        )
+        .forEach(
+          function(modal) {
+
+            modal.classList.remove(
+              "open"
+            );
+
+          }
+        );
+
+    }
+
+  }
+);
 
 </script>
 
