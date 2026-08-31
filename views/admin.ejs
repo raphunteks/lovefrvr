@@ -432,7 +432,7 @@
                       <img class="media-preview" src="<%= wedding.coverImage.url %>" alt="Cover">
                     <% } %>
                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-media-role="cover" data-media-slug="<%= wedding.slug %>">
-                    <small class="muted">Gunakan gambar vertikal kualitas baik. Maks 1 MB.</small>
+                    <small class="muted">Gunakan gambar vertikal kualitas baik. Maks 50 MB.</small>
                   </div>
 
                   <div class="form-group media-box">
@@ -441,6 +441,7 @@
                       <img class="media-preview square" src="<%= wedding.groom.photo.url %>" alt="Groom">
                     <% } %>
                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-media-role="groom" data-media-slug="<%= wedding.slug %>">
+                    <small class="muted">Maks 50 MB.</small>
                   </div>
 
                   <div class="form-group media-box">
@@ -449,6 +450,7 @@
                       <img class="media-preview square" src="<%= wedding.bride.photo.url %>" alt="Bride">
                     <% } %>
                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-media-role="bride" data-media-slug="<%= wedding.slug %>">
+                    <small class="muted">Maks 50 MB.</small>
                   </div>
                   
                   <div class="form-group full media-box">
@@ -458,7 +460,7 @@
                       <p class="muted"><%= wedding.music.name || "Wedding Music" %></p>
                     <% } %>
                     <input type="file" accept="audio/mpeg,audio/mp3" data-media-role="music" data-media-slug="<%= wedding.slug %>">
-                    <small class="muted">MP3 maksimal 8 MB.</small>
+                    <small class="muted">MP3 maksimal 15 MB.</small>
                   </div>
                 </div>
 
@@ -478,7 +480,7 @@
                   </div>
                   <br>
                   <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple data-media-role="gallery" data-media-slug="<%= wedding.slug %>">
-                  <small class="muted">Pilih beberapa file sekaligus. Maksimal 15 gambar per wedding.</small>
+                  <small class="muted">Pilih beberapa file sekaligus. Maksimal 25 gambar per wedding. (Bebas ukuran per file hingga total payload ~50MB)</small>
                 </div>
 
                 <div class="section-title">
@@ -747,8 +749,8 @@ function readFileAsDataURL(file) {
 async function uploadMedia(slug, file, role) {
   if (!file) return;
   const isAudio = role === "music";
-  const max = isAudio ? 8 * 1024 * 1024 : 1.5 * 1024 * 1024;
-  if (file.size > max) throw new Error(isAudio ? "MP3 maksimal 8 MB." : "Gambar maksimal 1.5 MB.");
+  const max = isAudio ? 15 * 1024 * 1024 : 50 * 1024 * 1024;
+  if (file.size > max) throw new Error(isAudio ? "MP3 maksimal 15 MB." : "Gambar maksimal 50 MB.");
   const allowedImages = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (!isAudio && !allowedImages.includes(file.type)) throw new Error("Format gambar tidak didukung.");
   if (isAudio && !["audio/mpeg", "audio/mp3"].includes(file.type)) throw new Error("File harus berformat .MP3.");
@@ -776,7 +778,7 @@ document.querySelectorAll("input[type=file][data-media-role]").forEach(input => 
       this.disabled = true;
       let uploadingMsg = document.createElement("p");
       uploadingMsg.className = "muted";
-      uploadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah ke server...';
+      uploadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah ke server (mohon tunggu)...';
       btnContainer.appendChild(uploadingMsg);
 
       if (role === "gallery") {
