@@ -5,16 +5,23 @@
 
   <meta charset="UTF-8">
 
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
 
+
   <title>
+
     <%= wedding.groom.name %>
+
     &
+
     <%= wedding.bride.name %>
+
     — LOVEFOREVER
+
   </title>
 
 
@@ -36,6 +43,12 @@
   >
 
 
+  <meta
+    property="og:url"
+    content="<%= guestInvitationUrl %>"
+  >
+
+
   <link
     rel="stylesheet"
     href="/css/style.css"
@@ -49,14 +62,16 @@
 
 <!-- =====================================================
      OPENING
-     ===================================================== -->
+====================================================== -->
 
 <section
   class="wedding-opening"
   id="opening"
 >
 
+
   <div class="opening-content">
+
 
     <p class="eyebrow">
       THE WEDDING OF
@@ -78,6 +93,7 @@
 
     <% if (guestName) { %>
 
+
       <p class="guest-opening">
 
         Kepada Yth.
@@ -88,12 +104,17 @@
 
       </p>
 
+
     <% } else { %>
 
+
       <p class="guest-opening">
+
         Dengan penuh kebahagiaan,
         kami mengundang Anda.
+
       </p>
+
 
     <% } %>
 
@@ -106,14 +127,16 @@
       Buka Undangan
     </button>
 
+
   </div>
+
 
 </section>
 
 
 <!-- =====================================================
      MAIN INVITATION
-     ===================================================== -->
+====================================================== -->
 
 <main
   id="invitation"
@@ -123,11 +146,17 @@
 
   <!-- ===================================================
        HERO
-       =================================================== -->
+  ==================================================== -->
 
-  <section class="wedding-hero">
+  <section
+    class="wedding-hero"
+  >
 
-    <div class="wedding-hero-overlay">
+
+    <div
+      class="wedding-hero-overlay"
+    >
+
 
       <p class="eyebrow">
         WEDDING INVITATION
@@ -149,6 +178,7 @@
 
       <% if (guestName) { %>
 
+
         <p class="guest-name">
 
           Dear
@@ -159,27 +189,37 @@
 
         </p>
 
+
       <% } %>
 
 
       <% if (wedding.date) { %>
 
+
         <p class="wedding-date">
+
           <%= wedding.date %>
+
         </p>
+
 
       <% } %>
 
+
     </div>
+
 
   </section>
 
 
   <!-- ===================================================
        COUPLE
-       =================================================== -->
+  ==================================================== -->
 
-  <section class="invitation-section couple-section">
+  <section
+    class="invitation-section couple-section"
+  >
+
 
     <p class="eyebrow">
       THE COUPLE
@@ -194,15 +234,22 @@
     <div class="couple-grid">
 
 
-      <article class="person-card">
+      <article
+        class="person-card"
+      >
 
-        <% if (wedding.groom.photo) { %>
+
+        <% if (
+          wedding.groom.photo
+        ) { %>
+
 
           <img
             src="<%= wedding.groom.photo %>"
             alt="<%= wedding.groom.fullName || wedding.groom.name %>"
             loading="lazy"
           >
+
 
         <% } %>
 
@@ -213,26 +260,38 @@
 
 
         <p>
+
           <%= wedding.groom.fullName || wedding.groom.name %>
+
         </p>
+
 
       </article>
 
 
-      <div class="couple-ampersand">
+      <div
+        class="couple-ampersand"
+      >
         &
       </div>
 
 
-      <article class="person-card">
+      <article
+        class="person-card"
+      >
 
-        <% if (wedding.bride.photo) { %>
+
+        <% if (
+          wedding.bride.photo
+        ) { %>
+
 
           <img
             src="<%= wedding.bride.photo %>"
             alt="<%= wedding.bride.fullName || wedding.bride.name %>"
             loading="lazy"
           >
+
 
         <% } %>
 
@@ -243,49 +302,76 @@
 
 
         <p>
+
           <%= wedding.bride.fullName || wedding.bride.name %>
+
         </p>
+
 
       </article>
 
 
     </div>
 
+
   </section>
 
 
   <!-- ===================================================
        QUOTE
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.quote) { %>
+  <% if (
+    wedding.quote
+  ) { %>
 
-    <section class="quote-section">
 
-      <div class="quote-content">
+    <section
+      class="quote-section"
+    >
 
-        <span class="quote-mark">
+
+      <div
+        class="quote-content"
+      >
+
+
+        <span
+          class="quote-mark"
+        >
           “
         </span>
 
+
         <p>
+
           <%= wedding.quote %>
+
         </p>
+
 
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        COUNTDOWN
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.date) { %>
+  <% if (
+    wedding.date
+  ) { %>
 
-    <section class="invitation-section countdown-section">
+
+    <section
+      class="invitation-section countdown-section"
+    >
+
 
       <p class="eyebrow">
         COUNTDOWN
@@ -303,7 +389,10 @@
         data-date="<%= wedding.date %>"
       >
 
-        <div class="countdown-item">
+
+        <div
+          class="countdown-item"
+        >
 
           <strong id="days">
             0
@@ -316,7 +405,9 @@
         </div>
 
 
-        <div class="countdown-item">
+        <div
+          class="countdown-item"
+        >
 
           <strong id="hours">
             0
@@ -329,7 +420,9 @@
         </div>
 
 
-        <div class="countdown-item">
+        <div
+          class="countdown-item"
+        >
 
           <strong id="minutes">
             0
@@ -342,7 +435,9 @@
         </div>
 
 
-        <div class="countdown-item">
+        <div
+          class="countdown-item"
+        >
 
           <strong id="seconds">
             0
@@ -354,20 +449,29 @@
 
         </div>
 
+
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        DESCRIPTION
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.description) { %>
+  <% if (
+    wedding.description
+  ) { %>
 
-    <section class="invitation-section">
+
+    <section
+      class="invitation-section"
+    >
+
 
       <p class="eyebrow">
         OUR STORY
@@ -381,24 +485,37 @@
 
       <div class="text-content">
 
+
         <p>
+
           <%= wedding.description %>
+
         </p>
+
 
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        STORY
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.story && wedding.story.length) { %>
+  <% if (
+    wedding.story &&
+    wedding.story.length
+  ) { %>
 
-    <section class="invitation-section">
+
+    <section
+      class="invitation-section"
+    >
+
 
       <p class="eyebrow">
         OUR JOURNEY
@@ -412,26 +529,44 @@
 
       <div class="timeline">
 
-        <% wedding.story.forEach(function(item) { %>
 
-          <article class="timeline-item">
+        <% wedding.story.forEach(
+          function(item)
+        { %>
 
-            <span class="timeline-date">
+
+          <article
+            class="timeline-item"
+          >
+
+
+            <span
+              class="timeline-date"
+            >
+
               <%= item.date || item.year || "" %>
+
             </span>
 
 
             <h3>
+
               <%= item.title %>
+
             </h3>
 
 
             <p>
+
               <%= item.description %>
+
             </p>
 
 
-            <% if (item.photo) { %>
+            <% if (
+              item.photo
+            ) { %>
+
 
               <img
                 src="<%= item.photo %>"
@@ -439,26 +574,39 @@
                 loading="lazy"
               >
 
+
             <% } %>
+
 
           </article>
 
+
         <% }); %>
+
 
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        EVENTS
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.events && wedding.events.length) { %>
+  <% if (
+    wedding.events &&
+    wedding.events.length
+  ) { %>
 
-    <section class="invitation-section events-section">
+
+    <section
+      class="invitation-section events-section"
+    >
+
 
       <p class="eyebrow">
         SAVE THE DATE
@@ -472,77 +620,128 @@
 
       <div class="event-grid">
 
-        <% wedding.events.forEach(function(event) { %>
 
-          <article class="event-card">
+        <% wedding.events.forEach(
+          function(event)
+        { %>
+
+
+          <article
+            class="event-card"
+          >
+
 
             <span class="event-type">
+
               <%= event.type || "" %>
+
             </span>
 
 
             <h3>
+
               <%= event.title %>
+
             </h3>
 
 
-            <% if (event.date) { %>
+            <% if (
+              event.date
+            ) { %>
+
 
               <p>
+
                 <strong>
+
                   <%= event.date %>
+
                 </strong>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (event.startTime) { %>
+            <% if (
+              event.startTime
+            ) { %>
+
 
               <p>
 
                 <%= event.startTime %>
 
-                <% if (event.endTime) { %>
+
+                <% if (
+                  event.endTime
+                ) { %>
 
                   —
+
                   <%= event.endTime %>
 
                 <% } %>
 
+
               </p>
+
 
             <% } %>
 
 
-            <% if (event.venue) { %>
+            <% if (
+              event.venue
+            ) { %>
+
 
               <p>
+
                 <%= event.venue %>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (event.address) { %>
+            <% if (
+              event.address
+            ) { %>
+
 
               <p>
+
                 <%= event.address %>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (event.description) { %>
+            <% if (
+              event.description
+            ) { %>
 
-              <p class="event-description">
+
+              <p
+                class="event-description"
+              >
+
                 <%= event.description %>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (event.mapsUrl) { %>
+            <% if (
+              event.mapsUrl
+            ) { %>
+
 
               <a
                 href="<%= event.mapsUrl %>"
@@ -550,29 +749,44 @@
                 rel="noopener noreferrer"
                 class="button button-small"
               >
+
                 Lihat Lokasi
+
               </a>
+
 
             <% } %>
 
+
           </article>
+
 
         <% }); %>
 
+
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        GALLERY
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.gallery && wedding.gallery.length) { %>
+  <% if (
+    wedding.gallery &&
+    wedding.gallery.length
+  ) { %>
 
-    <section class="invitation-section">
+
+    <section
+      class="invitation-section"
+    >
+
 
       <p class="eyebrow">
         OUR MOMENTS
@@ -586,9 +800,16 @@
 
       <div class="gallery-grid">
 
-        <% wedding.gallery.forEach(function(image, index) { %>
 
-          <figure class="gallery-item">
+        <% wedding.gallery.forEach(
+          function(image, index)
+        { %>
+
+
+          <figure
+            class="gallery-item"
+          >
+
 
             <img
               src="<%= image.base64 || image %>"
@@ -598,32 +819,50 @@
             >
 
 
-            <% if (image.caption) { %>
+            <% if (
+              image.caption
+            ) { %>
+
 
               <figcaption>
+
                 <%= image.caption %>
+
               </figcaption>
+
 
             <% } %>
 
+
           </figure>
+
 
         <% }); %>
 
+
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        WEDDING GIFT
-       =================================================== -->
+  ==================================================== -->
 
-  <% if (wedding.gift && wedding.gift.length) { %>
+  <% if (
+    wedding.gift &&
+    wedding.gift.length
+  ) { %>
 
-    <section class="invitation-section gift-section">
+
+    <section
+      class="invitation-section gift-section"
+    >
+
 
       <p class="eyebrow">
         WEDDING GIFT
@@ -637,32 +876,58 @@
 
       <div class="gift-grid">
 
-        <% wedding.gift.forEach(function(gift) { %>
 
-          <article class="gift-card">
+        <% wedding.gift.forEach(
+          function(gift)
+        { %>
 
-            <% if (gift.bank) { %>
 
-              <p class="gift-bank">
+          <article
+            class="gift-card"
+          >
+
+
+            <% if (
+              gift.bank
+            ) { %>
+
+
+              <p
+                class="gift-bank"
+              >
+
                 <%= gift.bank %>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (gift.accountName) { %>
+            <% if (
+              gift.accountName
+            ) { %>
+
 
               <p>
+
                 <%= gift.accountName %>
+
               </p>
+
 
             <% } %>
 
 
-            <% if (gift.accountNumber) { %>
+            <% if (
+              gift.accountNumber
+            ) { %>
+
 
               <strong>
+
                 <%= gift.accountNumber %>
+
               </strong>
 
 
@@ -671,31 +936,39 @@
                 class="button button-small"
                 onclick="copyText('<%= gift.accountNumber %>')"
               >
+
                 Salin Nomor
+
               </button>
+
 
             <% } %>
 
 
           </article>
 
+
         <% }); %>
+
 
       </div>
 
+
     </section>
+
 
   <% } %>
 
 
   <!-- ===================================================
        RSVP
-       =================================================== -->
+  ==================================================== -->
 
   <section
     class="invitation-section rsvp-section"
     id="rsvp"
   >
+
 
     <p class="eyebrow">
       RSVP
@@ -708,8 +981,10 @@
 
 
     <p>
-      Mohon konfirmasi kehadiran Anda
-      melalui form berikut.
+
+      Mohon konfirmasi kehadiran
+      Anda melalui form berikut.
+
     </p>
 
 
@@ -719,11 +994,20 @@
     >
 
 
+      <input
+        type="hidden"
+        name="slug"
+        value="<%= wedding.slug %>"
+      >
+
+
       <div class="form-group">
+
 
         <label>
           Nama
         </label>
+
 
         <input
           type="text"
@@ -732,46 +1016,57 @@
           required
         >
 
+
       </div>
 
 
       <div class="form-group">
 
+
         <label>
           Kehadiran
         </label>
+
 
         <select
           name="attendance"
           required
         >
 
+
           <option value="">
             Pilih Kehadiran
           </option>
+
 
           <option value="hadir">
             Hadir
           </option>
 
+
           <option value="tidak_hadir">
             Tidak Hadir
           </option>
+
 
           <option value="masih_menentukan">
             Masih Menentukan
           </option>
 
+
         </select>
+
 
       </div>
 
 
       <div class="form-group">
 
+
         <label>
           Jumlah Tamu
         </label>
+
 
         <input
           type="number"
@@ -782,14 +1077,17 @@
           required
         >
 
+
       </div>
 
 
       <div class="form-group">
 
+
         <label>
           Pesan
         </label>
+
 
         <textarea
           name="message"
@@ -798,6 +1096,7 @@
           placeholder="Tuliskan ucapan..."
         ></textarea>
 
+
       </div>
 
 
@@ -805,7 +1104,9 @@
         type="submit"
         class="button button-full"
       >
+
         Kirim RSVP
+
       </button>
 
 
@@ -817,14 +1118,18 @@
 
     </form>
 
+
   </section>
 
 
   <!-- ===================================================
        CLOSING
-       =================================================== -->
+  ==================================================== -->
 
-  <section class="closing-section">
+  <section
+    class="closing-section"
+  >
+
 
     <p class="eyebrow">
       WITH LOVE
@@ -843,14 +1148,17 @@
 
 
     <p>
-      Terima kasih telah menjadi bagian
-      dari hari bahagia kami.
+
+      Terima kasih telah menjadi
+      bagian dari hari bahagia kami.
+
     </p>
 
 
     <p class="closing-brand">
       LOVEFOREVER
     </p>
+
 
   </section>
 
@@ -860,9 +1168,13 @@
 
 <!-- =====================================================
      MUSIC
-     ===================================================== -->
+====================================================== -->
 
-<% if (wedding.music && wedding.music.url) { %>
+<% if (
+  wedding.music &&
+  wedding.music.url
+) { %>
+
 
   <audio
     id="weddingMusic"
@@ -881,6 +1193,7 @@
     ♪
   </button>
 
+
 <% } %>
 
 
@@ -893,13 +1206,21 @@
 */
 
 const opening =
-  document.getElementById("opening");
+  document.getElementById(
+    "opening"
+  );
+
 
 const invitation =
-  document.getElementById("invitation");
+  document.getElementById(
+    "invitation"
+  );
+
 
 const openButton =
-  document.getElementById("openInvitation");
+  document.getElementById(
+    "openInvitation"
+  );
 
 
 if (openButton) {
@@ -912,9 +1233,11 @@ if (openButton) {
         "opening-hidden"
       );
 
+
       invitation.classList.add(
         "invitation-visible"
       );
+
 
       document.body.classList.add(
         "invitation-opened"
@@ -926,12 +1249,19 @@ if (openButton) {
           "weddingMusic"
         );
 
+
       if (music) {
 
-        music.play()
-          .catch(function () {
-            // Browser may block autoplay.
-          });
+        music
+          .play()
+          .catch(
+            function () {
+              /*
+               * Browser dapat memblokir
+               * autoplay.
+               */
+            }
+          );
 
       }
 
@@ -948,7 +1278,9 @@ if (openButton) {
 */
 
 const countdown =
-  document.getElementById("countdown");
+  document.getElementById(
+    "countdown"
+  );
 
 
 if (countdown) {
@@ -961,31 +1293,53 @@ if (countdown) {
 
   function updateCountdown() {
 
-    const now =
+    const current =
       new Date().getTime();
 
 
     const distance =
-      targetDate - now;
+      targetDate -
+      current;
 
 
-    if (distance <= 0) {
+    if (
+      Number.isNaN(
+        targetDate
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      distance <= 0
+    ) {
 
       document.getElementById(
         "days"
-      ).textContent = "0";
+      ).textContent =
+        "0";
+
 
       document.getElementById(
         "hours"
-      ).textContent = "0";
+      ).textContent =
+        "0";
+
 
       document.getElementById(
         "minutes"
-      ).textContent = "0";
+      ).textContent =
+        "0";
+
 
       document.getElementById(
         "seconds"
-      ).textContent = "0";
+      ).textContent =
+        "0";
+
 
       return;
 
@@ -995,57 +1349,92 @@ if (countdown) {
     const days =
       Math.floor(
         distance /
-        (1000 * 60 * 60 * 24)
+          (
+            1000 *
+            60 *
+            60 *
+            24
+          )
       );
 
 
     const hours =
       Math.floor(
-        (distance %
-          (1000 * 60 * 60 * 24)) /
-        (1000 * 60 * 60)
+        (
+          distance %
+          (
+            1000 *
+            60 *
+            60 *
+            24
+          )
+        ) /
+          (
+            1000 *
+            60 *
+            60
+          )
       );
 
 
     const minutes =
       Math.floor(
-        (distance %
-          (1000 * 60 * 60)) /
-        (1000 * 60)
+        (
+          distance %
+          (
+            1000 *
+            60 *
+            60
+          )
+        ) /
+          (
+            1000 *
+            60
+          )
       );
 
 
     const seconds =
       Math.floor(
-        (distance %
-          (1000 * 60)) /
-        1000
+        (
+          distance %
+          (
+            1000 *
+            60
+          )
+        ) /
+          1000
       );
 
 
     document.getElementById(
       "days"
-    ).textContent = days;
+    ).textContent =
+      days;
 
 
     document.getElementById(
       "hours"
-    ).textContent = hours;
+    ).textContent =
+      hours;
 
 
     document.getElementById(
       "minutes"
-    ).textContent = minutes;
+    ).textContent =
+      minutes;
 
 
     document.getElementById(
       "seconds"
-    ).textContent = seconds;
+    ).textContent =
+      seconds;
 
   }
 
 
   updateCountdown();
+
 
   setInterval(
     updateCountdown,
@@ -1066,29 +1455,45 @@ const music =
     "weddingMusic"
   );
 
+
 const musicButton =
   document.getElementById(
     "musicButton"
   );
 
 
-if (music && musicButton) {
+if (
+  music &&
+  musicButton
+) {
 
   musicButton.addEventListener(
     "click",
     function () {
 
-      if (music.paused) {
+      if (
+        music.paused
+      ) {
 
-        music.play();
+        music
+          .play()
+          .then(
+            function () {
 
-        musicButton.classList.add(
-          "music-playing"
-        );
+              musicButton.classList.add(
+                "music-playing"
+              );
+
+            }
+          )
+          .catch(
+            function () {}
+          );
 
       } else {
 
         music.pause();
+
 
         musicButton.classList.remove(
           "music-playing"
@@ -1106,12 +1511,24 @@ if (music && musicButton) {
 |--------------------------------------------------------------------------
 | RSVP
 |--------------------------------------------------------------------------
+|
+| PENTING:
+|
+| Endpoint:
+|
+| POST /api/rsvp
+|
+| BUKAN:
+|
+| POST /slug/rsvp
+|
 */
 
 const rsvpForm =
   document.getElementById(
     "rsvpForm"
   );
+
 
 const rsvpMessage =
   document.getElementById(
@@ -1134,14 +1551,18 @@ if (rsvpForm) {
         );
 
 
-      submitButton.disabled = true;
+      submitButton.disabled =
+        true;
+
 
       submitButton.textContent =
         "Mengirim...";
 
 
       const formData =
-        new FormData(rsvpForm);
+        new FormData(
+          rsvpForm
+        );
 
 
       const data =
@@ -1154,18 +1575,20 @@ if (rsvpForm) {
 
         const response =
           await fetch(
-            window.location.pathname +
-            "/rsvp",
+            "/api/rsvp",
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
-                  "application/json"
+                  "application/json",
               },
 
               body:
-                JSON.stringify(data)
+                JSON.stringify(
+                  data
+                ),
             }
           );
 
@@ -1174,11 +1597,16 @@ if (rsvpForm) {
           await response.json();
 
 
-        if (!response.ok) {
+        if (
+          !response.ok ||
+          !result.success
+        ) {
+
           throw new Error(
             result.message ||
             "Gagal mengirim RSVP."
           );
+
         }
 
 
@@ -1193,19 +1621,29 @@ if (rsvpForm) {
         rsvpForm.reset();
 
 
-      } catch (error) {
+      } catch (
+        error
+      ) {
+
+        console.error(
+          error
+        );
+
 
         rsvpMessage.textContent =
-          error.message;
+          error.message ||
+          "Gagal mengirim RSVP.";
 
 
         rsvpMessage.className =
           "rsvp-message error";
 
+
       } finally {
 
         submitButton.disabled =
           false;
+
 
         submitButton.textContent =
           "Kirim RSVP";
@@ -1220,28 +1658,47 @@ if (rsvpForm) {
 
 /*
 |--------------------------------------------------------------------------
-| COPY ACCOUNT NUMBER
+| COPY TEXT
 |--------------------------------------------------------------------------
 */
 
-function copyText(text) {
+function copyText(
+  text
+) {
 
-  navigator.clipboard
-    .writeText(text)
-    .then(function () {
+  if (
+    navigator.clipboard
+  ) {
 
-      alert(
-        "Nomor berhasil disalin."
+    navigator.clipboard
+      .writeText(text)
+      .then(
+        function () {
+
+          alert(
+            "Nomor berhasil disalin."
+          );
+
+        }
+      )
+      .catch(
+        function () {
+
+          alert(
+            "Gagal menyalin nomor."
+          );
+
+        }
       );
 
-    })
-    .catch(function () {
+    return;
 
-      alert(
-        "Gagal menyalin nomor."
-      );
+  }
 
-    });
+
+  alert(
+    "Browser tidak mendukung fitur salin otomatis."
+  );
 
 }
 
@@ -1249,4 +1706,5 @@ function copyText(text) {
 
 
 </body>
+
 </html>
