@@ -1,837 +1,102 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="theme-color"
-    content="#f7f2ec"
-  >
-
-  <title>
-    LOVEFOREVER — Wedding Invitation
-  </title>
-
-
-  <meta
-    name="description"
-    content="LOVEFOREVER — Wedding Invitation"
-  >
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f2ec">
+  <title>LOVEFOREVER — Wedding Invitation</title>
+  <meta name="description" content="LOVEFOREVER — Wedding Invitation">
   <style>
-
     :root {
-
-      --bg:
-        #f7f2ec;
-
-      --text:
-        #2d2926;
-
-      --muted:
-        #766f69;
-
-      --accent:
-        #8b7565;
-
-      --border:
-        rgba(45,41,38,.12);
-
-      --surface:
-        rgba(255,255,255,.72);
-
+      --bg: #f7f2ec; --text: #2d2926; --muted: #766f69;
+      --accent: #8b7565; --border: rgba(45,41,38,.12); --surface: rgba(255,255,255,.72);
     }
-
-
-    * {
-      box-sizing:
-        border-box;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Georgia, "Times New Roman", serif; }
+    a { color: inherit; text-decoration: none; }
+    .site-header { position: sticky; top: 0; z-index: 100; height: 74px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: rgba(255,255,255,.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .brand { font-family: Arial, sans-serif; font-weight: 800; letter-spacing: .18em; font-size: 20px; }
+    .header-admin-link { padding: 10px 16px; border: 1px solid var(--border); border-radius: 999px; font-family: Arial, sans-serif; font-size: 13px; }
+    .hero { min-height: 78svh; display: grid; place-items: center; text-align: center; padding: 80px 24px; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: rgba(255,255,255,.65); filter: blur(20px); }
+    .hero-content { position: relative; z-index: 2; width: min(850px, 100%); }
+    .eyebrow { text-transform: uppercase; letter-spacing: .35em; font-size: 11px; color: var(--muted); margin: 0 0 18px; }
+    .hero h1 { font-size: clamp(60px, 13vw, 150px); line-height: .82; font-weight: 500; margin: 0; }
+    .hero-description { width: min(650px, 100%); margin: 30px auto; font-size: 18px; line-height: 1.9; color: var(--muted); }
+    .hero-button { display: inline-flex; background: var(--text); color: white; padding: 15px 25px; border-radius: 999px; font-family: Arial, sans-serif; font-size: 13px; }
+    .invitation-list { width: min(1200px, calc(100% - 32px)); margin: 0 auto; padding: 80px 0 120px; }
+    .section-heading { text-align: center; margin-bottom: 45px; }
+    .section-heading h2 { margin: 0; font-size: clamp(35px, 6vw, 60px); font-weight: 500; }
+    .wedding-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .wedding-card { min-height: 330px; border: 1px solid var(--border); border-radius: 28px; background: var(--surface); padding: 30px; display: flex; align-items: flex-end; box-shadow: 0 25px 70px rgba(45,41,38,.07); position: relative; overflow: hidden; }
+    .wedding-card::before { content: ""; position: absolute; width: 250px; height: 250px; border-radius: 50%; background: rgba(139,117,101,.10); top: -80px; right: -80px; }
+    .wedding-card-content { position: relative; z-index: 2; width: 100%; }
+    .card-label { font-family: Arial, sans-serif; font-size: 10px; letter-spacing: .2em; color: var(--muted); }
+    .wedding-card h3 { margin: 8px 0; font-size: 35px; font-weight: 500; line-height: 1; }
+    .card-date { color: var(--muted); margin-bottom: 22px; }
+    .button { display: inline-flex; padding: 12px 17px; border-radius: 999px; background: var(--text); color: white; font-family: Arial, sans-serif; font-size: 13px; }
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .site-footer { text-align: center; padding: 45px 20px; border-top: 1px solid var(--border); color: var(--muted); font-family: Arial, sans-serif; font-size: 12px; letter-spacing: .12em; }
+    @media (max-width: 650px) {
+      .site-header { padding: 0 15px; }
+      .brand { font-size: 16px; }
+      .hero { min-height: 70svh; }
+      .hero h1 { font-size: clamp(58px, 20vw, 100px); }
+      .invitation-list { width: calc(100% - 20px); }
+      .wedding-card { min-height: 300px; }
     }
-
-
-    html {
-      scroll-behavior:
-        smooth;
-    }
-
-
-    body {
-
-      margin:
-        0;
-
-      background:
-        var(--bg);
-
-      color:
-        var(--text);
-
-      font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    }
-
-
-    a {
-      color:
-        inherit;
-
-      text-decoration:
-        none;
-    }
-
-
-    .site-header {
-
-      position:
-        sticky;
-
-      top:
-        0;
-
-      z-index:
-        100;
-
-      height:
-        74px;
-
-      display:
-        flex;
-
-      align-items:
-        center;
-
-      justify-content:
-        space-between;
-
-      padding:
-        0 28px;
-
-      background:
-        rgba(255,255,255,.88);
-
-      backdrop-filter:
-        blur(20px);
-
-      border-bottom:
-        1px solid var(--border);
-
-    }
-
-
-    .brand {
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-weight:
-        800;
-
-      letter-spacing:
-        .18em;
-
-      font-size:
-        20px;
-
-    }
-
-
-    .header-admin-link {
-
-      padding:
-        10px 16px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius:
-        999px;
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-size:
-        13px;
-
-    }
-
-
-    .hero {
-
-      min-height:
-        78svh;
-
-      display:
-        grid;
-
-      place-items:
-        center;
-
-      text-align:
-        center;
-
-      padding:
-        80px 24px;
-
-      position:
-        relative;
-
-      overflow:
-        hidden;
-
-    }
-
-
-    .hero::before {
-
-      content:
-        "";
-
-      position:
-        absolute;
-
-      width:
-        600px;
-
-      height:
-        600px;
-
-      border-radius:
-        50%;
-
-      background:
-        rgba(255,255,255,.65);
-
-      filter:
-        blur(20px);
-
-    }
-
-
-    .hero-content {
-
-      position:
-        relative;
-
-      z-index:
-        2;
-
-      width:
-        min(850px,100%);
-
-    }
-
-
-    .eyebrow {
-
-      text-transform:
-        uppercase;
-
-      letter-spacing:
-        .35em;
-
-      font-size:
-        11px;
-
-      color:
-        var(--muted);
-
-      margin:
-        0 0 18px;
-
-    }
-
-
-    .hero h1 {
-
-      font-size:
-        clamp(
-          60px,
-          13vw,
-          150px
-        );
-
-      line-height:
-        .82;
-
-      font-weight:
-        500;
-
-      margin:
-        0;
-
-    }
-
-
-    .hero-description {
-
-      width:
-        min(650px,100%);
-
-      margin:
-        30px auto;
-
-      font-size:
-        18px;
-
-      line-height:
-        1.9;
-
-      color:
-        var(--muted);
-
-    }
-
-
-    .hero-button {
-
-      display:
-        inline-flex;
-
-      background:
-        var(--text);
-
-      color:
-        white;
-
-      padding:
-        15px 25px;
-
-      border-radius:
-        999px;
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-size:
-        13px;
-
-    }
-
-
-    .invitation-list {
-
-      width:
-        min(1200px,calc(100% - 32px));
-
-      margin:
-        0 auto;
-
-      padding:
-        80px 0 120px;
-
-    }
-
-
-    .section-heading {
-
-      text-align:
-        center;
-
-      margin-bottom:
-        45px;
-
-    }
-
-
-    .section-heading h2 {
-
-      margin:
-        0;
-
-      font-size:
-        clamp(
-          35px,
-          6vw,
-          60px
-        );
-
-      font-weight:
-        500;
-
-    }
-
-
-    .wedding-grid {
-
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(
-            280px,
-            1fr
-          )
-        );
-
-      gap:
-        20px;
-
-    }
-
-
-    .wedding-card {
-
-      min-height:
-        330px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius:
-        28px;
-
-      background:
-        var(--surface);
-
-      padding:
-        30px;
-
-      display:
-        flex;
-
-      align-items:
-        flex-end;
-
-      box-shadow:
-        0 25px 70px
-        rgba(45,41,38,.07);
-
-      position:
-        relative;
-
-      overflow:
-        hidden;
-
-    }
-
-
-    .wedding-card::before {
-
-      content:
-        "";
-
-      position:
-        absolute;
-
-      width:
-        250px;
-
-      height:
-        250px;
-
-      border-radius:
-        50%;
-
-      background:
-        rgba(139,117,101,.10);
-
-      top:
-        -80px;
-
-      right:
-        -80px;
-
-    }
-
-
-    .wedding-card-content {
-
-      position:
-        relative;
-
-      z-index:
-        2;
-
-      width:
-        100%;
-
-    }
-
-
-    .card-label {
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-size:
-        10px;
-
-      letter-spacing:
-        .2em;
-
-      color:
-        var(--muted);
-
-    }
-
-
-    .wedding-card h3 {
-
-      margin:
-        8px 0;
-
-      font-size:
-        35px;
-
-      font-weight:
-        500;
-
-      line-height:
-        1;
-
-    }
-
-
-    .card-date {
-
-      color:
-        var(--muted);
-
-      margin-bottom:
-        22px;
-
-    }
-
-
-    .button {
-
-      display:
-        inline-flex;
-
-      padding:
-        12px 17px;
-
-      border-radius:
-        999px;
-
-      background:
-        var(--text);
-
-      color:
-        white;
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-size:
-        13px;
-
-    }
-
-
-    .empty-state {
-
-      text-align:
-        center;
-
-      padding:
-        80px 20px;
-
-      color:
-        var(--muted);
-
-    }
-
-
-    .site-footer {
-
-      text-align:
-        center;
-
-      padding:
-        45px 20px;
-
-      border-top:
-        1px solid var(--border);
-
-      color:
-        var(--muted);
-
-      font-family:
-        Arial,
-        sans-serif;
-
-      font-size:
-        12px;
-
-      letter-spacing:
-        .12em;
-
-    }
-
-
-    @media (
-      max-width: 650px
-    ) {
-
-      .site-header {
-
-        padding:
-          0 15px;
-
-      }
-
-
-      .brand {
-
-        font-size:
-          16px;
-
-      }
-
-
-      .hero {
-
-        min-height:
-          70svh;
-
-      }
-
-
-      .hero h1 {
-
-        font-size:
-          clamp(
-            58px,
-            20vw,
-            100px
-          );
-
-      }
-
-
-      .invitation-list {
-
-        width:
-          calc(100% - 20px);
-
-      }
-
-
-      .wedding-card {
-
-        min-height:
-          300px;
-
-      }
-
-    }
-
   </style>
-
 </head>
-
-
 <body>
 
-
 <header class="site-header">
-
-  <a
-    href="/"
-    class="brand"
-  >
-    LOVEFOREVER
-  </a>
-
-
-  <a
-    href="/admin/login"
-    class="header-admin-link"
-  >
-    Admin
-  </a>
-
+  <a href="/" class="brand">LOVEFOREVER</a>
+  <a href="/admin/login" class="header-admin-link">Admin</a>
 </header>
 
-
 <main>
-
-
-  <!-- =====================================================
-       HERO
-  ====================================================== -->
-
   <section class="hero">
-
     <div class="hero-content">
-
-
-      <p class="eyebrow">
-        WEDDING INVITATION
-      </p>
-
-
-      <h1>
-        LOVE<br>
-        FOREVER
-      </h1>
-
-
-      <p class="hero-description">
-
-        Sebuah tempat untuk menyimpan
-        cerita cinta, hari bahagia,
-        dan undangan pernikahan.
-
-      </p>
-
-
-      <a
-        href="#invitations"
-        class="hero-button"
-      >
-        Lihat Undangan
-      </a>
-
-
+      <p class="eyebrow">WEDDING INVITATION</p>
+      <h1>LOVE<br>FOREVER</h1>
+      <p class="hero-description">Sebuah tempat untuk menyimpan cerita cinta, hari bahagia, dan undangan pernikahan.</p>
+      <a href="#invitations" class="hero-button">Lihat Undangan</a>
     </div>
-
   </section>
 
-
-  <!-- =====================================================
-       INVITATIONS
-  ====================================================== -->
-
-  <section
-    id="invitations"
-    class="invitation-list"
-  >
-
-
+  <section id="invitations" class="invitation-list">
     <div class="section-heading">
-
-      <p class="eyebrow">
-        OUR INVITATIONS
-      </p>
-
-      <h2>
-        Wedding Invitation
-      </h2>
-
+      <p class="eyebrow">OUR INVITATIONS</p>
+      <h2>Wedding Invitation</h2>
     </div>
 
-
-    <% if (
-      !weddings ||
-      weddings.length === 0
-    ) { %>
-
-
+    <% if (!weddings || weddings.length === 0) { %>
       <div class="empty-state">
-
-        <p>
-          Belum ada wedding invitation
-          yang dipublikasikan.
-        </p>
-
+        <p>Belum ada wedding invitation yang dipublikasikan.</p>
       </div>
-
-
     <% } else { %>
-
-
       <div class="wedding-grid">
-
-
-        <% weddings.forEach(
-          function(wedding)
-        { %>
-
-
+        <% weddings.forEach(function(wedding) { %>
           <article class="wedding-card">
-
-
             <div class="wedding-card-content">
-
-
-              <p class="card-label">
-                WEDDING INVITATION
-              </p>
-
-
-              <h3>
-
-                <%= wedding.groom?.name || "" %>
-
-                <br>
-
-                &
-
-                <br>
-
-                <%= wedding.bride?.name || "" %>
-
-              </h3>
-
-
-              <% if (
-                wedding.date
-              ) { %>
-
-                <p class="card-date">
-                  <%= wedding.date %>
-                </p>
-
+              <p class="card-label">WEDDING INVITATION</p>
+              <h3><%= wedding.groom?.name || "" %><br>&<br><%= wedding.bride?.name || "" %></h3>
+              <% if (wedding.date) { %>
+                <p class="card-date"><%= wedding.date %></p>
               <% } %>
-
-
-              <a
-                href="/<%= encodeURIComponent(wedding.slug) %>"
-                class="button"
-              >
-                Buka Undangan
-              </a>
-
-
+              <a href="/<%= encodeURIComponent(wedding.slug) %>" class="button">Buka Undangan</a>
             </div>
-
-
           </article>
-
-
         <% }); %>
-
-
       </div>
-
-
     <% } %>
-
-
   </section>
-
-
 </main>
 
-
 <footer class="site-footer">
-
-  © <%= new Date().getFullYear() %>
-  LOVEFOREVER
-
+  © <%= new Date().getFullYear() %> LOVEFOREVER
 </footer>
 
-
 </body>
-
 </html>
