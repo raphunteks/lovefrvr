@@ -5,48 +5,32 @@
 
   <meta charset="UTF-8">
 
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
 
+  <% if (notFound) { %>
 
-  <title>
+    <title>
+      Undangan Tidak Ditemukan — LOVEFOREVER
+    </title>
 
-    <%= wedding.groom.name %>
+  <% } else { %>
 
-    &
+    <title>
+      <%= wedding.bride?.name || "" %>
+      &
+      <%= wedding.groom?.name || "" %>
+      — LOVEFOREVER
+    </title>
 
-    <%= wedding.bride.name %>
+    <meta
+      name="description"
+      content="<%= wedding.description || 'Wedding Invitation' %>"
+    >
 
-    — LOVEFOREVER
-
-  </title>
-
-
-  <meta
-    name="description"
-    content="<%= wedding.groom.name %> & <%= wedding.bride.name %> — Wedding Invitation"
-  >
-
-
-  <meta
-    property="og:title"
-    content="<%= wedding.groom.name %> & <%= wedding.bride.name %>"
-  >
-
-
-  <meta
-    property="og:description"
-    content="Wedding Invitation — LOVEFOREVER"
-  >
-
-
-  <meta
-    property="og:url"
-    content="<%= guestInvitationUrl %>"
-  >
+  <% } %>
 
 
   <link
@@ -54,329 +38,786 @@
     href="/css/style.css"
   >
 
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #f8f5f1;
+      color: #292522;
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .wedding-page {
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .section {
+      width: min(1000px, 100%);
+      margin: auto;
+      padding: 90px 20px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: .6;
+    }
+
+    .hero {
+      min-height: 100svh;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+      color: white;
+      background:
+        linear-gradient(
+          rgba(0,0,0,.25),
+          rgba(0,0,0,.55)
+        );
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-content {
+      width: min(800px, 100%);
+      padding: 50px 10px;
+      animation:
+        fadeUp 1.2s ease;
+    }
+
+    .hero-title {
+      font-size:
+        clamp(
+          45px,
+          10vw,
+          100px
+        );
+      line-height: .95;
+      margin: 20px 0;
+      font-weight: 400;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      opacity: .9;
+    }
+
+    .guest-box {
+      margin: 30px auto 0;
+      padding: 18px;
+      width: min(480px, 100%);
+      border-top: 1px solid rgba(255,255,255,.4);
+      border-bottom: 1px solid rgba(255,255,255,.4);
+    }
+
+    .guest-name {
+      display: block;
+      font-size: 24px;
+      margin-top: 8px;
+    }
+
+    .opening {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .couple-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      gap: 35px;
+      align-items: center;
+    }
+
+    .person {
+      text-align: center;
+    }
+
+    .person-photo {
+      width: min(300px, 80vw);
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 20px;
+      box-shadow:
+        0 15px 45px
+        rgba(0,0,0,.12);
+    }
+
+    .person-placeholder {
+      width: min(300px, 80vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #e7ded5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+      margin: 0 auto 20px;
+    }
+
+    .person h3 {
+      font-size: 34px;
+      font-weight: 400;
+      margin: 10px 0;
+    }
+
+    .quote {
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          4,
+          1fr
+        );
+      gap: 10px;
+      width: min(650px, 100%);
+      margin: 35px auto 0;
+    }
+
+    .count-box {
+      background: white;
+      padding: 20px 10px;
+      border-radius: 15px;
+      box-shadow:
+        0 10px 35px
+        rgba(0,0,0,.05);
+    }
+
+    .count-number {
+      display: block;
+      font-size: 30px;
+    }
+
+    .count-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      opacity: .6;
+      margin-top: 5px;
+    }
+
+    .timeline {
+      max-width: 750px;
+      margin: auto;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 40px 30px;
+      border-left: 1px solid #cfc4bb;
+      margin-left: 15px;
+    }
+
+    .timeline-item:last-child {
+      border-left: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #6d5a4c;
+      left: -6px;
+      top: 5px;
+    }
+
+    .timeline-date {
+      font-size: 12px;
+      letter-spacing: 2px;
+      opacity: .6;
+      text-transform: uppercase;
+    }
+
+    .timeline-title {
+      font-size: 25px;
+      margin: 8px 0;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(280px, 1fr)
+        );
+      gap: 20px;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow:
+        0 10px 35px
+        rgba(0,0,0,.05);
+    }
+
+    .event-card h3 {
+      font-size: 28px;
+      font-weight: 400;
+      margin-top: 5px;
+    }
+
+    .event-line {
+      line-height: 1.7;
+      margin: 6px 0;
+    }
+
+    .maps-button {
+      display: inline-flex;
+      margin-top: 15px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      border: 1px solid #6d5a4c;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          1fr
+        );
+      gap: 10px;
+    }
+
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 12px;
+      cursor: pointer;
+      transition:
+        transform .3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.02);
+    }
+
+    .gift-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(260px, 1fr)
+        );
+      gap: 20px;
+    }
+
+    .gift-card {
+      background: white;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .account-number {
+      font-size: 22px;
+      letter-spacing: 1px;
+      margin: 15px 0;
+    }
+
+    .copy-button {
+      border: 0;
+      background: #292522;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .rsvp-card {
+      width: min(600px, 100%);
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow:
+        0 15px 45px
+        rgba(0,0,0,.06);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      border: 1px solid #ddd2c8;
+      border-radius: 10px;
+      padding: 12px;
+      background: white;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-button {
+      width: 100%;
+      border: 0;
+      background: #292522;
+      color: white;
+      padding: 14px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .rsvp-message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .rsvp-message.show {
+      display: block;
+    }
+
+    .music-button {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 100;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,.1);
+      background: white;
+      cursor: pointer;
+      box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.15);
+    }
+
+    .closing {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .closing h2 {
+      font-size:
+        clamp(
+          40px,
+          8vw,
+          80px
+        );
+      font-weight: 400;
+    }
+
+    .not-found {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .not-found a {
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      background: transparent;
+      border: 0;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeUp {
+
+      from {
+        opacity: 0;
+        transform:
+          translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0);
+      }
+
+    }
+
+    @media (max-width: 700px) {
+
+      .couple-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .countdown {
+        grid-template-columns:
+          repeat(
+            2,
+            1fr
+          );
+      }
+
+      .section {
+        padding: 70px 18px;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 
-<body class="wedding-page">
+<body>
 
 
-<!-- =====================================================
-     OPENING
-====================================================== -->
-
-<section
-  class="wedding-opening"
-  id="opening"
->
+<% if (notFound) { %>
 
 
-  <div class="opening-content">
+  <main class="not-found">
 
-
-    <p class="eyebrow">
-      THE WEDDING OF
-    </p>
-
-
-    <h1>
-
-      <%= wedding.groom.name %>
-
-      <span>
-        &
-      </span>
-
-      <%= wedding.bride.name %>
-
-    </h1>
-
-
-    <% if (guestName) { %>
-
-
-      <p class="guest-opening">
-
-        Kepada Yth.
-
-        <strong>
-          <%= guestName %>
-        </strong>
-
-      </p>
-
-
-    <% } else { %>
-
-
-      <p class="guest-opening">
-
-        Dengan penuh kebahagiaan,
-        kami mengundang Anda.
-
-      </p>
-
-
-    <% } %>
-
-
-    <button
-      type="button"
-      class="button"
-      id="openInvitation"
-    >
-      Buka Undangan
-    </button>
-
-
-  </div>
-
-
-</section>
-
-
-<!-- =====================================================
-     MAIN INVITATION
-====================================================== -->
-
-<main
-  id="invitation"
-  class="invitation-main"
->
-
-
-  <!-- ===================================================
-       HERO
-  ==================================================== -->
-
-  <section
-    class="wedding-hero"
-  >
-
-
-    <div
-      class="wedding-hero-overlay"
-    >
-
+    <div>
 
       <p class="eyebrow">
-        WEDDING INVITATION
+        LOVEFOREVER
       </p>
 
-
       <h1>
+        Undangan Tidak Ditemukan
+      </h1>
 
-        <%= wedding.groom.name %>
+      <p>
+        Link wedding invitation yang Anda buka
+        tidak tersedia atau belum dipublish.
+      </p>
 
-        <span>
-          &
-        </span>
+      <a href="/">
+        ← Kembali ke LOVEFOREVER
+      </a>
 
-        <%= wedding.bride.name %>
+    </div>
+
+  </main>
+
+
+<% } else { %>
+
+
+<div class="wedding-page">
+
+
+  <!-- =====================================================
+       HERO
+  ====================================================== -->
+
+  <section
+    class="hero"
+    <% if (
+      wedding.coverImage &&
+      wedding.coverImage.data
+    ) { %>
+
+      style="background-image:
+        linear-gradient(
+          rgba(0,0,0,.25),
+          rgba(0,0,0,.55)
+        ),
+        url('<%= wedding.coverImage.data %>')"
+
+    <% } %>
+  >
+
+    <div class="hero-content">
+
+      <p class="eyebrow">
+        The Wedding Of
+      </p>
+
+      <h1 class="hero-title">
+
+        <%= wedding.bride?.name || "" %>
+
+        <br>
+
+        &
+
+        <br>
+
+        <%= wedding.groom?.name || "" %>
 
       </h1>
 
 
+      <% if (wedding.date) { %>
+
+        <p class="hero-subtitle">
+          <%= wedding.date %>
+        </p>
+
+      <% } %>
+
+
       <% if (guestName) { %>
 
+        <div class="guest-box">
 
-        <p class="guest-name">
+          <span>
+            Kepada Yth.
+          </span>
 
-          Dear
-
-          <strong>
+          <strong class="guest-name">
             <%= guestName %>
           </strong>
 
-        </p>
-
-
-      <% } %>
-
-
-      <% if (wedding.date) { %>
-
-
-        <p class="wedding-date">
-
-          <%= wedding.date %>
-
-        </p>
-
+        </div>
 
       <% } %>
-
 
     </div>
-
 
   </section>
 
 
-  <!-- ===================================================
-       COUPLE
-  ==================================================== -->
+  <!-- =====================================================
+       OPENING
+  ====================================================== -->
 
-  <section
-    class="invitation-section couple-section"
-  >
-
+  <section class="opening">
 
     <p class="eyebrow">
-      THE COUPLE
+      Assalamu'alaikum Warahmatullahi Wabarakatuh
     </p>
 
-
     <h2>
-      Bride & Groom
+      Dengan penuh kebahagiaan,
     </h2>
+
+    <p style="max-width:650px;margin:auto;line-height:2">
+
+      Kami mengundang Bapak/Ibu/Saudara/i
+      untuk hadir dan memberikan doa restu
+      pada hari bahagia kami.
+
+    </p>
+
+  </section>
+
+
+  <!-- =====================================================
+       COUPLE
+  ====================================================== -->
+
+  <section class="section">
+
+    <div class="center">
+
+      <p class="eyebrow">
+        The Couple
+      </p>
+
+      <h2>
+        Mempelai
+      </h2>
+
+    </div>
 
 
     <div class="couple-grid">
 
 
-      <article
-        class="person-card"
-      >
-
+      <article class="person">
 
         <% if (
-          wedding.groom.photo
+          wedding.bride?.photo &&
+          wedding.bride.photo.data
         ) { %>
 
-
           <img
-            src="<%= wedding.groom.photo %>"
-            alt="<%= wedding.groom.fullName || wedding.groom.name %>"
+            class="person-photo"
+            src="<%= wedding.bride.photo.data %>"
+            alt="<%= wedding.bride.name %>"
             loading="lazy"
           >
 
+        <% } else { %>
+
+          <div class="person-placeholder">
+            ♡
+          </div>
 
         <% } %>
 
 
-        <h3>
-          <%= wedding.groom.name %>
-        </h3>
-
-
-        <p>
-
-          <%= wedding.groom.fullName || wedding.groom.name %>
-
+        <p class="eyebrow">
+          Bride
         </p>
 
+        <h3>
+          <%= wedding.bride?.name || "" %>
+        </h3>
+
+        <p>
+          <%= wedding.bride?.fullName || "" %>
+        </p>
 
       </article>
 
 
-      <div
-        class="couple-ampersand"
-      >
-        &
-      </div>
-
-
-      <article
-        class="person-card"
-      >
-
+      <article class="person">
 
         <% if (
-          wedding.bride.photo
+          wedding.groom?.photo &&
+          wedding.groom.photo.data
         ) { %>
 
-
           <img
-            src="<%= wedding.bride.photo %>"
-            alt="<%= wedding.bride.fullName || wedding.bride.name %>"
+            class="person-photo"
+            src="<%= wedding.groom.photo.data %>"
+            alt="<%= wedding.groom.name %>"
             loading="lazy"
           >
 
+        <% } else { %>
+
+          <div class="person-placeholder">
+            ♡
+          </div>
 
         <% } %>
 
 
-        <h3>
-          <%= wedding.bride.name %>
-        </h3>
-
-
-        <p>
-
-          <%= wedding.bride.fullName || wedding.bride.name %>
-
+        <p class="eyebrow">
+          Groom
         </p>
 
+        <h3>
+          <%= wedding.groom?.name || "" %>
+        </h3>
+
+        <p>
+          <%= wedding.groom?.fullName || "" %>
+        </p>
 
       </article>
 
 
     </div>
 
-
   </section>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        QUOTE
-  ==================================================== -->
+  ====================================================== -->
 
-  <% if (
-    wedding.quote
-  ) { %>
+  <% if (wedding.quote) { %>
 
+    <section class="section">
 
-    <section
-      class="quote-section"
-    >
+      <blockquote class="quote">
 
+        “<%= wedding.quote %>”
 
-      <div
-        class="quote-content"
-      >
-
-
-        <span
-          class="quote-mark"
-        >
-          “
-        </span>
-
-
-        <p>
-
-          <%= wedding.quote %>
-
-        </p>
-
-
-      </div>
-
+      </blockquote>
 
     </section>
-
 
   <% } %>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        COUNTDOWN
-  ==================================================== -->
+  ====================================================== -->
 
-  <% if (
-    wedding.date
-  ) { %>
+  <% if (wedding.date) { %>
 
-
-    <section
-      class="invitation-section countdown-section"
-    >
-
+    <section class="section center">
 
       <p class="eyebrow">
-        COUNTDOWN
+        Counting Down
       </p>
-
 
       <h2>
         Menuju Hari Bahagia
@@ -389,799 +830,624 @@
         data-date="<%= wedding.date %>"
       >
 
+        <div class="count-box">
 
-        <div
-          class="countdown-item"
-        >
-
-          <strong id="days">
+          <span
+            id="days"
+            class="count-number"
+          >
             0
-          </strong>
+          </span>
 
-          <span>
-            Hari
+          <span class="count-label">
+            HARI
           </span>
 
         </div>
 
 
-        <div
-          class="countdown-item"
-        >
+        <div class="count-box">
 
-          <strong id="hours">
+          <span
+            id="hours"
+            class="count-number"
+          >
             0
-          </strong>
+          </span>
 
-          <span>
-            Jam
+          <span class="count-label">
+            JAM
           </span>
 
         </div>
 
 
-        <div
-          class="countdown-item"
-        >
+        <div class="count-box">
 
-          <strong id="minutes">
+          <span
+            id="minutes"
+            class="count-number"
+          >
             0
-          </strong>
+          </span>
 
-          <span>
-            Menit
+          <span class="count-label">
+            MENIT
           </span>
 
         </div>
 
 
-        <div
-          class="countdown-item"
-        >
+        <div class="count-box">
 
-          <strong id="seconds">
+          <span
+            id="seconds"
+            class="count-number"
+          >
             0
-          </strong>
+          </span>
 
-          <span>
-            Detik
+          <span class="count-label">
+            DETIK
           </span>
 
         </div>
-
 
       </div>
 
-
     </section>
-
 
   <% } %>
 
 
-  <!-- ===================================================
-       DESCRIPTION
-  ==================================================== -->
-
-  <% if (
-    wedding.description
-  ) { %>
-
-
-    <section
-      class="invitation-section"
-    >
-
-
-      <p class="eyebrow">
-        OUR STORY
-      </p>
-
-
-      <h2>
-        Sebuah Cerita
-      </h2>
-
-
-      <div class="text-content">
-
-
-        <p>
-
-          <%= wedding.description %>
-
-        </p>
-
-
-      </div>
-
-
-    </section>
-
-
-  <% } %>
-
-
-  <!-- ===================================================
+  <!-- =====================================================
        STORY
-  ==================================================== -->
+  ====================================================== -->
 
   <% if (
     wedding.story &&
     wedding.story.length
   ) { %>
 
+    <section class="section">
 
-    <section
-      class="invitation-section"
-    >
+      <div class="center">
 
+        <p class="eyebrow">
+          Our Journey
+        </p>
 
-      <p class="eyebrow">
-        OUR JOURNEY
-      </p>
+        <h2>
+          Kisah Kami
+        </h2>
 
-
-      <h2>
-        Perjalanan Kami
-      </h2>
+      </div>
 
 
       <div class="timeline">
 
-
-        <% wedding.story.forEach(
-          function(item)
-        { %>
-
+        <% wedding.story.forEach(function(item) { %>
 
           <article
             class="timeline-item"
           >
 
-
-            <span
-              class="timeline-date"
-            >
-
-              <%= item.date || item.year || "" %>
-
+            <span class="timeline-dot">
             </span>
 
+            <div class="timeline-date">
+              <%= item.date || "" %>
+            </div>
 
-            <h3>
+            <div class="timeline-title">
+              <%= item.title || "" %>
+            </div>
 
-              <%= item.title %>
-
-            </h3>
-
-
-            <p>
-
-              <%= item.description %>
-
+            <p style="line-height:1.8">
+              <%= item.description || "" %>
             </p>
 
-
             <% if (
-              item.photo
+              item.photo &&
+              item.photo.data
             ) { %>
 
-
               <img
-                src="<%= item.photo %>"
-                alt="<%= item.title %>"
+                src="<%= item.photo.data %>"
+                alt="<%= item.title || 'Story' %>"
                 loading="lazy"
+                style="
+                  width:100%;
+                  max-width:400px;
+                  border-radius:15px;
+                  margin-top:10px;
+                "
               >
-
 
             <% } %>
 
-
           </article>
-
 
         <% }); %>
 
-
       </div>
 
-
     </section>
-
 
   <% } %>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        EVENTS
-  ==================================================== -->
+  ====================================================== -->
 
   <% if (
     wedding.events &&
     wedding.events.length
   ) { %>
 
+    <section class="section">
 
-    <section
-      class="invitation-section events-section"
-    >
+      <div class="center">
 
+        <p class="eyebrow">
+          Save The Date
+        </p>
 
-      <p class="eyebrow">
-        SAVE THE DATE
-      </p>
-
-
-      <h2>
-        Acara Pernikahan
-      </h2>
-
-
-      <div class="event-grid">
-
-
-        <% wedding.events.forEach(
-          function(event)
-        { %>
-
-
-          <article
-            class="event-card"
-          >
-
-
-            <span class="event-type">
-
-              <%= event.type || "" %>
-
-            </span>
-
-
-            <h3>
-
-              <%= event.title %>
-
-            </h3>
-
-
-            <% if (
-              event.date
-            ) { %>
-
-
-              <p>
-
-                <strong>
-
-                  <%= event.date %>
-
-                </strong>
-
-              </p>
-
-
-            <% } %>
-
-
-            <% if (
-              event.startTime
-            ) { %>
-
-
-              <p>
-
-                <%= event.startTime %>
-
-
-                <% if (
-                  event.endTime
-                ) { %>
-
-                  —
-
-                  <%= event.endTime %>
-
-                <% } %>
-
-
-              </p>
-
-
-            <% } %>
-
-
-            <% if (
-              event.venue
-            ) { %>
-
-
-              <p>
-
-                <%= event.venue %>
-
-              </p>
-
-
-            <% } %>
-
-
-            <% if (
-              event.address
-            ) { %>
-
-
-              <p>
-
-                <%= event.address %>
-
-              </p>
-
-
-            <% } %>
-
-
-            <% if (
-              event.description
-            ) { %>
-
-
-              <p
-                class="event-description"
-              >
-
-                <%= event.description %>
-
-              </p>
-
-
-            <% } %>
-
-
-            <% if (
-              event.mapsUrl
-            ) { %>
-
-
-              <a
-                href="<%= event.mapsUrl %>"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="button button-small"
-              >
-
-                Lihat Lokasi
-
-              </a>
-
-
-            <% } %>
-
-
-          </article>
-
-
-        <% }); %>
-
+        <h2>
+          Detail Acara
+        </h2>
 
       </div>
 
 
-    </section>
+      <div class="events-grid">
 
+        <% wedding.events.forEach(function(event) { %>
+
+          <article class="event-card">
+
+            <p class="eyebrow">
+              <%= event.type || "Event" %>
+            </p>
+
+            <h3>
+              <%= event.title || "" %>
+            </h3>
+
+
+            <% if (event.date) { %>
+
+              <p class="event-line">
+                📅
+                <strong>
+                  <%= event.date %>
+                </strong>
+              </p>
+
+            <% } %>
+
+
+            <% if (
+              event.startTime ||
+              event.endTime
+            ) { %>
+
+              <p class="event-line">
+
+                🕐
+
+                <%= event.startTime || "" %>
+
+                <% if (event.endTime) { %>
+
+                  -
+                  <%= event.endTime %>
+
+                <% } %>
+
+              </p>
+
+            <% } %>
+
+
+            <% if (event.venue) { %>
+
+              <p class="event-line">
+                📍
+                <strong>
+                  <%= event.venue %>
+                </strong>
+              </p>
+
+            <% } %>
+
+
+            <% if (event.address) { %>
+
+              <p class="event-line">
+                <%= event.address %>
+              </p>
+
+            <% } %>
+
+
+            <% if (event.description) { %>
+
+              <p
+                class="event-line"
+                style="opacity:.7"
+              >
+                <%= event.description %>
+              </p>
+
+            <% } %>
+
+
+            <% if (event.mapsUrl) { %>
+
+              <a
+                class="maps-button"
+                href="<%= event.mapsUrl %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Buka Google Maps
+              </a>
+
+            <% } %>
+
+          </article>
+
+        <% }); %>
+
+      </div>
+
+    </section>
 
   <% } %>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        GALLERY
-  ==================================================== -->
+  ====================================================== -->
 
   <% if (
     wedding.gallery &&
     wedding.gallery.length
   ) { %>
 
+    <section class="section">
 
-    <section
-      class="invitation-section"
-    >
+      <div class="center">
 
+        <p class="eyebrow">
+          Memories
+        </p>
 
-      <p class="eyebrow">
-        OUR MOMENTS
-      </p>
-
-
-      <h2>
-        Gallery
-      </h2>
-
-
-      <div class="gallery-grid">
-
-
-        <% wedding.gallery.forEach(
-          function(image, index)
-        { %>
-
-
-          <figure
-            class="gallery-item"
-          >
-
-
-            <img
-              src="<%= image.base64 || image %>"
-              alt="<%= image.caption || 'Wedding photo ' + (index + 1) %>"
-              loading="lazy"
-              class="gallery-image"
-            >
-
-
-            <% if (
-              image.caption
-            ) { %>
-
-
-              <figcaption>
-
-                <%= image.caption %>
-
-              </figcaption>
-
-
-            <% } %>
-
-
-          </figure>
-
-
-        <% }); %>
-
+        <h2>
+          Gallery
+        </h2>
 
       </div>
 
 
-    </section>
+      <div class="gallery">
 
+        <% wedding.gallery.forEach(function(image, index) { %>
+
+          <% if (image && image.data) { %>
+
+            <img
+              src="<%= image.data %>"
+              alt="<%= image.caption || 'Wedding Gallery ' + (index + 1) %>"
+              loading="lazy"
+              onclick="openLightbox(this.src)"
+            >
+
+          <% } %>
+
+        <% }); %>
+
+      </div>
+
+    </section>
 
   <% } %>
 
 
-  <!-- ===================================================
-       WEDDING GIFT
-  ==================================================== -->
+  <!-- =====================================================
+       GIFT
+  ====================================================== -->
 
   <% if (
     wedding.gift &&
     wedding.gift.length
   ) { %>
 
+    <section class="section">
 
-    <section
-      class="invitation-section gift-section"
-    >
+      <div class="center">
 
+        <p class="eyebrow">
+          Wedding Gift
+        </p>
 
-      <p class="eyebrow">
-        WEDDING GIFT
-      </p>
+        <h2>
+          Tanda Kasih
+        </h2>
 
+        <p style="opacity:.7">
+          Doa dan kehadiran Anda merupakan
+          hadiah terindah bagi kami.
+        </p>
 
-      <h2>
-        Tanda Kasih
-      </h2>
+      </div>
 
 
       <div class="gift-grid">
 
+        <% wedding.gift.forEach(function(gift) { %>
 
-        <% wedding.gift.forEach(
-          function(gift)
-        { %>
+          <article class="gift-card">
 
-
-          <article
-            class="gift-card"
-          >
+            <p class="eyebrow">
+              <%= gift.type || "Gift" %>
+            </p>
 
 
-            <% if (
-              gift.bank
-            ) { %>
+            <% if (gift.bank) { %>
 
-
-              <p
-                class="gift-bank"
-              >
-
+              <h3>
                 <%= gift.bank %>
-
-              </p>
-
+              </h3>
 
             <% } %>
 
 
-            <% if (
-              gift.accountName
-            ) { %>
-
+            <% if (gift.accountName) { %>
 
               <p>
-
-                <%= gift.accountName %>
-
+                a.n.
+                <strong>
+                  <%= gift.accountName %>
+                </strong>
               </p>
-
 
             <% } %>
 
 
-            <% if (
-              gift.accountNumber
-            ) { %>
+            <% if (gift.accountNumber) { %>
 
-
-              <strong>
-
+              <div
+                class="account-number"
+              >
                 <%= gift.accountNumber %>
-
-              </strong>
+              </div>
 
 
               <button
                 type="button"
-                class="button button-small"
-                onclick="copyText('<%= gift.accountNumber %>')"
+                class="copy-button"
+                onclick="copyAccount('<%= gift.accountNumber %>')"
               >
-
-                Salin Nomor
-
+                Copy Nomor
               </button>
-
 
             <% } %>
 
 
-          </article>
+            <% if (gift.description) { %>
 
+              <p
+                style="
+                  margin-top:15px;
+                  opacity:.7;
+                  line-height:1.7
+                "
+              >
+                <%= gift.description %>
+              </p>
+
+            <% } %>
+
+          </article>
 
         <% }); %>
 
-
       </div>
 
-
     </section>
-
 
   <% } %>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        RSVP
-  ==================================================== -->
+  ====================================================== -->
 
-  <section
-    class="invitation-section rsvp-section"
-    id="rsvp"
-  >
+  <section class="section">
 
+    <div class="center">
 
-    <p class="eyebrow">
-      RSVP
-    </p>
+      <p class="eyebrow">
+        RSVP
+      </p>
 
+      <h2>
+        Konfirmasi Kehadiran
+      </h2>
 
-    <h2>
-      Konfirmasi Kehadiran
-    </h2>
+      <p>
+        Mohon konfirmasi kehadiran Anda.
+      </p>
 
-
-    <p>
-
-      Mohon konfirmasi kehadiran
-      Anda melalui form berikut.
-
-    </p>
+    </div>
 
 
-    <form
-      id="rsvpForm"
-      class="form rsvp-form"
-    >
+    <div class="rsvp-card">
+
+      <form id="rsvpForm">
 
 
-      <input
-        type="hidden"
-        name="slug"
-        value="<%= wedding.slug %>"
-      >
+        <div class="form-group">
+
+          <label>
+            Nama
+          </label>
+
+          <input
+            type="text"
+            name="name"
+            maxlength="100"
+            required
+            placeholder="Nama Anda"
+          >
+
+        </div>
 
 
-      <div class="form-group">
+        <div class="form-group">
+
+          <label>
+            Kehadiran
+          </label>
+
+          <select
+            name="attendance"
+            required
+          >
+
+            <option value="">
+              Pilih Kehadiran
+            </option>
+
+            <option value="hadir">
+              Hadir
+            </option>
+
+            <option value="tidak_hadir">
+              Tidak Hadir
+            </option>
+
+            <option value="masih_menentukan">
+              Masih Menentukan
+            </option>
+
+          </select>
+
+        </div>
 
 
-        <label>
-          Nama
-        </label>
+        <div class="form-group">
+
+          <label>
+            Jumlah Tamu
+          </label>
+
+          <input
+            type="number"
+            name="guestCount"
+            min="1"
+            max="10"
+            value="1"
+            required
+          >
+
+        </div>
 
 
-        <input
-          type="text"
-          name="name"
-          maxlength="100"
-          required
+        <div class="form-group">
+
+          <label>
+            Pesan / Ucapan
+          </label>
+
+          <textarea
+            name="message"
+            maxlength="500"
+            placeholder="Tuliskan doa dan ucapan..."
+          ></textarea>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="submit-button"
         >
+          Kirim RSVP
+        </button>
 
 
-      </div>
+        <div
+          id="rsvpMessage"
+          class="rsvp-message"
+        ></div>
 
 
-      <div class="form-group">
+      </form>
 
-
-        <label>
-          Kehadiran
-        </label>
-
-
-        <select
-          name="attendance"
-          required
-        >
-
-
-          <option value="">
-            Pilih Kehadiran
-          </option>
-
-
-          <option value="hadir">
-            Hadir
-          </option>
-
-
-          <option value="tidak_hadir">
-            Tidak Hadir
-          </option>
-
-
-          <option value="masih_menentukan">
-            Masih Menentukan
-          </option>
-
-
-        </select>
-
-
-      </div>
-
-
-      <div class="form-group">
-
-
-        <label>
-          Jumlah Tamu
-        </label>
-
-
-        <input
-          type="number"
-          name="guestCount"
-          min="1"
-          max="20"
-          value="1"
-          required
-        >
-
-
-      </div>
-
-
-      <div class="form-group">
-
-
-        <label>
-          Pesan
-        </label>
-
-
-        <textarea
-          name="message"
-          maxlength="500"
-          rows="5"
-          placeholder="Tuliskan ucapan..."
-        ></textarea>
-
-
-      </div>
-
-
-      <button
-        type="submit"
-        class="button button-full"
-      >
-
-        Kirim RSVP
-
-      </button>
-
-
-      <div
-        id="rsvpMessage"
-        class="rsvp-message"
-      ></div>
-
-
-    </form>
-
+    </div>
 
   </section>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        CLOSING
-  ==================================================== -->
+  ====================================================== -->
 
-  <section
-    class="closing-section"
-  >
+  <section class="closing section">
 
+    <div>
 
-    <p class="eyebrow">
-      WITH LOVE
-    </p>
+      <p class="eyebrow">
+        Thank You
+      </p>
 
+      <h2>
+        <%= wedding.bride?.name || "" %>
+        &
+        <%= wedding.groom?.name || "" %>
+      </h2>
 
-    <h2>
+      <p style="line-height:2">
+        Terima kasih atas doa,
+        cinta dan kehadiran Anda.
+      </p>
 
-      <%= wedding.groom.name %>
+      <p class="eyebrow">
+        LOVEFOREVER
+      </p>
 
-      &
-
-      <%= wedding.bride.name %>
-
-    </h2>
-
-
-    <p>
-
-      Terima kasih telah menjadi
-      bagian dari hari bahagia kami.
-
-    </p>
-
-
-    <p class="closing-brand">
-      LOVEFOREVER
-    </p>
-
+    </div>
 
   </section>
 
 
-</main>
+</div>
 
 
-<!-- =====================================================
+<!-- =======================================================
      MUSIC
-====================================================== -->
+======================================================== -->
 
 <% if (
   wedding.music &&
   wedding.music.url
 ) { %>
 
-
   <audio
     id="weddingMusic"
-    src="<%= wedding.music.url %>"
     loop
     preload="none"
-  ></audio>
+  >
+
+    <source
+      src="<%= wedding.music.url %>"
+    >
+
+  </audio>
 
 
   <button
@@ -1193,95 +1459,47 @@
     ♪
   </button>
 
-
 <% } %>
+
+
+<!-- =======================================================
+     LIGHTBOX
+======================================================== -->
+
+<div
+  id="lightbox"
+  class="lightbox"
+  onclick="closeLightbox()"
+>
+
+  <button
+    type="button"
+    class="lightbox-close"
+    onclick="closeLightbox()"
+  >
+    ×
+  </button>
+
+  <img
+    id="lightboxImage"
+    src=""
+    alt="Gallery"
+    onclick="event.stopPropagation()"
+  >
+
+</div>
 
 
 <script>
 
-/*
-|--------------------------------------------------------------------------
-| OPEN INVITATION
-|--------------------------------------------------------------------------
-*/
-
-const opening =
-  document.getElementById(
-    "opening"
-  );
-
-
-const invitation =
-  document.getElementById(
-    "invitation"
-  );
-
-
-const openButton =
-  document.getElementById(
-    "openInvitation"
-  );
-
-
-if (openButton) {
-
-  openButton.addEventListener(
-    "click",
-    function () {
-
-      opening.classList.add(
-        "opening-hidden"
-      );
-
-
-      invitation.classList.add(
-        "invitation-visible"
-      );
-
-
-      document.body.classList.add(
-        "invitation-opened"
-      );
-
-
-      const music =
-        document.getElementById(
-          "weddingMusic"
-        );
-
-
-      if (music) {
-
-        music
-          .play()
-          .catch(
-            function () {
-              /*
-               * Browser dapat memblokir
-               * autoplay.
-               */
-            }
-          );
-
-      }
-
-    }
-  );
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| COUNTDOWN
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   COUNTDOWN
+========================================================= */
 
 const countdown =
   document.getElementById(
     "countdown"
   );
-
 
 if (countdown) {
 
@@ -1293,24 +1511,12 @@ if (countdown) {
 
   function updateCountdown() {
 
-    const current =
-      new Date().getTime();
-
+    const now =
+      Date.now();
 
     const distance =
       targetDate -
-      current;
-
-
-    if (
-      Number.isNaN(
-        targetDate
-      )
-    ) {
-
-      return;
-
-    }
+      now;
 
 
     if (
@@ -1322,24 +1528,20 @@ if (countdown) {
       ).textContent =
         "0";
 
-
       document.getElementById(
         "hours"
       ).textContent =
         "0";
-
 
       document.getElementById(
         "minutes"
       ).textContent =
         "0";
 
-
       document.getElementById(
         "seconds"
       ).textContent =
         "0";
-
 
       return;
 
@@ -1349,12 +1551,12 @@ if (countdown) {
     const days =
       Math.floor(
         distance /
-          (
-            1000 *
-            60 *
-            60 *
-            24
-          )
+        (
+          1000 *
+          60 *
+          60 *
+          24
+        )
       );
 
 
@@ -1369,11 +1571,11 @@ if (countdown) {
             24
           )
         ) /
-          (
-            1000 *
-            60 *
-            60
-          )
+        (
+          1000 *
+          60 *
+          60
+        )
       );
 
 
@@ -1387,10 +1589,10 @@ if (countdown) {
             60
           )
         ) /
-          (
-            1000 *
-            60
-          )
+        (
+          1000 *
+          60
+        )
       );
 
 
@@ -1403,7 +1605,7 @@ if (countdown) {
             60
           )
         ) /
-          1000
+        1000
       );
 
 
@@ -1416,25 +1618,39 @@ if (countdown) {
     document.getElementById(
       "hours"
     ).textContent =
-      hours;
+      String(
+        hours
+      ).padStart(
+        2,
+        "0"
+      );
 
 
     document.getElementById(
       "minutes"
     ).textContent =
-      minutes;
+      String(
+        minutes
+      ).padStart(
+        2,
+        "0"
+      );
 
 
     document.getElementById(
       "seconds"
     ).textContent =
-      seconds;
+      String(
+        seconds
+      ).padStart(
+        2,
+        "0"
+      );
 
   }
 
 
   updateCountdown();
-
 
   setInterval(
     updateCountdown,
@@ -1444,91 +1660,14 @@ if (countdown) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MUSIC
-|--------------------------------------------------------------------------
-*/
-
-const music =
-  document.getElementById(
-    "weddingMusic"
-  );
-
-
-const musicButton =
-  document.getElementById(
-    "musicButton"
-  );
-
-
-if (
-  music &&
-  musicButton
-) {
-
-  musicButton.addEventListener(
-    "click",
-    function () {
-
-      if (
-        music.paused
-      ) {
-
-        music
-          .play()
-          .then(
-            function () {
-
-              musicButton.classList.add(
-                "music-playing"
-              );
-
-            }
-          )
-          .catch(
-            function () {}
-          );
-
-      } else {
-
-        music.pause();
-
-
-        musicButton.classList.remove(
-          "music-playing"
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| RSVP
-|--------------------------------------------------------------------------
-|
-| PENTING:
-|
-| Endpoint:
-|
-| POST /api/rsvp
-|
-| BUKAN:
-|
-| POST /slug/rsvp
-|
-*/
+/* =========================================================
+   RSVP
+========================================================= */
 
 const rsvpForm =
   document.getElementById(
     "rsvpForm"
   );
-
 
 const rsvpMessage =
   document.getElementById(
@@ -1540,23 +1679,9 @@ if (rsvpForm) {
 
   rsvpForm.addEventListener(
     "submit",
-    async function (event) {
+    async event => {
 
       event.preventDefault();
-
-
-      const submitButton =
-        rsvpForm.querySelector(
-          "button[type='submit']"
-        );
-
-
-      submitButton.disabled =
-        true;
-
-
-      submitButton.textContent =
-        "Mengirim...";
 
 
       const formData =
@@ -1565,30 +1690,56 @@ if (rsvpForm) {
         );
 
 
-      const data =
-        Object.fromEntries(
-          formData.entries()
-        );
+      const payload = {
+
+        name:
+          formData.get(
+            "name"
+          ),
+
+        attendance:
+          formData.get(
+            "attendance"
+          ),
+
+        guestCount:
+          formData.get(
+            "guestCount"
+          ),
+
+        message:
+          formData.get(
+            "message"
+          )
+
+      };
+
+
+      rsvpMessage.className =
+        "rsvp-message show";
+
+      rsvpMessage.textContent =
+        "Mengirim RSVP...";
 
 
       try {
 
         const response =
           await fetch(
-            "/api/rsvp",
+            "<%= wedding.slug %>/rsvp",
             {
               method:
                 "POST",
 
               headers: {
                 "Content-Type":
-                  "application/json",
+                  "application/json"
               },
 
               body:
                 JSON.stringify(
-                  data
-                ),
+                  payload
+                )
             }
           );
 
@@ -1604,7 +1755,7 @@ if (rsvpForm) {
 
           throw new Error(
             result.message ||
-            "Gagal mengirim RSVP."
+            "RSVP gagal."
           );
 
         }
@@ -1613,40 +1764,20 @@ if (rsvpForm) {
         rsvpMessage.textContent =
           result.message;
 
-
-        rsvpMessage.className =
-          "rsvp-message success";
+        rsvpMessage.style.background =
+          "#e6f5e9";
 
 
         rsvpForm.reset();
 
 
-      } catch (
-        error
-      ) {
-
-        console.error(
-          error
-        );
-
+      } catch (error) {
 
         rsvpMessage.textContent =
-          error.message ||
-          "Gagal mengirim RSVP.";
+          error.message;
 
-
-        rsvpMessage.className =
-          "rsvp-message error";
-
-
-      } finally {
-
-        submitButton.disabled =
-          false;
-
-
-        submitButton.textContent =
-          "Kirim RSVP";
+        rsvpMessage.style.background =
+          "#f8dddd";
 
       }
 
@@ -1656,48 +1787,141 @@ if (rsvpForm) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| COPY TEXT
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   COPY ACCOUNT
+========================================================= */
 
-function copyText(
-  text
+async function copyAccount(
+  account
 ) {
 
-  if (
-    navigator.clipboard
-  ) {
+  try {
 
-    navigator.clipboard
-      .writeText(text)
-      .then(
-        function () {
+    await navigator.clipboard.writeText(
+      account
+    );
 
-          alert(
-            "Nomor berhasil disalin."
-          );
+    alert(
+      "Nomor rekening berhasil disalin."
+    );
 
-        }
-      )
-      .catch(
-        function () {
+  } catch {
 
-          alert(
-            "Gagal menyalin nomor."
-          );
-
-        }
-      );
-
-    return;
+    alert(
+      "Nomor rekening: " +
+      account
+    );
 
   }
 
+}
 
-  alert(
-    "Browser tidak mendukung fitur salin otomatis."
+
+/* =========================================================
+   LIGHTBOX
+========================================================= */
+
+function openLightbox(
+  src
+) {
+
+  const lightbox =
+    document.getElementById(
+      "lightbox"
+    );
+
+  const image =
+    document.getElementById(
+      "lightboxImage"
+    );
+
+  image.src =
+    src;
+
+  lightbox.classList.add(
+    "open"
+  );
+
+}
+
+
+function closeLightbox() {
+
+  const lightbox =
+    document.getElementById(
+      "lightbox"
+    );
+
+  lightbox.classList.remove(
+    "open"
+  );
+
+}
+
+
+/* =========================================================
+   MUSIC
+========================================================= */
+
+const music =
+  document.getElementById(
+    "weddingMusic"
+  );
+
+const musicButton =
+  document.getElementById(
+    "musicButton"
+  );
+
+
+if (
+  music &&
+  musicButton
+) {
+
+  let playing =
+    false;
+
+
+  musicButton.addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        if (
+          playing
+        ) {
+
+          music.pause();
+
+          playing =
+            false;
+
+          musicButton.textContent =
+            "♪";
+
+        } else {
+
+          await music.play();
+
+          playing =
+            true;
+
+          musicButton.textContent =
+            "Ⅱ";
+
+        }
+
+      } catch {
+
+        alert(
+          "Browser membutuhkan interaksi user untuk memutar musik."
+        );
+
+      }
+
+    }
   );
 
 }
@@ -1705,6 +1929,7 @@ function copyText(
 </script>
 
 
-</body>
+<% } %>
 
+</body>
 </html>
