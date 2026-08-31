@@ -13,8 +13,8 @@ const SESSION_SECRET = process.env.SESSION_SECRET || "";
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || "";
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || "";
 
-const MAX_BODY_SIZE = "16mb";
-const MAX_IMAGE_BYTES = 1024 * 1024;
+const MAX_BODY_SIZE = "50mb"; // Diperbesar untuk mengakomodasi upload multi-image
+const MAX_MAIN_IMAGE_BYTES = 1.5 * 1024 * 1024; // Limit khusus foto Cover/Groom/Bride (1.5MB)
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 const MAX_GALLERY_IMAGES = 15;
 const MAX_WEDDING_TEXT = 5000;
@@ -61,7 +61,7 @@ function isValidSlug(slug) {
   return !RESERVED_SLUGS.includes(slug);
 }
 function normalizeGuestName(value) { return safeString(value, 150); }
-function validAttendance(value) { return ["hadir", "tidak_hadir", "masih_menentukan"].includes(value); }
+function validAttendance(value) { return ["hadir", "tidak_hadir", "masih_menentukan", "ragu", "tidak_menentukan"].includes(value); }
 function parseInteger(value, fallback = 0) {
   const number = Number(value);
   return Number.isInteger(number) ? number : fallback;
@@ -105,32 +105,31 @@ function createDefaultWedding() {
     id: createId("wedding"),
     slug: "",
     status: "draft",
-    groom: { name: "", fullName: "", photo: null },
-    bride: { name: "", fullName: "", photo: null },
+    groom: { name: "", fullName: "", photo: null, parents: "", instagram: "" },
+    bride: { name: "", fullName: "", photo: null, parents: "", instagram: "" },
     coverImage: null,
     opening: {
       enabled: true,
-      title: "The Wedding Of",
-      subtitle: "Dengan penuh kebahagiaan",
-      description: "Kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada hari bahagia kami."
+      eyebrow: "ASSALAMU'ALAIKUM WARAHMATULLAHI WABARAKATUH",
+      title: "Dengan Penuh Rasa Syukur & Bahagia",
+      text: "Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu pada hari pernikahan kami.",
+      button: "BUKA UNDANGAN"
     },
-    quote: "",
-    description: "",
+    quote: { text: "", source: "" },
     date: "",
     timezone: "Asia/Jakarta",
     events: [],
     story: [],
     gallery: [],
-    gift: [],
+    gift: { text: "", bankName: "", accountNumber: "", accountName: "", address: "" },
     music: { enabled: false, url: "", mediaId: "", name: "" },
-    theme: { primary: "#2d2926", background: "#f7f2ec", accent: "#8b7565", font: "serif" },
+    theme: { background: "#fbf9f5", accent: "#8a735c", text: "#2b2623", muted: "#787068" },
     settings: {
       showCountdown: true,
       showStory: true,
       showGallery: true,
       showGift: true,
-      showRsvp: true,
-      showMusic: true,
+      showRSVP: true,
       bottomNavigation: true
     },
     createdAt: timestamp,
@@ -166,21 +165,26 @@ function normalizeMediaRef(value) {
       name: safeString(value.name, 200),
       caption: safeString(value.caption, 200),
       size: Number(value.size || 0),
-      url: `/media/${value.slug || 'slug'}/${value.mediaId}` // URL fallback for media delivery
+      url: value.url || `/media/${value.slug || 'slug'}/${value.mediaId}`
     };
   }
   return null;
 }
 
-async function saveMedia(slug, { data, mime, name, caption, kind }) {
+async function saveMedia(slug, { data, mime, name, caption, kind, role }) {
   if (!redis) throw new Error("Redis belum dikonfigurasi.");
   if (typeof data !== "string" || !data.startsWith("data:")) throw new Error("Format media Base64 tidak valid.");
   const bytes = estimateBase64Bytes(data);
   const isImage = validImageMime(mime);
   const isAudio = validAudioMime(mime);
   if (!isImage && !isAudio) throw new Error("Format media tidak didukung.");
-  if (isImage && bytes > MAX_IMAGE_BYTES) throw new Error("Ukuran gambar maksimal 1 MB.");
+  
   if (isAudio && bytes > MAX_AUDIO_BYTES) throw new Error("Ukuran audio maksimal 8 MB.");
+
+  // Pembatasan gambar HANYA untuk Cover, Groom, dan Bride sebesar 1.5MB. Galeri tidak ada batas/limit.
+  if (isImage && ["cover", "groom", "bride"].includes(role) && bytes > MAX_MAIN_IMAGE_BYTES) {
+    throw new Error("Ukuran gambar Cover/Mempelai maksimal 1.5 MB.");
+  }
 
   const mediaId = createId("media");
   const record = {
@@ -211,7 +215,6 @@ function buildWeddingFromPayload(payload, existing = null) {
   const wedding = existing || createDefaultWedding();
   wedding.status = payload.status === "published" ? "published" : "draft";
   
-  // Media ref with direct URL injection for wedding.ejs mapping
   const injectUrl = (ref) => {
     if (ref && ref.mediaId) ref.url = `/media/${payload.slug || existing.slug}/${ref.mediaId}`;
     return ref;
@@ -220,65 +223,72 @@ function buildWeddingFromPayload(payload, existing = null) {
   wedding.groom = {
     name: safeString(payload.groomName, 100),
     fullName: safeString(payload.groomFullName, 200),
+    parents: safeString(payload.groomParents, 200),
+    instagram: safeString(payload.groomInstagram, 100),
     photo: injectUrl(normalizeMediaRef(payload.groomPhoto))
   };
   wedding.bride = {
     name: safeString(payload.brideName, 100),
     fullName: safeString(payload.brideFullName, 200),
+    parents: safeString(payload.brideParents, 200),
+    instagram: safeString(payload.brideInstagram, 100),
     photo: injectUrl(normalizeMediaRef(payload.bridePhoto))
   };
   wedding.coverImage = injectUrl(normalizeMediaRef(payload.coverImage));
   wedding.opening = {
     enabled: payload.openingEnabled !== false,
-    title: safeString(payload.openingTitle, 200) || "The Wedding Of",
-    subtitle: safeString(payload.openingSubtitle, 500) || "Dengan penuh kebahagiaan",
-    description: safeString(payload.openingDescription, 1000)
+    eyebrow: safeString(payload.openingEyebrow, 200) || "ASSALAMU'ALAIKUM WARAHMATULLAHI WABARAKATUH",
+    title: safeString(payload.openingTitle, 200) || "Dengan Penuh Rasa Syukur & Bahagia",
+    text: safeString(payload.openingText, 1000) || "Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu pada hari pernikahan kami.",
+    button: safeString(payload.openingButton, 100) || "BUKA UNDANGAN"
   };
-  wedding.quote = safeString(payload.quote, MAX_WEDDING_TEXT);
-  wedding.description = safeString(payload.description, MAX_WEDDING_TEXT);
+  wedding.quote = {
+    text: safeString(payload.quoteText, MAX_WEDDING_TEXT),
+    source: safeString(payload.quoteSource, 200)
+  };
   wedding.date = safeString(payload.date, 100);
   wedding.timezone = safeString(payload.timezone, 100) || "Asia/Jakarta";
   wedding.events = asArray(payload.events).slice(0, 10).map(event => ({
     id: safeString(event.id, 100) || createId("event"),
-    type: safeString(event.type, 50),
     title: safeString(event.title, 200),
     date: safeString(event.date, 100),
-    startTime: safeString(event.startTime, 50),
-    endTime: safeString(event.endTime, 50),
+    time: safeString(event.time, 100),
     venue: safeString(event.venue, 300),
     address: safeString(event.address, 1000),
-    mapsUrl: safeString(event.mapsUrl, 1000),
-    description: safeString(event.description, 1000)
+    mapsUrl: safeString(event.mapsUrl, 1000)
   }));
   wedding.story = asArray(payload.story).slice(0, 20).map(item => ({
     id: safeString(item.id, 100) || createId("story"),
-    date: safeString(item.date, 100),
+    year: safeString(item.year, 100),
     title: safeString(item.title, 200),
-    description: safeString(item.description, 1500),
-    photo: injectUrl(normalizeMediaRef(item.photo))
+    text: safeString(item.text, 1500)
   }));
   wedding.gallery = asArray(payload.gallery).slice(0, MAX_GALLERY_IMAGES).map(normalizeMediaRef).filter(Boolean).map(injectUrl);
-  wedding.gift = asArray(payload.gift).slice(0, 10).map(item => ({
-    id: safeString(item.id, 100) || createId("gift"),
-    type: safeString(item.type, 50) || "Bank",
-    bank: safeString(item.bank, 100),
-    accountNumber: safeString(item.accountNumber, 100),
-    accountName: safeString(item.accountName, 200),
-    description: safeString(item.description, 1000)
-  }));
+  wedding.gift = payload.gift ? {
+    text: safeString(payload.gift.text, 1000),
+    bankName: safeString(payload.gift.bankName, 100),
+    accountNumber: safeString(payload.gift.accountNumber, 100),
+    accountName: safeString(payload.gift.accountName, 200),
+    address: safeString(payload.gift.address, 1000)
+  } : null;
   wedding.music = {
     enabled: payload.musicEnabled === true,
     url: safeString(payload.musicUrl, 1000),
     mediaId: safeString(payload.musicMediaId, 100),
     name: safeString(payload.musicName, 200)
   };
+  wedding.theme = {
+    background: safeString(payload.themeBackground, 20) || "#fbf9f5",
+    accent: safeString(payload.themeAccent, 20) || "#8a735c",
+    text: safeString(payload.themeText, 20) || "#2b2623",
+    muted: safeString(payload.themeMuted, 20) || "#787068"
+  };
   wedding.settings = {
     showCountdown: payload.showCountdown !== false,
     showStory: payload.showStory !== false,
     showGallery: payload.showGallery !== false,
     showGift: payload.showGift !== false,
-    showRsvp: payload.showRsvp !== false,
-    showMusic: payload.showMusic !== false,
+    showRSVP: payload.showRSVP !== false,
     bottomNavigation: payload.bottomNavigation !== false
   };
   wedding.updatedAt = nowISO();
@@ -462,7 +472,7 @@ app.get("/admin", requireAdmin, async function(req, res) {
         total: rsvps.length,
         hadir: rsvps.filter(x => x.attendance === "hadir").length,
         tidakHadir: rsvps.filter(x => x.attendance === "tidak_hadir").length,
-        belumTentu: rsvps.filter(x => x.attendance === "masih_menentukan").length,
+        belumTentu: rsvps.filter(x => ["masih_menentukan","ragu","tidak_menentukan"].includes(x.attendance)).length,
         guestCount: rsvps.reduce((total, item) => total + Number(item.guestCount || 0), 0)
       };
       weddings.push({ ...wedding, stats });
@@ -649,7 +659,10 @@ app.post("/admin/wedding/:slug/media", requireAdmin, async function(req, res) {
     if (!wedding) return res.status(404).json({ success: false, message: "Wedding tidak ditemukan." });
 
     const { data, mime, name, caption, kind, role } = req.body;
-    const media = await saveMedia(slug, { data, mime, name, caption, kind });
+    
+    // Simpan Media (Limit 1.5MB hanya diperiksa di fungsi saveMedia ini untuk role tertentu)
+    const media = await saveMedia(slug, { data, mime, name, caption, kind, role });
+    
     const ref = { 
       mediaId: media.id, 
       mime: media.mime, 
@@ -773,7 +786,7 @@ app.get("/admin/wedding/:slug/rsvp", requireAdmin, async function(req, res) {
       total: rsvps.length,
       hadir: rsvps.filter(x => x.attendance === "hadir").length,
       tidakHadir: rsvps.filter(x => x.attendance === "tidak_hadir").length,
-      belumTentu: rsvps.filter(x => x.attendance === "masih_menentukan").length,
+      belumTentu: rsvps.filter(x => ["masih_menentukan","ragu","tidak_menentukan"].includes(x.attendance)).length,
       guestCount: rsvps.reduce((total, item) => total + Number(item.guestCount || 0), 0)
     };
     return res.json({ success: true, total: rsvps.length, stats, rsvps });
