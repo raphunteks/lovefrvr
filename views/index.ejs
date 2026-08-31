@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 
   <meta charset="UTF-8">
@@ -9,291 +10,828 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <meta
+    name="theme-color"
+    content="#f7f2ec"
+  >
+
   <title>
     LOVEFOREVER — Wedding Invitation
   </title>
 
+
   <meta
     name="description"
-    content="Wedding invitation by LOVEFOREVER."
+    content="LOVEFOREVER — Wedding Invitation"
   >
 
-  <link
-    rel="stylesheet"
-    href="/css/style.css"
-  >
 
   <style>
 
-    .lf-home {
-      min-height: 100vh;
-      padding: 30px 18px;
+    :root {
+
+      --bg:
+        #f7f2ec;
+
+      --text:
+        #2d2926;
+
+      --muted:
+        #766f69;
+
+      --accent:
+        #8b7565;
+
+      --border:
+        rgba(45,41,38,.12);
+
+      --surface:
+        rgba(255,255,255,.72);
+
     }
 
-    .lf-container {
-      width: min(1100px, 100%);
-      margin: 0 auto;
+
+    * {
+      box-sizing:
+        border-box;
     }
 
-    .lf-hero {
-      min-height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 60px 20px;
+
+    html {
+      scroll-behavior:
+        smooth;
     }
 
-    .lf-logo {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
-      margin-bottom: 25px;
+
+    body {
+
+      margin:
+        0;
+
+      background:
+        var(--bg);
+
+      color:
+        var(--text);
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
     }
 
-    .lf-eyebrow {
-      letter-spacing: 4px;
-      font-size: 12px;
-      text-transform: uppercase;
-      opacity: .7;
+
+    a {
+      color:
+        inherit;
+
+      text-decoration:
+        none;
     }
 
-    .lf-title {
-      font-size: clamp(42px, 8vw, 90px);
-      line-height: 1;
-      margin: 10px 0 25px;
+
+    .site-header {
+
+      position:
+        sticky;
+
+      top:
+        0;
+
+      z-index:
+        100;
+
+      height:
+        74px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      padding:
+        0 28px;
+
+      background:
+        rgba(255,255,255,.88);
+
+      backdrop-filter:
+        blur(20px);
+
+      border-bottom:
+        1px solid var(--border);
+
     }
 
-    .lf-subtitle {
-      max-width: 650px;
-      margin: auto;
-      line-height: 1.8;
-      opacity: .75;
+
+    .brand {
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-weight:
+        800;
+
+      letter-spacing:
+        .18em;
+
+      font-size:
+        20px;
+
     }
 
-    .lf-section-title {
-      text-align: center;
-      margin-bottom: 35px;
+
+    .header-admin-link {
+
+      padding:
+        10px 16px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius:
+        999px;
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-size:
+        13px;
+
     }
 
-    .lf-weddings {
-      display: grid;
+
+    .hero {
+
+      min-height:
+        78svh;
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      text-align:
+        center;
+
+      padding:
+        80px 24px;
+
+      position:
+        relative;
+
+      overflow:
+        hidden;
+
+    }
+
+
+    .hero::before {
+
+      content:
+        "";
+
+      position:
+        absolute;
+
+      width:
+        600px;
+
+      height:
+        600px;
+
+      border-radius:
+        50%;
+
+      background:
+        rgba(255,255,255,.65);
+
+      filter:
+        blur(20px);
+
+    }
+
+
+    .hero-content {
+
+      position:
+        relative;
+
+      z-index:
+        2;
+
+      width:
+        min(850px,100%);
+
+    }
+
+
+    .eyebrow {
+
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .35em;
+
+      font-size:
+        11px;
+
+      color:
+        var(--muted);
+
+      margin:
+        0 0 18px;
+
+    }
+
+
+    .hero h1 {
+
+      font-size:
+        clamp(
+          60px,
+          13vw,
+          150px
+        );
+
+      line-height:
+        .82;
+
+      font-weight:
+        500;
+
+      margin:
+        0;
+
+    }
+
+
+    .hero-description {
+
+      width:
+        min(650px,100%);
+
+      margin:
+        30px auto;
+
+      font-size:
+        18px;
+
+      line-height:
+        1.9;
+
+      color:
+        var(--muted);
+
+    }
+
+
+    .hero-button {
+
+      display:
+        inline-flex;
+
+      background:
+        var(--text);
+
+      color:
+        white;
+
+      padding:
+        15px 25px;
+
+      border-radius:
+        999px;
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-size:
+        13px;
+
+    }
+
+
+    .invitation-list {
+
+      width:
+        min(1200px,calc(100% - 32px));
+
+      margin:
+        0 auto;
+
+      padding:
+        80px 0 120px;
+
+    }
+
+
+    .section-heading {
+
+      text-align:
+        center;
+
+      margin-bottom:
+        45px;
+
+    }
+
+
+    .section-heading h2 {
+
+      margin:
+        0;
+
+      font-size:
+        clamp(
+          35px,
+          6vw,
+          60px
+        );
+
+      font-weight:
+        500;
+
+    }
+
+
+    .wedding-grid {
+
+      display:
+        grid;
+
       grid-template-columns:
         repeat(
           auto-fit,
-          minmax(250px, 1fr)
+          minmax(
+            280px,
+            1fr
+          )
         );
-      gap: 25px;
-      padding-bottom: 80px;
+
+      gap:
+        20px;
+
     }
 
-    .lf-card {
-      overflow: hidden;
-      border-radius: 20px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(0,0,0,.08);
+
+    .wedding-card {
+
+      min-height:
+        330px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius:
+        28px;
+
+      background:
+        var(--surface);
+
+      padding:
+        30px;
+
+      display:
+        flex;
+
+      align-items:
+        flex-end;
+
+      box-shadow:
+        0 25px 70px
+        rgba(45,41,38,.07);
+
+      position:
+        relative;
+
+      overflow:
+        hidden;
+
     }
 
-    .lf-card-image {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      display: block;
+
+    .wedding-card::before {
+
+      content:
+        "";
+
+      position:
+        absolute;
+
+      width:
+        250px;
+
+      height:
+        250px;
+
+      border-radius:
+        50%;
+
+      background:
+        rgba(139,117,101,.10);
+
+      top:
+        -80px;
+
+      right:
+        -80px;
+
     }
 
-    .lf-card-placeholder {
-      aspect-ratio: 4 / 3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,.05);
-      font-size: 40px;
+
+    .wedding-card-content {
+
+      position:
+        relative;
+
+      z-index:
+        2;
+
+      width:
+        100%;
+
     }
 
-    .lf-card-body {
-      padding: 24px;
+
+    .card-label {
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-size:
+        10px;
+
+      letter-spacing:
+        .2em;
+
+      color:
+        var(--muted);
+
     }
 
-    .lf-card-body h3 {
-      margin: 0 0 10px;
+
+    .wedding-card h3 {
+
+      margin:
+        8px 0;
+
+      font-size:
+        35px;
+
+      font-weight:
+        500;
+
+      line-height:
+        1;
+
     }
 
-    .lf-card-body p {
-      opacity: .7;
-      line-height: 1.6;
+
+    .card-date {
+
+      color:
+        var(--muted);
+
+      margin-bottom:
+        22px;
+
     }
 
-    .lf-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 999px;
-      text-decoration: none;
-      border: 1px solid currentColor;
+
+    .button {
+
+      display:
+        inline-flex;
+
+      padding:
+        12px 17px;
+
+      border-radius:
+        999px;
+
+      background:
+        var(--text);
+
+      color:
+        white;
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-size:
+        13px;
+
     }
 
-    .lf-empty {
-      text-align: center;
-      padding: 70px 20px;
-      opacity: .7;
+
+    .empty-state {
+
+      text-align:
+        center;
+
+      padding:
+        80px 20px;
+
+      color:
+        var(--muted);
+
     }
 
-    .lf-footer {
-      text-align: center;
-      padding: 50px 20px;
-      opacity: .6;
-      font-size: 13px;
+
+    .site-footer {
+
+      text-align:
+        center;
+
+      padding:
+        45px 20px;
+
+      border-top:
+        1px solid var(--border);
+
+      color:
+        var(--muted);
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      font-size:
+        12px;
+
+      letter-spacing:
+        .12em;
+
+    }
+
+
+    @media (
+      max-width: 650px
+    ) {
+
+      .site-header {
+
+        padding:
+          0 15px;
+
+      }
+
+
+      .brand {
+
+        font-size:
+          16px;
+
+      }
+
+
+      .hero {
+
+        min-height:
+          70svh;
+
+      }
+
+
+      .hero h1 {
+
+        font-size:
+          clamp(
+            58px,
+            20vw,
+            100px
+          );
+
+      }
+
+
+      .invitation-list {
+
+        width:
+          calc(100% - 20px);
+
+      }
+
+
+      .wedding-card {
+
+        min-height:
+          300px;
+
+      }
+
     }
 
   </style>
 
 </head>
 
+
 <body>
 
-  <main class="lf-home">
 
-    <div class="lf-container">
+<header class="site-header">
 
-      <section class="lf-hero">
-
-        <div>
-
-          <img
-            src="/img/weddinglogo.png"
-            alt="LOVEFOREVER"
-            class="lf-logo"
-          >
-
-          <p class="lf-eyebrow">
-            LOVEFOREVER
-          </p>
-
-          <h1 class="lf-title">
-            Forever<br>
-            Starts Here
-          </h1>
-
-          <p class="lf-subtitle">
-            Platform undangan pernikahan digital
-            yang sederhana, elegan, dan personal.
-          </p>
-
-        </div>
-
-      </section>
+  <a
+    href="/"
+    class="brand"
+  >
+    LOVEFOREVER
+  </a>
 
 
-      <section>
+  <a
+    href="/admin/login"
+    class="header-admin-link"
+  >
+    Admin
+  </a>
 
-        <div class="lf-section-title">
-
-          <p class="lf-eyebrow">
-            Wedding Invitation
-          </p>
-
-          <h2>
-            Undangan Pernikahan
-          </h2>
-
-        </div>
+</header>
 
 
-        <% if (weddings && weddings.length) { %>
-
-          <div class="lf-weddings">
-
-            <% weddings.forEach(function(wedding) { %>
-
-              <article class="lf-card">
-
-                <% if (
-                  wedding.coverImage &&
-                  wedding.coverImage.data
-                ) { %>
-
-                  <img
-                    src="<%= wedding.coverImage.data %>"
-                    alt="Wedding <%= wedding.bride.name %> & <%= wedding.groom.name %>"
-                    class="lf-card-image"
-                    loading="lazy"
-                  >
-
-                <% } else { %>
-
-                  <div class="lf-card-placeholder">
-                    ♥
-                  </div>
-
-                <% } %>
+<main>
 
 
-                <div class="lf-card-body">
+  <!-- =====================================================
+       HERO
+  ====================================================== -->
 
-                  <p class="lf-eyebrow">
-                    The Wedding Of
-                  </p>
+  <section class="hero">
 
-                  <h3>
-                    <%= wedding.bride.name %>
-                    &
-                    <%= wedding.groom.name %>
-                  </h3>
-
-                  <% if (wedding.date) { %>
-
-                    <p>
-                      <%= wedding.date %>
-                    </p>
-
-                  <% } %>
-
-                  <a
-                    class="lf-button"
-                    href="/<%= encodeURIComponent(wedding.slug) %>"
-                  >
-                    Buka Undangan
-                  </a>
-
-                </div>
-
-              </article>
-
-            <% }); %>
-
-          </div>
-
-        <% } else { %>
-
-          <div class="lf-empty">
-
-            <h3>
-              Belum ada undangan.
-            </h3>
-
-            <p>
-              Wedding invitation yang telah
-              dipublish akan tampil di sini.
-            </p>
-
-          </div>
-
-        <% } %>
-
-      </section>
+    <div class="hero-content">
 
 
-      <footer class="lf-footer">
+      <p class="eyebrow">
+        WEDDING INVITATION
+      </p>
 
-        © <%= new Date().getFullYear() %>
-        LOVEFOREVER
 
-      </footer>
+      <h1>
+        LOVE<br>
+        FOREVER
+      </h1>
+
+
+      <p class="hero-description">
+
+        Sebuah tempat untuk menyimpan
+        cerita cinta, hari bahagia,
+        dan undangan pernikahan.
+
+      </p>
+
+
+      <a
+        href="#invitations"
+        class="hero-button"
+      >
+        Lihat Undangan
+      </a>
+
 
     </div>
 
-  </main>
+  </section>
+
+
+  <!-- =====================================================
+       INVITATIONS
+  ====================================================== -->
+
+  <section
+    id="invitations"
+    class="invitation-list"
+  >
+
+
+    <div class="section-heading">
+
+      <p class="eyebrow">
+        OUR INVITATIONS
+      </p>
+
+      <h2>
+        Wedding Invitation
+      </h2>
+
+    </div>
+
+
+    <% if (
+      !weddings ||
+      weddings.length === 0
+    ) { %>
+
+
+      <div class="empty-state">
+
+        <p>
+          Belum ada wedding invitation
+          yang dipublikasikan.
+        </p>
+
+      </div>
+
+
+    <% } else { %>
+
+
+      <div class="wedding-grid">
+
+
+        <% weddings.forEach(
+          function(wedding)
+        { %>
+
+
+          <article class="wedding-card">
+
+
+            <div class="wedding-card-content">
+
+
+              <p class="card-label">
+                WEDDING INVITATION
+              </p>
+
+
+              <h3>
+
+                <%= wedding.groom?.name || "" %>
+
+                <br>
+
+                &
+
+                <br>
+
+                <%= wedding.bride?.name || "" %>
+
+              </h3>
+
+
+              <% if (
+                wedding.date
+              ) { %>
+
+                <p class="card-date">
+                  <%= wedding.date %>
+                </p>
+
+              <% } %>
+
+
+              <a
+                href="/<%= encodeURIComponent(wedding.slug) %>"
+                class="button"
+              >
+                Buka Undangan
+              </a>
+
+
+            </div>
+
+
+          </article>
+
+
+        <% }); %>
+
+
+      </div>
+
+
+    <% } %>
+
+
+  </section>
+
+
+</main>
+
+
+<footer class="site-footer">
+
+  © <%= new Date().getFullYear() %>
+  LOVEFOREVER
+
+</footer>
+
 
 </body>
+
 </html>
