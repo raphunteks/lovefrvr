@@ -1,102 +1,79 @@
 require("dotenv").config();
 
 const express = require("express");
-const crypto = require("crypto");
 const path = require("path");
-
+const crypto = require("crypto");
+const multer = require("multer");
 const { Redis } = require("@upstash/redis");
 
 const app = express();
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+/* ============================================================
+   BASIC CONFIG
+============================================================ */
 
 const PORT = process.env.PORT || 3000;
+
+const APP_NAME = "LOVEFOREVER";
+
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  "CHANGE_THIS_SESSION_SECRET_IN_PRODUCTION";
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
-const SESSION_SECRET = process.env.SESSION_SECRET || "";
+const SESSION_MAX_AGE = 8 * 60 * 60 * 1000;
 
-const UPSTASH_REDIS_REST_URL =
-  process.env.UPSTASH_REDIS_REST_URL || "";
+/*
+ * Vercel request body limit = 4.5 MB.
+ *
+ * Kita sengaja membuat batas lebih rendah.
+ */
+const MAX_IMAGE_SIZE = 1.2 * 1024 * 1024;
+const MAX_AUDIO_SIZE = 3 * 1024 * 1024;
 
-const UPSTASH_REDIS_REST_TOKEN =
-  process.env.UPSTASH_REDIS_REST_TOKEN || "";
-
-const MAX_BODY_SIZE = "12mb";
-
-const MAX_IMAGE_BYTES = 1024 * 1024;
-
-const MAX_GALLERY_IMAGES = 15;
-
-const MAX_WEDDING_TEXT = 5000;
-
-const RESERVED_SLUGS = [
-  "admin",
-  "login",
-  "health",
-  "api",
-  "favicon.ico",
-  "robots.txt",
-  "sitemap.xml"
-];
-
-/* =========================================================
-   REDIS
-========================================================= */
+/* ============================================================
+   UPSTASH
+============================================================ */
 
 let redis = null;
 
 if (
-  UPSTASH_REDIS_REST_URL &&
-  UPSTASH_REDIS_REST_TOKEN
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
 ) {
   redis = new Redis({
-    url: UPSTASH_REDIS_REST_URL,
-    token: UPSTASH_REDIS_REST_TOKEN
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
   });
 }
 
-/* =========================================================
+/* ============================================================
    EXPRESS
-========================================================= */
+============================================================ */
 
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.set(
-  "views",
-  path.join(__dirname, "views")
-);
+app.disable("x-powered-by");
 
-app.use(
-  express.json({
-    limit: MAX_BODY_SIZE
-  })
-);
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: "7d",
+}));
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: MAX_BODY_SIZE
-  })
-);
+app.use(express.json({
+  limit: "1mb",
+}));
 
-app.use(
-  express.static(
-    path.join(__dirname, "public"),
-    {
-      maxAge: process.env.NODE_ENV === "production"
-        ? "7d"
-        : 0
-    }
-  )
-);
+app.use(express.urlencoded({
+  extended: true,
+  limit: "1mb",
+}));
 
-/* =========================================================
-   BASIC SECURITY HEADERS
-========================================================= */
+/* ============================================================
+   SECURITY HEADERS
+============================================================ */
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -122,319 +99,168 @@ app.use((req, res, next) => {
   next();
 });
 
-/* =========================================================
-   UTILITY
-========================================================= */
+/* ============================================================
+   HELPERS
+============================================================ */
 
 function nowISO() {
   return new Date().toISOString();
 }
 
 function createId(prefix = "id") {
-  return (
-    prefix +
-    "_" +
-    Date.now().toString(36) +
-    "_" +
-    crypto.randomBytes(5).toString("hex")
-  );
-}
-
-function safeString(
-  value,
-  maxLength = 1000
-) {
-  if (value === undefined || value === null) {
-    return "";
-  }
-
-  return String(value)
-    .trim()
-    .slice(0, maxLength);
+  return `${prefix}_${crypto.randomUUID()}`;
 }
 
 function normalizeSlug(value) {
-  return safeString(value, 100)
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 function isValidSlug(slug) {
-  if (!slug) {
-    return false;
-  }
-
-  if (
-    slug.length < 3 ||
-    slug.length > 100
-  ) {
-    return false;
-  }
-
-  if (!/^[a-z0-9-]+$/.test(slug)) {
-    return false;
-  }
-
-  if (RESERVED_SLUGS.includes(slug)) {
-    return false;
-  }
-
-  return true;
+  return /^[a-z0-9](?:[a-z0-9-]{1,98}[a-z0-9])?$/.test(slug);
 }
 
-function normalizeGuestName(value) {
-  return safeString(value, 150);
+const RESERVED_SLUGS = new Set([
+  "admin",
+  "login",
+  "logout",
+  "health",
+  "api",
+  "media",
+  "favicon.ico",
+  "robots.txt",
+  "sitemap.xml",
+]);
+
+function isReservedSlug(slug) {
+  return RESERVED_SLUGS.has(slug);
 }
 
-function validAttendance(value) {
-  return [
-    "hadir",
-    "tidak_hadir",
-    "masih_menentukan"
-  ].includes(value);
+function cleanText(value, max = 5000) {
+  return String(value || "")
+    .replace(/\u0000/g, "")
+    .trim()
+    .slice(0, max);
 }
 
-function parseInteger(
-  value,
-  fallback = 0
-) {
-  const n = Number(value);
+function safeJSONParse(value, fallback = null) {
+  try {
+    if (typeof value !== "string") {
+      return value;
+    }
 
-  if (!Number.isInteger(n)) {
+    return JSON.parse(value);
+  } catch {
     return fallback;
   }
-
-  return n;
 }
 
-function isValidImageMime(mime) {
-  return [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif"
-  ].includes(mime);
+function getOrigin(req) {
+  const forwardedProto =
+    req.headers["x-forwarded-proto"];
+
+  const forwardedHost =
+    req.headers["x-forwarded-host"];
+
+  const protocol =
+    forwardedProto ||
+    req.protocol ||
+    "https";
+
+  const host =
+    forwardedHost ||
+    req.get("host");
+
+  return `${protocol}://${host}`;
 }
 
-/* =========================================================
-   BASE64 IMAGE VALIDATION
-========================================================= */
-
-function validateBase64Image(image) {
-  if (!image) {
-    return null;
-  }
-
-  if (
-    typeof image !== "object" ||
-    typeof image.data !== "string"
-  ) {
-    return null;
-  }
-
-  const mime = safeString(
-    image.mime,
-    50
-  );
-
-  if (!isValidImageMime(mime)) {
-    return null;
-  }
-
-  const data = image.data;
-
-  if (!data.startsWith("data:image/")) {
-    return null;
-  }
-
-  const commaIndex = data.indexOf(",");
-
-  if (commaIndex === -1) {
-    return null;
-  }
-
-  const base64Part =
-    data.substring(commaIndex + 1);
-
-  if (!base64Part) {
-    return null;
-  }
-
-  const estimatedBytes =
-    Math.floor(
-      (base64Part.length * 3) / 4
-    );
-
-  if (
-    estimatedBytes >
-    MAX_IMAGE_BYTES
-  ) {
-    return null;
-  }
-
-  return {
-    data,
-    mime,
-    caption: safeString(
-      image.caption,
-      200
-    )
-  };
+function weddingURL(req, slug) {
+  return `${getOrigin(req)}/${encodeURIComponent(slug)}`;
 }
 
-/* =========================================================
-   DEFAULT WEDDING OBJECT
-========================================================= */
-
-function createDefaultWedding() {
-  const timestamp = nowISO();
-
-  return {
-    id: createId("wedding"),
-
-    slug: "",
-
-    status: "draft",
-
-    groom: {
-      name: "",
-      fullName: "",
-      photo: null
-    },
-
-    bride: {
-      name: "",
-      fullName: "",
-      photo: null
-    },
-
-    coverImage: null,
-
-    quote: "",
-
-    description: "",
-
-    date: "",
-
-    timezone: "Asia/Makassar",
-
-    events: [],
-
-    story: [],
-
-    gallery: [],
-
-    gift: [],
-
-    music: {
-      url: ""
-    },
-
-    createdAt: timestamp,
-
-    updatedAt: timestamp
-  };
+function guestURL(req, slug, guest) {
+  return `${weddingURL(req, slug)}?to=${encodeURIComponent(
+    guest
+  )}`;
 }
 
-/* =========================================================
-   REDIS KEY
-========================================================= */
+/* ============================================================
+   API RESPONSE HELPERS
+============================================================ */
 
-function weddingKey(slug) {
-  return `wedding:${slug}`;
+function apiSuccess(res, data = {}, status = 200) {
+  return res.status(status).json({
+    success: true,
+    ...data,
+  });
 }
 
-function rsvpKey(slug) {
-  return `rsvp:${slug}`;
+function apiError(
+  res,
+  message = "Terjadi kesalahan.",
+  status = 500,
+  extra = {}
+) {
+  return res.status(status).json({
+    success: false,
+    error: message,
+    ...extra,
+  });
 }
 
-/* =========================================================
-   REDIS HELPERS
-========================================================= */
+/* ============================================================
+   COOKIE HELPERS
+============================================================ */
 
-async function getWedding(slug) {
-  if (!redis) {
-    throw new Error(
-      "Redis belum dikonfigurasi."
-    );
-  }
+function parseCookies(req) {
+  const header = req.headers.cookie || "";
 
-  return await redis.get(
-    weddingKey(slug)
-  );
+  const cookies = {};
+
+  header.split(";").forEach((item) => {
+    const index = item.indexOf("=");
+
+    if (index === -1) {
+      return;
+    }
+
+    const key = item.slice(0, index).trim();
+
+    const value = item
+      .slice(index + 1)
+      .trim();
+
+    cookies[key] = decodeURIComponent(value);
+  });
+
+  return cookies;
 }
 
-async function saveWedding(wedding) {
-  if (!redis) {
-    throw new Error(
-      "Redis belum dikonfigurasi."
-    );
-  }
-
-  await redis.set(
-    weddingKey(wedding.slug),
-    wedding
-  );
-
-  return wedding;
-}
-
-async function getWeddingSlugs() {
-  if (!redis) {
-    throw new Error(
-      "Redis belum dikonfigurasi."
-    );
-  }
-
-  const data =
-    await redis.get("weddings");
-
-  if (!Array.isArray(data)) {
-    return [];
-  }
-
-  return data;
-}
-
-async function saveWeddingSlugs(slugs) {
-  await redis.set(
-    "weddings",
-    slugs
-  );
-}
-
-/* =========================================================
-   ADMIN AUTH
-========================================================= */
-
-function base64UrlEncode(value) {
+function base64url(value) {
   return Buffer
     .from(value)
     .toString("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
-    .replace(/=/g, "");
+    .replace(/=+$/, "");
 }
 
-function base64UrlDecode(value) {
-  try {
-    return Buffer
-      .from(
-        value
-          .replace(/-/g, "+")
-          .replace(/_/g, "/"),
-        "base64"
-      )
-      .toString("utf8");
-  } catch {
-    return null;
+function fromBase64url(value) {
+  let normalized = value
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+
+  while (normalized.length % 4) {
+    normalized += "=";
   }
+
+  return Buffer
+    .from(normalized, "base64")
+    .toString();
 }
 
-function signValue(value) {
+function sign(value) {
   return crypto
     .createHmac(
       "sha256",
@@ -444,840 +270,1349 @@ function signValue(value) {
     .digest("hex");
 }
 
-function createAdminSession() {
+function createAdminToken() {
   const payload = {
     username: ADMIN_USERNAME,
-    exp:
-      Date.now() +
-      1000 * 60 * 60 * 8,
-
-    csrf:
-      crypto
-        .randomBytes(24)
-        .toString("hex")
+    createdAt: Date.now(),
+    nonce: crypto.randomBytes(16).toString("hex"),
   };
 
-  const encoded =
-    base64UrlEncode(
-      JSON.stringify(payload)
-    );
-
-  const signature =
-    signValue(encoded);
-
-  return {
-    token:
-      `${encoded}.${signature}`,
-
-    csrf: payload.csrf
-  };
-}
-
-function verifyAdminSession(token) {
-  if (!token || !SESSION_SECRET) {
-    return null;
-  }
-
-  const parts =
-    token.split(".");
-
-  if (parts.length !== 2) {
-    return null;
-  }
-
-  const encoded = parts[0];
-
-  const signature = parts[1];
-
-  const expected =
-    signValue(encoded);
-
-  const validSignature =
-    crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
-    );
-
-  if (!validSignature) {
-    return null;
-  }
-
-  const decoded =
-    base64UrlDecode(encoded);
-
-  if (!decoded) {
-    return null;
-  }
-
-  let payload;
-
-  try {
-    payload = JSON.parse(decoded);
-  } catch {
-    return null;
-  }
-
-  if (
-    !payload.exp ||
-    payload.exp < Date.now()
-  ) {
-    return null;
-  }
-
-  if (
-    payload.username !==
-    ADMIN_USERNAME
-  ) {
-    return null;
-  }
-
-  return payload;
-}
-
-function getSession(req) {
-  const cookie =
-    req.headers.cookie || "";
-
-  const match =
-    cookie.match(
-      /(?:^|;\s*)lf_admin=([^;]+)/
-    );
-
-  if (!match) {
-    return null;
-  }
-
-  return verifyAdminSession(
-    decodeURIComponent(
-      match[1]
-    )
+  const encoded = base64url(
+    JSON.stringify(payload)
   );
+
+  const signature = sign(encoded);
+
+  return `${encoded}.${signature}`;
 }
 
-function requireAdmin(
-  req,
-  res,
-  next
-) {
-  const session =
-    getSession(req);
-
-  if (!session) {
-    return res.redirect(
-      "/admin/login"
-    );
-  }
-
-  req.adminSession =
-    session;
-
-  next();
-}
-
-/* =========================================================
-   CSRF
-========================================================= */
-
-function verifyCsrf(
-  req,
-  res
-) {
-  const session =
-    req.adminSession ||
-    getSession(req);
-
-  if (!session) {
-    return false;
-  }
-
-  const token =
-    req.body?._csrf ||
-    req.headers["x-csrf-token"];
-
+function verifyAdminToken(token) {
   if (!token) {
     return false;
   }
 
-  return crypto.timingSafeEqual(
-    Buffer.from(String(token)),
-    Buffer.from(String(session.csrf))
+  const parts = token.split(".");
+
+  if (parts.length !== 2) {
+    return false;
+  }
+
+  const encoded = parts[0];
+  const signature = parts[1];
+
+  const expected = sign(encoded);
+
+  try {
+    const validSignature =
+      crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+      );
+
+    if (!validSignature) {
+      return false;
+    }
+
+    const payload = JSON.parse(
+      fromBase64url(encoded)
+    );
+
+    if (
+      payload.username !==
+      ADMIN_USERNAME
+    ) {
+      return false;
+    }
+
+    if (
+      Date.now() - payload.createdAt >
+      SESSION_MAX_AGE
+    ) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function setAdminCookie(res) {
+  const token = createAdminToken();
+
+  const cookie = [
+    `lf_admin=${encodeURIComponent(token)}`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Strict",
+    "Max-Age=28800",
+  ];
+
+  if (process.env.NODE_ENV === "production") {
+    cookie.push("Secure");
+  }
+
+  res.setHeader(
+    "Set-Cookie",
+    cookie.join("; ")
   );
 }
 
-/* =========================================================
+function clearAdminCookie(res) {
+  const cookie = [
+    "lf_admin=",
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Strict",
+    "Max-Age=0",
+  ];
+
+  if (process.env.NODE_ENV === "production") {
+    cookie.push("Secure");
+  }
+
+  res.setHeader(
+    "Set-Cookie",
+    cookie.join("; ")
+  );
+}
+
+/* ============================================================
+   ADMIN AUTH
+============================================================ */
+
+function isAdminAuthenticated(req) {
+  const cookies = parseCookies(req);
+
+  return verifyAdminToken(
+    cookies.lf_admin
+  );
+}
+
+function requireAdminPage(req, res, next) {
+  if (!isAdminAuthenticated(req)) {
+    return res.redirect(
+      `/login?redirect=${encodeURIComponent(
+        req.originalUrl
+      )}`
+    );
+  }
+
+  next();
+}
+
+function requireAdminAPI(req, res, next) {
+  if (!isAdminAuthenticated(req)) {
+    return apiError(
+      res,
+      "Unauthorized.",
+      401
+    );
+  }
+
+  next();
+}
+
+/* ============================================================
+   ORIGIN CHECK FOR ADMIN MUTATIONS
+============================================================ */
+
+function adminMutationGuard(req, res, next) {
+  if (!isAdminAuthenticated(req)) {
+    return apiError(
+      res,
+      "Unauthorized.",
+      401
+    );
+  }
+
+  const origin =
+    req.headers.origin;
+
+  if (origin) {
+    const allowedOrigin =
+      getOrigin(req);
+
+    if (
+      origin !== allowedOrigin
+    ) {
+      return apiError(
+        res,
+        "Origin tidak valid.",
+        403
+      );
+    }
+  }
+
+  next();
+}
+
+/* ============================================================
+   REDIS HELPERS
+============================================================ */
+
+function ensureRedis() {
+  if (!redis) {
+    throw new Error(
+      "Upstash Redis belum dikonfigurasi."
+    );
+  }
+
+  return redis;
+}
+
+async function getWedding(slug) {
+  const db = ensureRedis();
+
+  const raw = await db.get(
+    `wedding:${slug}`
+  );
+
+  if (!raw) {
+    return null;
+  }
+
+  return typeof raw === "string"
+    ? safeJSONParse(raw, null)
+    : raw;
+}
+
+async function saveWedding(wedding) {
+  const db = ensureRedis();
+
+  await db.set(
+    `wedding:${wedding.slug}`,
+    JSON.stringify(wedding)
+  );
+
+  await db.sadd(
+    "weddings:index",
+    wedding.slug
+  );
+
+  return wedding;
+}
+
+async function deleteWeddingData(wedding) {
+  const db = ensureRedis();
+
+  const keys = [
+    `wedding:${wedding.slug}`,
+    `rsvp:${wedding.slug}`,
+  ];
+
+  const assetIds = [];
+
+  if (
+    wedding.cover &&
+    wedding.cover.assetId
+  ) {
+    assetIds.push(
+      wedding.cover.assetId
+    );
+  }
+
+  if (
+    wedding.bride &&
+    wedding.bride.photo &&
+    wedding.bride.photo.assetId
+  ) {
+    assetIds.push(
+      wedding.bride.photo.assetId
+    );
+  }
+
+  if (
+    wedding.groom &&
+    wedding.groom.photo &&
+    wedding.groom.photo.assetId
+  ) {
+    assetIds.push(
+      wedding.groom.photo.assetId
+    );
+  }
+
+  if (
+    wedding.music &&
+    wedding.music.assetId
+  ) {
+    assetIds.push(
+      wedding.music.assetId
+    );
+  }
+
+  if (Array.isArray(wedding.gallery)) {
+    wedding.gallery.forEach((item) => {
+      if (item.assetId) {
+        assetIds.push(item.assetId);
+      }
+    });
+  }
+
+  for (const assetId of assetIds) {
+    keys.push(`asset:${assetId}`);
+  }
+
+  if (keys.length) {
+    await db.del(...keys);
+  }
+
+  await db.srem(
+    "weddings:index",
+    wedding.slug
+  );
+}
+
+/* ============================================================
+   DEFAULT WEDDING
+============================================================ */
+
+function createDefaultWedding(slug) {
+  const timestamp = nowISO();
+
+  return {
+    id: createId("wedding"),
+
+    slug,
+
+    status: "draft",
+
+    createdAt: timestamp,
+    updatedAt: timestamp,
+
+    title: "The Wedding Of",
+
+    opening: {
+      eyebrow:
+        "ASSALAMU'ALAIKUM WARAHMATULLAHI WABARAKATUH",
+
+      title:
+        "Dengan penuh kebahagiaan,",
+
+      text:
+        "Kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada hari bahagia kami.",
+
+      button:
+        "BUKA UNDANGAN",
+    },
+
+    quote: {
+      text:
+        "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri supaya kamu mendapatkan ketenangan hati dan dijadikan-Nya kasih sayang di antara kamu.",
+      source:
+        "QS. Ar-Rum: 21",
+    },
+
+    groom: {
+      name: "Nama Mempelai Pria",
+      fullName: "",
+      parents: "",
+      instagram: "",
+      photo: null,
+    },
+
+    bride: {
+      name: "Nama Mempelai Wanita",
+      fullName: "",
+      parents: "",
+      instagram: "",
+      photo: null,
+    },
+
+    date: "",
+    timezone: "Asia/Jakarta",
+
+    story: [],
+
+    events: [
+      {
+        id: createId("event"),
+        title: "Akad Nikah",
+        date: "",
+        time: "",
+        venue: "",
+        address: "",
+        mapsUrl: "",
+      },
+      {
+        id: createId("event"),
+        title: "Resepsi",
+        date: "",
+        time: "",
+        venue: "",
+        address: "",
+        mapsUrl: "",
+      },
+    ],
+
+    gallery: [],
+
+    gift: {
+      enabled: true,
+      title: "Wedding Gift",
+      text:
+        "Doa restu Anda adalah hadiah terindah bagi kami.",
+      bankName: "",
+      accountNumber: "",
+      accountName: "",
+      address: "",
+    },
+
+    music: {
+      assetId: null,
+      title: "",
+      autoplay: true,
+      loop: true,
+    },
+
+    theme: {
+      background: "#f7f2eb",
+      surface: "#fffdf9",
+      text: "#2e2925",
+      muted: "#8c837b",
+      accent: "#7c6b5d",
+      serif:
+        "'Cormorant Garamond', Georgia, serif",
+      sans:
+        "Inter, Arial, sans-serif",
+    },
+
+    settings: {
+      showOpening: true,
+      showCountdown: true,
+      showStory: true,
+      showGallery: true,
+      showGift: true,
+      showRSVP: true,
+      showMusic: true,
+      bottomNavigation: true,
+    },
+  };
+}
+
+/* ============================================================
+   NORMALIZE WEDDING
+============================================================ */
+
+function normalizeWedding(input, oldWedding = null) {
+  const base =
+    oldWedding ||
+    createDefaultWedding(
+      normalizeSlug(input.slug)
+    );
+
+  const wedding = {
+    ...base,
+    ...input,
+  };
+
+  wedding.slug =
+    normalizeSlug(input.slug);
+
+  wedding.status =
+    input.status === "published"
+      ? "published"
+      : "draft";
+
+  wedding.title =
+    cleanText(
+      input.title ||
+      "The Wedding Of",
+      200
+    );
+
+  wedding.date =
+    cleanText(
+      input.date,
+      100
+    );
+
+  wedding.timezone =
+    cleanText(
+      input.timezone ||
+      "Asia/Jakarta",
+      100
+    );
+
+  wedding.opening = {
+    ...base.opening,
+    ...(input.opening || {}),
+  };
+
+  wedding.quote = {
+    ...base.quote,
+    ...(input.quote || {}),
+  };
+
+  wedding.bride = {
+    ...base.bride,
+    ...(input.bride || {}),
+  };
+
+  wedding.groom = {
+    ...base.groom,
+    ...(input.groom || {}),
+  };
+
+  wedding.gift = {
+    ...base.gift,
+    ...(input.gift || {}),
+  };
+
+  wedding.music = {
+    ...base.music,
+    ...(input.music || {}),
+  };
+
+  wedding.theme = {
+    ...base.theme,
+    ...(input.theme || {}),
+  };
+
+  wedding.settings = {
+    ...base.settings,
+    ...(input.settings || {}),
+  };
+
+  wedding.story =
+    Array.isArray(input.story)
+      ? input.story
+      : base.story;
+
+  wedding.events =
+    Array.isArray(input.events)
+      ? input.events
+      : base.events;
+
+  wedding.gallery =
+    Array.isArray(input.gallery)
+      ? input.gallery
+      : base.gallery;
+
+  wedding.updatedAt =
+    nowISO();
+
+  return wedding;
+}
+
+/* ============================================================
+   ASSET HELPERS
+============================================================ */
+
+function assetPublicURL(req, assetId) {
+  if (!assetId) {
+    return null;
+  }
+
+  return `${getOrigin(req)}/media/${encodeURIComponent(
+    assetId
+  )}`;
+}
+
+function addAssetURL(req, item) {
+  if (!item) {
+    return null;
+  }
+
+  return {
+    ...item,
+    url: assetPublicURL(
+      req,
+      item.assetId
+    ),
+  };
+}
+
+function publicWedding(req, wedding) {
+  const output = JSON.parse(
+    JSON.stringify(wedding)
+  );
+
+  if (output.cover) {
+    output.cover =
+      addAssetURL(
+        req,
+        output.cover
+      );
+  }
+
+  if (
+    output.bride &&
+    output.bride.photo
+  ) {
+    output.bride.photo =
+      addAssetURL(
+        req,
+        output.bride.photo
+      );
+  }
+
+  if (
+    output.groom &&
+    output.groom.photo
+  ) {
+    output.groom.photo =
+      addAssetURL(
+        req,
+        output.groom.photo
+      );
+  }
+
+  if (
+    output.music &&
+    output.music.assetId
+  ) {
+    output.music.url =
+      assetPublicURL(
+        req,
+        output.music.assetId
+      );
+  }
+
+  output.gallery =
+    Array.isArray(
+      output.gallery
+    )
+      ? output.gallery.map((item) =>
+          addAssetURL(req, item)
+        )
+      : [];
+
+  return output;
+}
+
+/* ============================================================
+   MULTER
+============================================================ */
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+
+  limits: {
+    fileSize: MAX_AUDIO_SIZE,
+    files: 1,
+    parts: 3,
+  },
+
+  fileFilter(req, file, cb) {
+    const allowedImages = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
+
+    const allowedAudio = [
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/wav",
+      "audio/x-wav",
+      "audio/ogg",
+    ];
+
+    if (
+      allowedImages.includes(
+        file.mimetype
+      )
+    ) {
+      return cb(null, true);
+    }
+
+    if (
+      allowedAudio.includes(
+        file.mimetype
+      )
+    ) {
+      return cb(null, true);
+    }
+
+    return cb(
+      new Error(
+        "Format file tidak didukung."
+      )
+    );
+  },
+});
+
+/* ============================================================
    HEALTH
-========================================================= */
+============================================================ */
 
-app.get(
-  "/health",
-  async (req, res) => {
-    try {
-      if (!redis) {
-        return res.status(500).json({
-          status: "error",
-          redis: false
-        });
-      }
-
-      await redis.set(
-        "health:lastCheck",
-        nowISO()
-      );
-
-      return res.json({
-        status: "ok",
-        redis: true
-      });
-    } catch (error) {
-      console.error(
-        "Health check error:",
-        error
-      );
-
-      return res.status(500).json({
+app.get("/health", async (req, res) => {
+  try {
+    if (!redis) {
+      return res.status(503).json({
         status: "error",
-        redis: false
+        redis: false,
       });
     }
+
+    await redis.ping();
+
+    return res.json({
+      status: "ok",
+      redis: true,
+      timestamp: nowISO(),
+    });
+  } catch (error) {
+    return res.status(503).json({
+      status: "error",
+      redis: false,
+      message: "Redis unavailable",
+    });
   }
-);
+});
 
-/* =========================================================
-   LANDING PAGE
-========================================================= */
+/* ============================================================
+   LOGIN
+============================================================ */
 
-app.get(
-  "/",
-  async (req, res) => {
-    try {
-      const slugs =
-        await getWeddingSlugs();
-
-      const weddings = [];
-
-      for (const slug of slugs) {
-        const wedding =
-          await getWedding(slug);
-
-        if (
-          wedding &&
-          wedding.status === "published"
-        ) {
-          weddings.push(wedding);
-        }
-      }
-
-      return res.render(
-        "index",
-        {
-          weddings
-        }
-      );
-    } catch (error) {
-      console.error(
-        "Landing error:",
-        error
-      );
-
-      return res.status(500).send(
-        "Terjadi kesalahan server."
-      );
-    }
+app.get("/login", (req, res) => {
+  if (isAdminAuthenticated(req)) {
+    return res.redirect("/admin");
   }
-);
 
-/* =========================================================
-   ADMIN LOGIN PAGE
-========================================================= */
+  res.render("login", {
+    error: null,
+    csrfToken: "",
+  });
+});
 
-app.get(
-  "/admin/login",
-  (req, res) => {
-    const session =
-      getSession(req);
+app.post("/admin/login", (req, res) => {
+  const username =
+    cleanText(
+      req.body.username,
+      150
+    );
 
-    if (session) {
-      return res.redirect(
-        "/admin"
-      );
-    }
+  const password =
+    String(
+      req.body.password || ""
+    );
 
-    return res.render(
+  const validUsername =
+    username === ADMIN_USERNAME;
+
+  const validPassword =
+    password === ADMIN_PASSWORD;
+
+  if (
+    !validUsername ||
+    !validPassword
+  ) {
+    return res.status(401).render(
       "login",
       {
-        error: null,
-        csrfToken: ""
+        error:
+          "Username atau password salah.",
+        csrfToken: "",
       }
     );
   }
-);
 
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
+  setAdminCookie(res);
 
-app.post(
-  "/admin/login",
-  (req, res) => {
-    const username =
-      safeString(
-        req.body.username,
-        100
-      );
+  return res.redirect("/admin");
+});
 
-    const password =
-      String(
-        req.body.password || ""
-      );
-
-    if (
-      !ADMIN_USERNAME ||
-      !ADMIN_PASSWORD ||
-      !SESSION_SECRET
-    ) {
-      return res.status(500).render(
-        "login",
-        {
-          error:
-            "Konfigurasi admin di environment belum lengkap.",
-          csrfToken: ""
-        }
-      );
-    }
-
-    if (
-      username !==
-        ADMIN_USERNAME ||
-      password !==
-        ADMIN_PASSWORD
-    ) {
-      return res.status(401).render(
-        "login",
-        {
-          error:
-            "Username atau password salah.",
-          csrfToken: ""
-        }
-      );
-    }
-
-    const session =
-      createAdminSession();
-
-    res.setHeader(
-      "Set-Cookie",
-      [
-        `lf_admin=${encodeURIComponent(
-          session.token
-        )}`,
-        "HttpOnly",
-        "Path=/",
-        "SameSite=Lax",
-        process.env.NODE_ENV ===
-          "production"
-          ? "Secure"
-          : ""
-      ]
-        .filter(Boolean)
-        .join("; ")
-    );
-
-    return res.redirect(
-      "/admin"
-    );
-  }
-);
-
-/* =========================================================
-   ADMIN LOGOUT
-========================================================= */
+/* ============================================================
+   LOGOUT
+============================================================ */
 
 app.post(
   "/admin/logout",
-  requireAdmin,
   (req, res) => {
-    if (!verifyCsrf(req, res)) {
-      return res.status(403).send(
-        "CSRF token tidak valid."
-      );
+    clearAdminCookie(res);
+
+    if (
+      String(
+        req.headers.accept || ""
+      ).includes("application/json")
+    ) {
+      return apiSuccess(res);
     }
 
-    res.setHeader(
-      "Set-Cookie",
-      "lf_admin=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0"
-    );
-
-    return res.redirect(
-      "/admin/login"
-    );
+    return res.redirect("/login");
   }
 );
 
-/* =========================================================
-   ADMIN DASHBOARD
-========================================================= */
+app.get(
+  "/admin/logout",
+  (req, res) => {
+    clearAdminCookie(res);
+    return res.redirect("/login");
+  }
+);
+
+/* ============================================================
+   ADMIN PAGE
+============================================================ */
 
 app.get(
   "/admin",
-  requireAdmin,
+  requireAdminPage,
   async (req, res) => {
     try {
+      const db = ensureRedis();
+
       const slugs =
-        await getWeddingSlugs();
+        await db.smembers(
+          "weddings:index"
+        );
 
       const weddings = [];
 
-      for (const slug of slugs) {
+      for (const slug of slugs || []) {
         const wedding =
           await getWedding(slug);
 
         if (wedding) {
-          const rsvps =
-            (await redis.get(
-              rsvpKey(slug)
-            )) || [];
-
-          const stats = {
-            total: rsvps.length,
-
-            hadir:
-              rsvps.filter(
-                x =>
-                  x.attendance ===
-                  "hadir"
-              ).length,
-
-            tidakHadir:
-              rsvps.filter(
-                x =>
-                  x.attendance ===
-                  "tidak_hadir"
-              ).length,
-
-            belumTentu:
-              rsvps.filter(
-                x =>
-                  x.attendance ===
-                  "masih_menentukan"
-              ).length,
-
-            guestCount:
-              rsvps.reduce(
-                (total, item) =>
-                  total +
-                  Number(
-                    item.guestCount ||
-                      0
-                  ),
-                0
-              )
-          };
+          const rsvpCount =
+            await db.llen(
+              `rsvp:${slug}`
+            );
 
           weddings.push({
             ...wedding,
-            stats
+            rsvpCount,
+            url: weddingURL(
+              req,
+              slug
+            ),
           });
         }
       }
 
-      return res.render(
-        "admin",
-        {
-          weddings,
-          csrfToken:
-            req.adminSession.csrf
-        }
+      weddings.sort(
+        (a, b) =>
+          String(
+            b.updatedAt
+          ).localeCompare(
+            String(a.updatedAt)
+          )
       );
+
+      const published =
+        weddings.filter(
+          (item) =>
+            item.status ===
+            "published"
+        ).length;
+
+      res.render("admin", {
+        weddings,
+        totalWedding:
+          weddings.length,
+        published,
+        draft:
+          weddings.length -
+          published,
+        origin:
+          getOrigin(req),
+      });
     } catch (error) {
       console.error(
-        "Admin dashboard error:",
+        "ADMIN ERROR:",
         error
       );
 
-      return res.status(500).send(
-        "Gagal membuka dashboard."
+      res.status(500).render(
+        "admin",
+        {
+          weddings: [],
+          totalWedding: 0,
+          published: 0,
+          draft: 0,
+          origin:
+            getOrigin(req),
+          error:
+            "Gagal mengambil data dashboard.",
+        }
       );
     }
   }
 );
 
-/* =========================================================
-   CREATE WEDDING
-========================================================= */
+/* ============================================================
+   ADMIN — LIST WEDDINGS
+============================================================ */
 
-app.post(
-  "/admin/wedding/new",
-  requireAdmin,
+app.get(
+  "/api/weddings",
+  requireAdminAPI,
   async (req, res) => {
     try {
-      if (!verifyCsrf(req, res)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "CSRF token tidak valid."
+      const db = ensureRedis();
+
+      const slugs =
+        await db.smembers(
+          "weddings:index"
+        );
+
+      const weddings = [];
+
+      for (const slug of slugs || []) {
+        const wedding =
+          await getWedding(slug);
+
+        if (!wedding) {
+          continue;
+        }
+
+        const rsvpCount =
+          await db.llen(
+            `rsvp:${slug}`
+          );
+
+        weddings.push({
+          ...wedding,
+          rsvpCount,
+          url: weddingURL(
+            req,
+            slug
+          ),
         });
       }
 
-      const payload =
-        req.body;
+      return apiSuccess(
+        res,
+        {
+          weddings,
+        }
+      );
+    } catch (error) {
+      console.error(
+        "LIST ERROR:",
+        error
+      );
 
+      return apiError(
+        res,
+        "Gagal mengambil wedding.",
+        500
+      );
+    }
+  }
+);
+
+/* ============================================================
+   ADMIN — GET WEDDING
+============================================================ */
+
+app.get(
+  "/api/weddings/:slug",
+  requireAdminAPI,
+  async (req, res) => {
+    try {
       const slug =
         normalizeSlug(
-          payload.slug
+          req.params.slug
         );
 
+      const wedding =
+        await getWedding(slug);
+
+      if (!wedding) {
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
+        );
+      }
+
+      const db = ensureRedis();
+
+      const rsvps =
+        await db.lrange(
+          `rsvp:${slug}`,
+          0,
+          -1
+        );
+
+      const parsedRSVP =
+        (rsvps || [])
+          .map((item) =>
+            typeof item ===
+            "string"
+              ? safeJSONParse(
+                  item,
+                  null
+                )
+              : item
+          )
+          .filter(Boolean);
+
+      return apiSuccess(
+        res,
+        {
+          wedding,
+          rsvps: parsedRSVP,
+          url: weddingURL(
+            req,
+            slug
+          ),
+        }
+      );
+    } catch (error) {
+      console.error(
+        "GET WEDDING ERROR:",
+        error
+      );
+
+      return apiError(
+        res,
+        "Gagal mengambil wedding.",
+        500
+      );
+    }
+  }
+);
+
+/* ============================================================
+   ADMIN — CREATE
+============================================================ */
+
+app.post(
+  "/api/weddings",
+  adminMutationGuard,
+  async (req, res) => {
+    try {
+      const slug =
+        normalizeSlug(
+          req.body.slug
+        );
+
+      if (!slug) {
+        return apiError(
+          res,
+          "Slug wajib diisi.",
+          422
+        );
+      }
+
       if (!isValidSlug(slug)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Slug tidak valid."
-        });
+        return apiError(
+          res,
+          "Slug hanya boleh berisi huruf kecil, angka dan tanda -.",
+          422
+        );
+      }
+
+      if (isReservedSlug(slug)) {
+        return apiError(
+          res,
+          "Slug tersebut merupakan reserved route.",
+          422
+        );
       }
 
       const existing =
         await getWedding(slug);
 
       if (existing) {
-        return res.status(409).json({
-          success: false,
-          message:
-            "Slug sudah digunakan."
-        });
+        return apiError(
+          res,
+          "Slug sudah digunakan.",
+          409
+        );
       }
 
       const wedding =
-        buildWeddingFromPayload(
-          payload
+        normalizeWedding(
+          {
+            ...req.body,
+            slug,
+          }
         );
-
-      wedding.slug = slug;
-
-      wedding.id =
-        createId("wedding");
-
-      wedding.createdAt =
-        nowISO();
-
-      wedding.updatedAt =
-        nowISO();
 
       await saveWedding(
         wedding
       );
 
-      const slugs =
-        await getWeddingSlugs();
-
-      if (!slugs.includes(slug)) {
-        slugs.push(slug);
-
-        await saveWeddingSlugs(
-          slugs
-        );
-      }
-
-      return res.json({
-        success: true,
-        message:
-          "Wedding berhasil dibuat.",
-        wedding
-      });
+      return apiSuccess(
+        res,
+        {
+          message:
+            "Wedding berhasil dibuat.",
+          wedding,
+          url: weddingURL(
+            req,
+            slug
+          ),
+        },
+        201
+      );
     } catch (error) {
       console.error(
-        "Create wedding error:",
+        "CREATE WEDDING ERROR:",
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal membuat wedding."
-      });
+      return apiError(
+        res,
+        "Gagal membuat wedding.",
+        500
+      );
     }
   }
 );
 
-/* =========================================================
-   UPDATE WEDDING
-========================================================= */
+/* ============================================================
+   ADMIN — UPDATE
+============================================================ */
 
-app.post(
-  "/admin/wedding/:slug/edit",
-  requireAdmin,
+app.put(
+  "/api/weddings/:slug",
+  adminMutationGuard,
   async (req, res) => {
     try {
-      if (!verifyCsrf(req, res)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "CSRF token tidak valid."
-        });
-      }
-
       const oldSlug =
         normalizeSlug(
           req.params.slug
         );
 
-      const existing =
+      const current =
         await getWedding(
           oldSlug
         );
 
-      if (!existing) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Wedding tidak ditemukan."
-        });
+      if (!current) {
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
+        );
       }
-
-      const payload =
-        req.body;
 
       const newSlug =
         normalizeSlug(
-          payload.slug
+          req.body.slug ||
+          oldSlug
         );
 
       if (!isValidSlug(newSlug)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Slug baru tidak valid."
-        });
+        return apiError(
+          res,
+          "Slug tidak valid.",
+          422
+        );
+      }
+
+      if (
+        isReservedSlug(
+          newSlug
+        )
+      ) {
+        return apiError(
+          res,
+          "Slug tersebut merupakan reserved route.",
+          422
+        );
       }
 
       if (
         newSlug !== oldSlug
       ) {
-        const conflict =
+        const collision =
           await getWedding(
             newSlug
           );
 
-        if (conflict) {
-          return res.status(409).json({
-            success: false,
-            message:
-              "Slug baru sudah digunakan."
-          });
+        if (collision) {
+          return apiError(
+            res,
+            "Slug baru sudah digunakan.",
+            409
+          );
         }
       }
 
       const wedding =
-        buildWeddingFromPayload(
-          payload
+        normalizeWedding(
+          {
+            ...current,
+            ...req.body,
+            slug: newSlug,
+            id: current.id,
+            createdAt:
+              current.createdAt,
+          },
+          current
         );
 
-      wedding.id =
-        existing.id;
-
-      wedding.slug =
-        newSlug;
-
-      wedding.createdAt =
-        existing.createdAt ||
-        nowISO();
-
-      wedding.updatedAt =
-        nowISO();
-
-      await saveWedding(
-        wedding
-      );
+      const db = ensureRedis();
 
       if (
         newSlug !== oldSlug
       ) {
-        await redis.del(
-          weddingKey(
-            oldSlug
+        await db.set(
+          `wedding:${newSlug}`,
+          JSON.stringify(
+            wedding
           )
         );
 
-        const slugs =
-          await getWeddingSlugs();
+        await db.sadd(
+          "weddings:index",
+          newSlug
+        );
 
-        const index =
-          slugs.indexOf(
-            oldSlug
+        await db.del(
+          `wedding:${oldSlug}`
+        );
+
+        await db.srem(
+          "weddings:index",
+          oldSlug
+        );
+
+        const oldRSVPKey =
+          `rsvp:${oldSlug}`;
+
+        const newRSVPKey =
+          `rsvp:${newSlug}`;
+
+        const existingRSVP =
+          await db.lrange(
+            oldRSVPKey,
+            0,
+            -1
           );
 
-        if (index !== -1) {
-          slugs[index] =
-            newSlug;
-        } else if (
-          !slugs.includes(
-            newSlug
-          )
+        if (
+          existingRSVP &&
+          existingRSVP.length
         ) {
-          slugs.push(
+          for (
+            const item of existingRSVP
+          ) {
+            await db.rpush(
+              newRSVPKey,
+              item
+            );
+          }
+
+          await db.del(
+            oldRSVPKey
+          );
+        }
+      } else {
+        await saveWedding(
+          wedding
+        );
+      }
+
+      return apiSuccess(
+        res,
+        {
+          message:
+            "Wedding berhasil diperbarui.",
+          wedding,
+          url: weddingURL(
+            req,
             newSlug
-          );
+          ),
         }
-
-        await saveWeddingSlugs(
-          slugs
-        );
-
-        const oldRsvp =
-          await redis.get(
-            rsvpKey(
-              oldSlug
-            )
-          );
-
-        if (oldRsvp) {
-          await redis.set(
-            rsvpKey(
-              newSlug
-            ),
-            oldRsvp
-          );
-
-          await redis.del(
-            rsvpKey(
-              oldSlug
-            )
-          );
-        }
-      }
-
-      return res.json({
-        success: true,
-        message:
-          "Wedding berhasil diperbarui.",
-        wedding
-      });
+      );
     } catch (error) {
       console.error(
-        "Update wedding error:",
+        "UPDATE WEDDING ERROR:",
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal memperbarui wedding."
-      });
+      return apiError(
+        res,
+        "Gagal memperbarui wedding.",
+        500
+      );
     }
   }
 );
 
-/* =========================================================
-   DELETE WEDDING
-========================================================= */
+/* ============================================================
+   ADMIN — DELETE
+============================================================ */
 
-app.post(
-  "/admin/wedding/:slug/delete",
-  requireAdmin,
+app.delete(
+  "/api/weddings/:slug",
+  adminMutationGuard,
   async (req, res) => {
     try {
-      if (!verifyCsrf(req, res)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "CSRF token tidak valid."
-        });
-      }
-
-      const slug =
-        normalizeSlug(
-          req.params.slug
-        );
-
-      const existing =
-        await getWedding(
-          slug
-        );
-
-      if (!existing) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Wedding tidak ditemukan."
-        });
-      }
-
-      await redis.del(
-        weddingKey(slug)
-      );
-
-      await redis.del(
-        rsvpKey(slug)
-      );
-
-      const slugs =
-        await getWeddingSlugs();
-
-      const newSlugs =
-        slugs.filter(
-          item =>
-            item !== slug
-        );
-
-      await saveWeddingSlugs(
-        newSlugs
-      );
-
-      return res.json({
-        success: true,
-        message:
-          "Wedding berhasil dihapus."
-      });
-    } catch (error) {
-      console.error(
-        "Delete wedding error:",
-        error
-      );
-
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal menghapus wedding."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   PUBLISH
-========================================================= */
-
-app.post(
-  "/admin/wedding/:slug/publish",
-  requireAdmin,
-  async (req, res) => {
-    try {
-      if (!verifyCsrf(req, res)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "CSRF token tidak valid."
-        });
-      }
-
       const slug =
         normalizeSlug(
           req.params.slug
         );
 
       const wedding =
-        await getWedding(
-          slug
-        );
+        await getWedding(slug);
 
       if (!wedding) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Wedding tidak ditemukan."
-        });
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
+        );
       }
 
+      await deleteWeddingData(
+        wedding
+      );
+
+      return apiSuccess(
+        res,
+        {
+          message:
+            "Wedding berhasil dihapus.",
+        }
+      );
+    } catch (error) {
+      console.error(
+        "DELETE WEDDING ERROR:",
+        error
+      );
+
+      return apiError(
+        res,
+        "Gagal menghapus wedding.",
+        500
+      );
+    }
+  }
+);
+
+/* ============================================================
+   ADMIN — PUBLISH / UNPUBLISH
+============================================================ */
+
+app.patch(
+  "/api/weddings/:slug/status",
+  adminMutationGuard,
+  async (req, res) => {
+    try {
+      const slug =
+        normalizeSlug(
+          req.params.slug
+        );
+
+      const wedding =
+        await getWedding(slug);
+
+      if (!wedding) {
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
+        );
+      }
+
+      const status =
+        req.body.status ===
+        "published"
+          ? "published"
+          : "draft";
+
       wedding.status =
-        "published";
+        status;
 
       wedding.updatedAt =
         nowISO();
@@ -1286,98 +1621,422 @@ app.post(
         wedding
       );
 
-      return res.json({
-        success: true,
-        message:
-          "Wedding dipublish."
-      });
+      return apiSuccess(
+        res,
+        {
+          message:
+            status === "published"
+              ? "Wedding berhasil dipublish."
+              : "Wedding berhasil dijadikan draft.",
+          wedding,
+        }
+      );
     } catch (error) {
       console.error(
-        "Publish error:",
+        "STATUS ERROR:",
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal publish."
-      });
+      return apiError(
+        res,
+        "Gagal mengubah status.",
+        500
+      );
     }
   }
 );
 
-/* =========================================================
-   UNPUBLISH
-========================================================= */
+/* ============================================================
+   ADMIN — UPLOAD ASSET
+============================================================ */
+
+/*
+ * IMPORTANT:
+ * Satu request hanya satu file.
+ *
+ * Admin.ejs akan meng-upload gallery satu per satu.
+ * Ini menghindari request terlalu besar.
+ */
 
 app.post(
-  "/admin/wedding/:slug/unpublish",
-  requireAdmin,
+  "/api/weddings/:slug/assets",
+  adminMutationGuard,
+  upload.single("file"),
   async (req, res) => {
     try {
-      if (!verifyCsrf(req, res)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "CSRF token tidak valid."
-        });
-      }
-
       const slug =
         normalizeSlug(
           req.params.slug
         );
 
       const wedding =
-        await getWedding(
-          slug
-        );
+        await getWedding(slug);
 
       if (!wedding) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Wedding tidak ditemukan."
-        });
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
+        );
       }
 
-      wedding.status =
-        "draft";
+      if (!req.file) {
+        return apiError(
+          res,
+          "File belum dipilih.",
+          422
+        );
+      }
 
-      wedding.updatedAt =
-        nowISO();
+      const isImage =
+        req.file.mimetype.startsWith(
+          "image/"
+        );
 
-      await saveWedding(
-        wedding
+      const isAudio =
+        req.file.mimetype.startsWith(
+          "audio/"
+        );
+
+      if (
+        isImage &&
+        req.file.size >
+          MAX_IMAGE_SIZE
+      ) {
+        return apiError(
+          res,
+          "Ukuran gambar maksimal 1.2 MB.",
+          413
+        );
+      }
+
+      if (
+        isAudio &&
+        req.file.size >
+          MAX_AUDIO_SIZE
+      ) {
+        return apiError(
+          res,
+          "Ukuran MP3/audio maksimal 3 MB.",
+          413
+        );
+      }
+
+      if (
+        !isImage &&
+        !isAudio
+      ) {
+        return apiError(
+          res,
+          "Format file tidak didukung.",
+          415
+        );
+      }
+
+      const assetId =
+        createId("asset");
+
+      const asset = {
+        assetId,
+
+        weddingSlug:
+          slug,
+
+        filename:
+          cleanText(
+            req.file.originalname,
+            200
+          ),
+
+        mime:
+          req.file.mimetype,
+
+        size:
+          req.file.size,
+
+        kind:
+          isImage
+            ? "image"
+            : "audio",
+
+        createdAt:
+          nowISO(),
+
+        base64:
+          req.file.buffer.toString(
+            "base64"
+          ),
+      };
+
+      const db = ensureRedis();
+
+      await db.set(
+        `asset:${assetId}`,
+        JSON.stringify(
+          asset
+        )
       );
 
-      return res.json({
-        success: true,
-        message:
-          "Wedding di-unpublish."
-      });
+      return apiSuccess(
+        res,
+        {
+          message:
+            "File berhasil disimpan ke Upstash Redis.",
+
+          asset: {
+            assetId,
+            filename:
+              asset.filename,
+            mime:
+              asset.mime,
+            size:
+              asset.size,
+            kind:
+              asset.kind,
+            url:
+              assetPublicURL(
+                req,
+                assetId
+              ),
+          },
+        },
+        201
+      );
     } catch (error) {
       console.error(
-        "Unpublish error:",
+        "UPLOAD ERROR:",
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal unpublish."
-      });
+      return apiError(
+        res,
+        error.message ||
+          "Gagal upload file.",
+        500
+      );
     }
   }
 );
 
-/* =========================================================
-   ADMIN RSVP
-========================================================= */
+/* ============================================================
+   ADMIN — DELETE ASSET
+============================================================ */
+
+app.delete(
+  "/api/assets/:assetId",
+  adminMutationGuard,
+  async (req, res) => {
+    try {
+      const assetId =
+        cleanText(
+          req.params.assetId,
+          150
+        );
+
+      const db = ensureRedis();
+
+      const exists =
+        await db.get(
+          `asset:${assetId}`
+        );
+
+      if (!exists) {
+        return apiError(
+          res,
+          "Asset tidak ditemukan.",
+          404
+        );
+      }
+
+      await db.del(
+        `asset:${assetId}`
+      );
+
+      return apiSuccess(
+        res,
+        {
+          message:
+            "Asset berhasil dihapus.",
+        }
+      );
+    } catch (error) {
+      console.error(
+        "DELETE ASSET ERROR:",
+        error
+      );
+
+      return apiError(
+        res,
+        "Gagal menghapus asset.",
+        500
+      );
+    }
+  }
+);
+
+/* ============================================================
+   MEDIA DELIVERY
+============================================================ */
 
 app.get(
-  "/admin/wedding/:slug/rsvp",
-  requireAdmin,
+  "/media/:assetId",
+  async (req, res) => {
+    try {
+      const assetId =
+        cleanText(
+          req.params.assetId,
+          150
+        );
+
+      const db = ensureRedis();
+
+      const raw =
+        await db.get(
+          `asset:${assetId}`
+        );
+
+      if (!raw) {
+        return res.status(404).send(
+          "Media tidak ditemukan."
+        );
+      }
+
+      const asset =
+        typeof raw === "string"
+          ? safeJSONParse(
+              raw,
+              null
+            )
+          : raw;
+
+      if (!asset) {
+        return res.status(404).send(
+          "Media tidak valid."
+        );
+      }
+
+      const buffer =
+        Buffer.from(
+          asset.base64,
+          "base64"
+        );
+
+      res.setHeader(
+        "Content-Type",
+        asset.mime
+      );
+
+      res.setHeader(
+        "Content-Length",
+        buffer.length
+      );
+
+      res.setHeader(
+        "Cache-Control",
+        "public, max-age=31536000, immutable"
+      );
+
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename="${encodeURIComponent(
+          asset.filename
+        )}"`
+      );
+
+      return res.send(
+        buffer
+      );
+    } catch (error) {
+      console.error(
+        "MEDIA ERROR:",
+        error
+      );
+
+      return res.status(500).send(
+        "Media gagal diproses."
+      );
+    }
+  }
+);
+
+/* ============================================================
+   PUBLIC — LANDING PAGE
+============================================================ */
+
+app.get(
+  "/",
+  async (req, res) => {
+    try {
+      const db = ensureRedis();
+
+      const slugs =
+        await db.smembers(
+          "weddings:index"
+        );
+
+      const weddings = [];
+
+      for (const slug of slugs || []) {
+        const wedding =
+          await getWedding(slug);
+
+        if (
+          wedding &&
+          wedding.status ===
+            "published"
+        ) {
+          weddings.push(
+            publicWedding(
+              req,
+              wedding
+            )
+          );
+        }
+      }
+
+      weddings.sort(
+        (a, b) =>
+          String(
+            b.updatedAt
+          ).localeCompare(
+            String(a.updatedAt)
+          )
+      );
+
+      return res.render(
+        "index",
+        {
+          weddings,
+          origin:
+            getOrigin(req),
+        }
+      );
+    } catch (error) {
+      console.error(
+        "LANDING ERROR:",
+        error
+      );
+
+      return res.render(
+        "index",
+        {
+          weddings: [],
+          origin:
+            getOrigin(req),
+          error:
+            "Belum ada wedding yang dipublish.",
+        }
+      );
+    }
+  }
+);
+
+/* ============================================================
+   PUBLIC — RSVP
+============================================================ */
+
+app.post(
+  "/api/weddings/:slug/rsvp",
   async (req, res) => {
     try {
       const slug =
@@ -1386,55 +2045,134 @@ app.get(
         );
 
       const wedding =
-        await getWedding(
-          slug
-        );
+        await getWedding(slug);
 
-      if (!wedding) {
-        return res.status(404).send(
-          "Wedding tidak ditemukan."
+      if (
+        !wedding ||
+        wedding.status !==
+          "published"
+      ) {
+        return apiError(
+          res,
+          "Wedding tidak ditemukan.",
+          404
         );
       }
 
-      const rsvps =
-        (await redis.get(
-          rsvpKey(slug)
-        )) || [];
+      const name =
+        cleanText(
+          req.body.name,
+          150
+        );
 
-      return res.json({
-        success: true,
-        wedding: {
-          slug:
-            wedding.slug,
-          bride:
-            wedding.bride?.name ||
-            "",
-          groom:
-            wedding.groom?.name ||
-            ""
+      const attendance =
+        cleanText(
+          req.body.attendance,
+          50
+        );
+
+      const guestCount =
+        Number(
+          req.body.guestCount
+        );
+
+      const message =
+        cleanText(
+          req.body.message,
+          1000
+        );
+
+      const allowedAttendance =
+        new Set([
+          "hadir",
+          "tidak_hadir",
+          "tidak_menentukan",
+        ]);
+
+      if (!name) {
+        return apiError(
+          res,
+          "Nama wajib diisi.",
+          422
+        );
+      }
+
+      if (
+        !allowedAttendance.has(
+          attendance
+        )
+      ) {
+        return apiError(
+          res,
+          "Status kehadiran tidak valid.",
+          422
+        );
+      }
+
+      if (
+        !Number.isInteger(
+          guestCount
+        ) ||
+        guestCount < 0 ||
+        guestCount > 20
+      ) {
+        return apiError(
+          res,
+          "Jumlah tamu tidak valid.",
+          422
+        );
+      }
+
+      const rsvp = {
+        id: createId("rsvp"),
+
+        name,
+
+        attendance,
+
+        guestCount,
+
+        message,
+
+        createdAt:
+          nowISO(),
+      };
+
+      const db = ensureRedis();
+
+      await db.lpush(
+        `rsvp:${slug}`,
+        JSON.stringify(
+          rsvp
+        )
+      );
+
+      return apiSuccess(
+        res,
+        {
+          message:
+            "Terima kasih, RSVP Anda sudah tersimpan.",
         },
-        total:
-          rsvps.length,
-        rsvps
-      });
+        201
+      );
     } catch (error) {
       console.error(
-        "RSVP list error:",
+        "RSVP ERROR:",
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        message:
-          "Gagal mengambil RSVP."
-      });
+      return apiError(
+        res,
+        "RSVP gagal disimpan.",
+        500
+      );
     }
   }
 );
 
-/* =========================================================
-   PUBLIC WEDDING
-========================================================= */
+/* ============================================================
+   PUBLIC — WEDDING
+============================================================ */
 
 app.get(
   "/:slug",
@@ -1446,7 +2184,7 @@ app.get(
         );
 
       if (
-        RESERVED_SLUGS.includes(
+        RESERVED_SLUGS.has(
           slug
         )
       ) {
@@ -1454,9 +2192,7 @@ app.get(
       }
 
       const wedding =
-        await getWedding(
-          slug
-        );
+        await getWedding(slug);
 
       if (
         !wedding ||
@@ -1464,594 +2200,151 @@ app.get(
           "published"
       ) {
         return res.status(404).render(
-          "wedding",
+          "index",
           {
-            wedding: null,
-            guestName: "",
-            notFound: true
+            weddings: [],
+            error:
+              "Wedding tidak ditemukan atau belum dipublish.",
+            origin:
+              getOrigin(req),
           }
         );
       }
 
-      const guestName =
-        normalizeGuestName(
-          req.query.to
+      let guestName =
+        cleanText(
+          req.query.to,
+          200
         );
+
+      if (!guestName) {
+        guestName =
+          "Bapak/Ibu/Saudara/i";
+      }
 
       return res.render(
         "wedding",
         {
-          wedding,
+          wedding:
+            publicWedding(
+              req,
+              wedding
+            ),
+
           guestName,
-          notFound: false
+
+          origin:
+            getOrigin(req),
+
+          weddingUrl:
+            weddingURL(
+              req,
+              slug
+            ),
         }
       );
     } catch (error) {
       console.error(
-        "Wedding route error:",
+        "WEDDING ERROR:",
         error
       );
 
       return res.status(500).render(
-        "wedding",
+        "index",
         {
-          wedding: null,
-          guestName: "",
-          notFound: true
+          weddings: [],
+          error:
+            "Terjadi kesalahan pada undangan.",
+          origin:
+            getOrigin(req),
         }
       );
     }
   }
 );
 
-/* =========================================================
-   RSVP SUBMISSION
-========================================================= */
+/* ============================================================
+   404
+============================================================ */
 
-app.post(
-  "/:slug/rsvp",
-  async (req, res) => {
-    try {
-      const slug =
-        normalizeSlug(
-          req.params.slug
-        );
-
-      const wedding =
-        await getWedding(
-          slug
-        );
-
-      if (
-        !wedding ||
-        wedding.status !==
-          "published"
-      ) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Wedding tidak ditemukan."
-        });
-      }
-
-      const name =
-        safeString(
-          req.body.name,
-          100
-        );
-
-      const attendance =
-        safeString(
-          req.body.attendance,
-          30
-        );
-
-      const guestCount =
-        parseInteger(
-          req.body.guestCount,
-          0
-        );
-
-      const message =
-        safeString(
-          req.body.message,
-          500
-        );
-
-      if (
-        !name ||
-        name.length < 2
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Nama wajib diisi."
-        });
-      }
-
-      if (
-        !validAttendance(
-          attendance
-        )
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Pilihan kehadiran tidak valid."
-        });
-      }
-
-      if (
-        guestCount < 1 ||
-        guestCount > 10
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Jumlah tamu harus antara 1-10."
-        });
-      }
-
-      const rsvp = {
-        id:
-          createId("rsvp"),
-
-        name,
-
-        attendance,
-
-        guestCount,
-
-        message,
-
-        createdAt:
-          nowISO()
-      };
-
-      const existing =
-        (await redis.get(
-          rsvpKey(slug)
-        )) || [];
-
-      if (
-        !Array.isArray(
-          existing
-        )
-      ) {
-        throw new Error(
-          "Format RSVP Redis tidak valid."
-        );
-      }
-
-      existing.unshift(
-        rsvp
-      );
-
-      if (
-        existing.length > 5000
-      ) {
-        existing.length =
-          5000;
-      }
-
-      await redis.set(
-        rsvpKey(slug),
-        existing
-      );
-
-      return res.json({
-        success: true,
-        message:
-          "Terima kasih, RSVP Anda telah diterima."
-      });
-    } catch (error) {
-      console.error(
-        "RSVP error:",
-        error
-      );
-
-      return res.status(500).json({
-        success: false,
-        message:
-          "RSVP gagal disimpan."
-      });
-    }
+app.use(
+  "/api",
+  (req, res) => {
+    return apiError(
+      res,
+      "API endpoint tidak ditemukan.",
+      404
+    );
   }
 );
-
-/* =========================================================
-   BUILD WEDDING FROM ADMIN PAYLOAD
-========================================================= */
-
-function buildWeddingFromPayload(
-  payload
-) {
-  const wedding =
-    createDefaultWedding();
-
-  wedding.status =
-    payload.status ===
-    "published"
-      ? "published"
-      : "draft";
-
-  wedding.groom = {
-    name: safeString(
-      payload.groomName,
-      100
-    ),
-
-    fullName: safeString(
-      payload.groomFullName,
-      200
-    ),
-
-    photo:
-      validateBase64Image(
-        payload.groomPhoto
-      )
-  };
-
-  wedding.bride = {
-    name: safeString(
-      payload.brideName,
-      100
-    ),
-
-    fullName: safeString(
-      payload.brideFullName,
-      200
-    ),
-
-    photo:
-      validateBase64Image(
-        payload.bridePhoto
-      )
-  };
-
-  wedding.coverImage =
-    validateBase64Image(
-      payload.coverImage
-    );
-
-  wedding.quote =
-    safeString(
-      payload.quote,
-      1000
-    );
-
-  wedding.description =
-    safeString(
-      payload.description,
-      MAX_WEDDING_TEXT
-    );
-
-  wedding.date =
-    safeString(
-      payload.date,
-      100
-    );
-
-  wedding.timezone =
-    safeString(
-      payload.timezone,
-      100
-    ) ||
-    "Asia/Makassar";
-
-  wedding.music = {
-    url: safeString(
-      payload.musicUrl,
-      1000
-    )
-  };
-
-  /* =======================================================
-     EVENTS
-  ======================================================= */
-
-  let events = [];
-
-  if (
-    Array.isArray(
-      payload.events
-    )
-  ) {
-    events =
-      payload.events
-        .slice(0, 10)
-        .map(item => ({
-          id:
-            safeString(
-              item.id,
-              100
-            ) ||
-            createId("event"),
-
-          type:
-            safeString(
-              item.type,
-              50
-            ),
-
-          title:
-            safeString(
-              item.title,
-              150
-            ),
-
-          date:
-            safeString(
-              item.date,
-              50
-            ),
-
-          startTime:
-            safeString(
-              item.startTime,
-              20
-            ),
-
-          endTime:
-            safeString(
-              item.endTime,
-              20
-            ),
-
-          venue:
-            safeString(
-              item.venue,
-              200
-            ),
-
-          address:
-            safeString(
-              item.address,
-              500
-            ),
-
-          mapsUrl:
-            safeString(
-              item.mapsUrl,
-              1000
-            ),
-
-          description:
-            safeString(
-              item.description,
-              1000
-            )
-        }))
-        .filter(
-          item =>
-            item.title
-        );
-  }
-
-  wedding.events =
-    events;
-
-  /* =======================================================
-     STORY
-  ======================================================= */
-
-  let story = [];
-
-  if (
-    Array.isArray(
-      payload.story
-    )
-  ) {
-    story =
-      payload.story
-        .slice(0, 20)
-        .map(item => ({
-          id:
-            safeString(
-              item.id,
-              100
-            ) ||
-            createId("story"),
-
-          date:
-            safeString(
-              item.date,
-              100
-            ),
-
-          title:
-            safeString(
-              item.title,
-              150
-            ),
-
-          description:
-            safeString(
-              item.description,
-              1000
-            ),
-
-          photo:
-            validateBase64Image(
-              item.photo
-            )
-        }))
-        .filter(
-          item =>
-            item.title ||
-            item.description
-        );
-  }
-
-  wedding.story =
-    story;
-
-  /* =======================================================
-     GALLERY
-  ======================================================= */
-
-  let gallery = [];
-
-  if (
-    Array.isArray(
-      payload.gallery
-    )
-  ) {
-    gallery =
-      payload.gallery
-        .slice(
-          0,
-          MAX_GALLERY_IMAGES
-        )
-        .map(item =>
-          validateBase64Image(
-            item
-          )
-        )
-        .filter(Boolean);
-  }
-
-  wedding.gallery =
-    gallery;
-
-  /* =======================================================
-     GIFT
-  ======================================================= */
-
-  let gift = [];
-
-  if (
-    Array.isArray(
-      payload.gift
-    )
-  ) {
-    gift =
-      payload.gift
-        .slice(0, 10)
-        .map(item => ({
-          id:
-            safeString(
-              item.id,
-              100
-            ) ||
-            createId("gift"),
-
-          type:
-            safeString(
-              item.type,
-              50
-            ),
-
-          bank:
-            safeString(
-              item.bank,
-              100
-            ),
-
-          accountName:
-            safeString(
-              item.accountName,
-              150
-            ),
-
-          accountNumber:
-            safeString(
-              item.accountNumber,
-              100
-            ),
-
-          description:
-            safeString(
-              item.description,
-              500
-            )
-        }))
-        .filter(
-          item =>
-            item.accountNumber ||
-            item.description
-        );
-  }
-
-  wedding.gift =
-    gift;
-
-  return wedding;
-}
-
-/* =========================================================
-   404
-========================================================= */
 
 app.use(
   (req, res) => {
-    res.status(404).send(
-      `
-      <!DOCTYPE html>
-      <html lang="id">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>404 — LOVEFOREVER</title>
-      </head>
-      <body style="font-family:Arial,sans-serif;padding:40px;text-align:center">
-        <h1>404</h1>
-        <p>Halaman yang Anda cari tidak ditemukan.</p>
-        <a href="/">Kembali ke LOVEFOREVER</a>
-      </body>
-      </html>
-      `
+    return res.status(404).render(
+      "index",
+      {
+        weddings: [],
+        error:
+          "Halaman tidak ditemukan.",
+        origin:
+          getOrigin(req),
+      }
     );
   }
 );
 
-/* =========================================================
-   ERROR HANDLER
-========================================================= */
+/* ============================================================
+   GLOBAL ERROR
+============================================================ */
 
 app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
+  (error, req, res, next) => {
     console.error(
-      "Unhandled error:",
+      "GLOBAL ERROR:",
       error
     );
 
     if (
-      res.headersSent
+      req.path.startsWith(
+        "/api/"
+      )
     ) {
-      return next(error);
+      return apiError(
+        res,
+        error.message ||
+          "Server error.",
+        error.code ===
+          "LIMIT_FILE_SIZE"
+          ? 413
+          : 500
+      );
     }
 
-    res.status(500).send(
-      "Terjadi kesalahan pada server."
+    return res.status(500).send(
+      "Internal Server Error"
     );
   }
 );
 
-/* =========================================================
-   VERCEL EXPORT
-========================================================= */
-
-module.exports = app;
-
-/* =========================================================
-   LOCAL DEVELOPMENT
-========================================================= */
+/* ============================================================
+   LOCAL SERVER
+============================================================ */
 
 if (
-  require.main === module
+  process.env.NODE_ENV !==
+  "production"
 ) {
   app.listen(
     PORT,
     () => {
       console.log(
-        `LOVEFOREVER running on port ${PORT}`
+        `${APP_NAME} running at http://localhost:${PORT}`
       );
     }
   );
 }
+
+/*
+ * WAJIB untuk Vercel.
+ */
+module.exports = app;
